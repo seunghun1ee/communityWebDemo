@@ -26,7 +26,7 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public @ResponseBody Post showPostById(@PathVariable Long id) throws Exception {
+    public String showPostById(@PathVariable Long id, Model model) throws Exception {
         Optional<Post> optionalPost = postService.getPostById(id);
         Post post;
         if(optionalPost.isPresent()) {
@@ -34,6 +34,7 @@ public class PostController {
         }
         else throw new Exception();
 
-        return post;
+        model.addAttribute("post",post);
+        return "post";
     }
 }
