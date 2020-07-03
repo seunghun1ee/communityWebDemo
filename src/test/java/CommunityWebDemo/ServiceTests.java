@@ -61,4 +61,24 @@ public class ServiceTests {
         assert(postService.getAllPosts().size() == 3);
     }
 
+    @Test
+    void getPostByIdTest() {
+        postRepository.deleteAll();
+        List<Post> posts = new ArrayList<>();
+        Post targetPost = new Post("get this post","body",0L);
+        postRepository.save(targetPost);
+        postRepository.save(new Post("post2","body",1L));
+        postRepository.save(new Post("post3","body",3L));
+        postRepository.findAll().forEach(posts::add);
+        Post getThisPost = new Post();
+        for(Post post : posts) {
+            if(post.getTitle().equals("get this post")) {
+                getThisPost = post;
+                break;
+            }
+        }
+        targetPost.setId(getThisPost.getId());
+        assert(postService.getPostById(getThisPost.getId()).isPresent());
+        assert(postService.getPostById(getThisPost.getId()).get().equals(targetPost));
+    }
 }
