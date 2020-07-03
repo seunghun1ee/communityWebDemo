@@ -50,4 +50,12 @@ public class PostController {
         postService.addPost(newPost);
         return new RedirectView("/posts");
     }
+
+    @GetMapping("/posts/{id}/delete")
+    public RedirectView deletePost(@PathVariable Long id) throws Exception{
+        if(postService.deletePostById(id)) {
+            return new RedirectView("/posts");
+        }
+        else throw new Exception();
+    }
 }

@@ -7,5 +7,7 @@
 <body>
     <h2 th:text="${post.title}"></h2>
     <p th:text="${post.body}"></p>
+    <br>
+    <a th:href="@{/posts/{id}/delete(id=${post.id})}">Delete this post</a>
 </body>
 </html>
