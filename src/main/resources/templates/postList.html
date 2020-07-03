@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>Posts</h2>
+    <tr th:each="post : ${posts}">
+        <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a><br>
+    </tr>
+</body>
+</html>
