@@ -1,6 +1,5 @@
 package CommunityWebDemo;
 
-import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ class CommunityWebDemoApplicationTests {
 
 	@Autowired
 	PostService postService;
-
 
 	@Test
 	void contextLoads() {

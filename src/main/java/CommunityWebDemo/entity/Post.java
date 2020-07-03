@@ -1,7 +1,5 @@
 package CommunityWebDemo.entity;
 
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,13 +8,10 @@ import javax.persistence.Id;
 @Entity
 public class Post {
 
-    @Getter @Setter @Id @GeneratedValue
+    @Id @GeneratedValue
     private Long id;
-    @Getter @Setter
     private String title;
-    @Getter @Setter
     private String body;
-    @Getter @Setter
     private Long authorId;
 
     public Post() {
@@ -33,6 +28,38 @@ public class Post {
         this.id = id;
         this.title = title;
         this.body = body;
+        this.authorId = authorId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
         this.authorId = authorId;
     }
 }
