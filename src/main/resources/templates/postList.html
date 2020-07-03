@@ -9,5 +9,7 @@
     <tr th:each="post : ${posts}">
         <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a><br>
     </tr>
+    <br>
+    <a href="/posts/new_post">Add new post</a>
 </body>
 </html>

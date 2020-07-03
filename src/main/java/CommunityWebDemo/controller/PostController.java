@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,5 +38,16 @@ public class PostController {
 
         model.addAttribute("post",post);
         return "post";
+    }
+
+    @GetMapping("/posts/new_post")
+    public String newPost() {
+        return "newPost";
+    }
+
+    @PostMapping("/posts/new_post")
+    public RedirectView saveNewPost(Post newPost) {
+        postService.addPost(newPost);
+        return new RedirectView("/posts");
     }
 }
