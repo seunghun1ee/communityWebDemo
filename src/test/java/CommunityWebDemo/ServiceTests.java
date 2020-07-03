@@ -81,4 +81,24 @@ public class ServiceTests {
         assert(postService.getPostById(getThisPost.getId()).isPresent());
         assert(postService.getPostById(getThisPost.getId()).get().equals(targetPost));
     }
+
+    @Test
+    void deletePostTest() {
+        postRepository.deleteAll();
+        Post targetPost = new Post("Delete this","body",0L);
+        Post post = new Post("Don't delete this","body",0L);
+        postRepository.save(targetPost);
+        postRepository.save(post);
+        List<Post> posts = postService.getAllPosts();
+        for(Post post1 : posts) {
+            if(post1.getTitle().equals("Delete this")) {
+                targetPost = post1;
+                break;
+            }
+        }
+        postService.deletePostById(targetPost.getId());
+        List<Post> result = postService.getAllPosts();
+        assert(result.size() == 1);
+        assert(result.get(0).getTitle().equals("Don't delete this"));
+    }
 }

@@ -30,4 +30,12 @@ public class PostService {
         return postRepository.findById(id);
     }
 
+    public Boolean deletePostById(Long id) {
+        if(postRepository.findById(id).isPresent()) {
+            postRepository.deleteById(id);
+            return true;
+        }
+        else return false;
+    }
+
 }
