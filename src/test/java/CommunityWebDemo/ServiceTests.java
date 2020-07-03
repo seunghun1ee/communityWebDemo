@@ -60,4 +60,5 @@ public class ServiceTests {
         postRepository.save(new Post("post3","body",3L));
         assert(postService.getAllPosts().size() == 3);
     }
+
 }
