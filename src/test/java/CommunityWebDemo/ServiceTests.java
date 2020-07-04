@@ -101,4 +101,14 @@ public class ServiceTests {
         assert(result.size() == 1);
         assert(result.get(0).getTitle().equals("Don't delete this"));
     }
+
+    @Test
+    void deleteAllTest() {
+        postRepository.deleteAll();
+        for(int i=0; i < 5; i++) {
+            postRepository.save(new Post());
+        }
+        postService.deleteAll();
+        assert(postService.getAllPosts().size() == 0);
+    }
 }

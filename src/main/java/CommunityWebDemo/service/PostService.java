@@ -38,4 +38,8 @@ public class PostService {
         else return false;
     }
 
+    public void deleteAll() {
+        postRepository.deleteAll();
+    }
+
 }
