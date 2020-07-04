@@ -55,4 +55,24 @@ public class PostController {
         }
         else return new RedirectView("/error");
     }
+
+    @GetMapping("/posts/{id}/edit")
+    public String updatePost(@PathVariable Long id, Model model) throws Exception{
+        Optional<Post> optionalPost = postService.getPostById(id);
+        Post post;
+        if(optionalPost.isPresent()) {
+            post = optionalPost.get();
+            model.addAttribute("post", post);
+            return "update";
+        }
+        else throw new Exception();
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public RedirectView saveUpdatedPost(@PathVariable Long id, Post post) {
+        post.setId(id);
+        postService.addPost(post);
+        return new RedirectView("/posts/{id}");
+    }
+
 }

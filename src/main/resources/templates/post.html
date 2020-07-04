@@ -8,6 +8,9 @@
     <h2 th:text="${post.title}"></h2>
     <p th:text="${post.body}"></p>
     <br>
+    <form th:action="@{/posts/{id}/edit(id=${post.id})}" method="get">
+        <button type="submit">Edit this post</button>
+    </form>
     <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post">
         <button type="submit">Delete this post</button>
     </form>
