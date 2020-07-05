@@ -17,26 +17,32 @@ public class UserService extends MyService<User>{
 
     @Override
     public void add(User user) {
-
+        userRepository.save(user);
     }
 
     @Override
     public List<User> getAll() {
-        return null;
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        return users;
     }
 
     @Override
     public Optional<User> getById(Long id) {
-        return Optional.empty();
+        return userRepository.findById(id);
     }
 
     @Override
     public boolean deleteById(Long id) {
+        if(userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+            return true;
+        }
         return false;
     }
 
     @Override
     public void deleteAll() {
-
+        userRepository.deleteAll();
     }
 }

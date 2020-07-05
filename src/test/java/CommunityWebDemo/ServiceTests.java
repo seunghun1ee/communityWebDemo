@@ -173,10 +173,11 @@ public class ServiceTests {
         for(User user : users) {
             if(user.getName().equals("target")) {
                 target = user;
+                break;
             }
         }
         assertThat(userService.getById(target.getId()).isPresent()).isTrue();
-        assertThat(userService.getById(target.getId())).isEqualTo(target);
+        assertThat(userService.getById(target.getId()).get()).isEqualTo(target);
     }
 
     @Test
@@ -195,7 +196,7 @@ public class ServiceTests {
         userService.deleteById(target.getId());
         List<User> result = userService.getAll();
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getName()).isEqualTo("delete");
+        assertThat(result.get(0).getName()).isEqualTo("don't");
     }
 
     @Test
