@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -27,5 +29,16 @@ public class UserController {
             return userService.getById(id).get();
         }
         else throw new Exception();
+    }
+
+    @GetMapping("/users/new_user")
+    public String newUser() {
+        return "newUser";
+    }
+
+    @PostMapping("/users/new_user")
+    public RedirectView saveNewUser(User user) {
+        userService.add(user);
+        return new RedirectView("/users");
     }
 }
