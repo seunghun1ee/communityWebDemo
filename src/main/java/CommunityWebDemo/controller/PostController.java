@@ -19,14 +19,14 @@ public class PostController {
 
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
-        List<Post> posts = postService.getAllPosts();
+        List<Post> posts = postService.getAll();
         model.addAttribute("posts",posts);
         return "postList";
     }
 
     @GetMapping("/posts/{id}")
     public String showPostById(@PathVariable Long id, Model model) throws Exception {
-        Optional<Post> optionalPost = postService.getPostById(id);
+        Optional<Post> optionalPost = postService.getById(id);
         Post post;
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
@@ -44,13 +44,13 @@ public class PostController {
 
     @PostMapping("/posts/new_post")
     public RedirectView saveNewPost(Post newPost) {
-        postService.addPost(newPost);
+        postService.add(newPost);
         return new RedirectView("/posts");
     }
 
     @PostMapping("/posts/{id}/delete")
     public RedirectView delete(@PathVariable Long id) {
-        if(postService.deletePostById(id)) {
+        if(postService.deleteById(id)) {
             return new RedirectView("/posts");
         }
         else return new RedirectView("/error");
@@ -58,7 +58,7 @@ public class PostController {
 
     @GetMapping("/posts/{id}/edit")
     public String updatePost(@PathVariable Long id, Model model) throws Exception{
-        Optional<Post> optionalPost = postService.getPostById(id);
+        Optional<Post> optionalPost = postService.getById(id);
         Post post;
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
@@ -71,7 +71,7 @@ public class PostController {
     @PostMapping("/posts/{id}/edit")
     public RedirectView saveUpdatedPost(@PathVariable Long id, Post post) {
         post.setId(id);
-        postService.addPost(post);
+        postService.add(post);
         return new RedirectView("/posts/{id}");
     }
 

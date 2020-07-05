@@ -11,26 +11,30 @@ import java.util.Optional;
 
 
 @Service
-public class PostService {
+public class PostService extends MyService<Post>{
 
     @Autowired
     private PostRepository postRepository;
 
-    public void addPost(Post post) {
+    @Override
+    public void add(Post post) {
         postRepository.save(post);
     }
 
-    public List<Post> getAllPosts() {
+    @Override
+    public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
         postRepository.findAll().forEach(posts::add);
         return posts;
     }
 
-    public Optional<Post> getPostById(Long id) {
+    @Override
+    public Optional<Post> getById(Long id) {
         return postRepository.findById(id);
     }
 
-    public Boolean deletePostById(Long id) {
+    @Override
+    public boolean deleteById(Long id) {
         if(postRepository.findById(id).isPresent()) {
             postRepository.deleteById(id);
             return true;
@@ -38,6 +42,7 @@ public class PostService {
         else return false;
     }
 
+    @Override
     public void deleteAll() {
         postRepository.deleteAll();
     }
