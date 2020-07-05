@@ -1,9 +1,7 @@
 package CommunityWebDemo.entity;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -13,23 +11,22 @@ public class Post {
     private Long id;
     private String title;
     private String body;
-    private Long authorId;
+    @ManyToOne() @JoinColumn()
+    private User user;
 
     public Post() {
 
     }
 
-    public Post(String title, String body, Long authorId) {
+    public Post(String title, String body) {
         this.title = title;
         this.body = body;
-        this.authorId = authorId;
     }
 
-    public Post(Long id, String title, String body, Long authorId) {
-        this.id = id;
+    public Post(String title, String body, User user) {
         this.title = title;
         this.body = body;
-        this.authorId = authorId;
+        this.user = user;
     }
 
     public Long getId() {
@@ -56,12 +53,12 @@ public class Post {
         this.body = body;
     }
 
-    public Long getAuthorId() {
-        return authorId;
+    public User getUser() {
+        return user;
     }
 
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -69,14 +66,14 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id.equals(post.id) &&
-                title.equals(post.title) &&
-                body.equals(post.body) &&
-                authorId.equals(post.authorId);
+        return Objects.equals(id, post.id) &&
+                Objects.equals(title, post.title) &&
+                Objects.equals(body, post.body) &&
+                Objects.equals(user, post.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, authorId);
+        return Objects.hash(id, title, body, user);
     }
 }

@@ -24,8 +24,8 @@ public class HomeController {
     @GetMapping("/load")
     public @ResponseBody String loadTestData() {
         postRepository.deleteAll();
-        postService.addPost(new Post("first post","hello",0L));
-        postService.addPost(new Post("second post", "nice to meet you",1L));
+        postService.addPost(new Post("first post","hello"));
+        postService.addPost(new Post("second post", "nice to meet you"));
 
         return "Test data is loaded";
     }

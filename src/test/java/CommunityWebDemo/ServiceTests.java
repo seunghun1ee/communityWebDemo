@@ -21,8 +21,8 @@ public class ServiceTests {
     @Test
     void addPostTest() {
         postRepository.deleteAll();
-        Post post0 = new Post(1L, "title", "body", 0L);
-        Post post1 = new Post("title2","body",1L);
+        Post post0 = new Post("title", "body");
+        Post post1 = new Post("title2","body");
         List<Post> result = new ArrayList<>();
         postService.addPost(post0);
         postService.addPost(post1);
@@ -34,8 +34,8 @@ public class ServiceTests {
     void updatePostTest() {
         postRepository.deleteAll();
         List<Post> result = new ArrayList<>();
-        postService.addPost(new Post("update this title","body",4L));
-        postService.addPost(new Post("don't edit this title","body",4L));
+        postService.addPost(new Post("update this title","body"));
+        postService.addPost(new Post("don't edit this title","body"));
         postRepository.findAll().forEach(result::add);
         Post postEdit = new Post();
         for(Post post : result) {
@@ -55,9 +55,9 @@ public class ServiceTests {
     @Test
     void getAllPostTest() {
         postRepository.deleteAll();
-        postRepository.save(new Post("post1","body",0L));
-        postRepository.save(new Post("post2","body",1L));
-        postRepository.save(new Post("post3","body",3L));
+        postRepository.save(new Post("post1","body"));
+        postRepository.save(new Post("post2","body"));
+        postRepository.save(new Post("post3","body"));
         assert(postService.getAllPosts().size() == 3);
     }
 
@@ -65,10 +65,10 @@ public class ServiceTests {
     void getPostByIdTest() {
         postRepository.deleteAll();
         List<Post> posts = new ArrayList<>();
-        Post targetPost = new Post("get this post","body",0L);
+        Post targetPost = new Post("get this post","body");
         postRepository.save(targetPost);
-        postRepository.save(new Post("post2","body",1L));
-        postRepository.save(new Post("post3","body",3L));
+        postRepository.save(new Post("post2","body"));
+        postRepository.save(new Post("post3","body"));
         postRepository.findAll().forEach(posts::add);
         Post getThisPost = new Post();
         for(Post post : posts) {
@@ -85,8 +85,8 @@ public class ServiceTests {
     @Test
     void deletePostTest() {
         postRepository.deleteAll();
-        Post targetPost = new Post("Delete this","body",0L);
-        Post post = new Post("Don't delete this","body",0L);
+        Post targetPost = new Post("Delete this","body");
+        Post post = new Post("Don't delete this","body");
         postRepository.save(targetPost);
         postRepository.save(post);
         List<Post> posts = postService.getAllPosts();
