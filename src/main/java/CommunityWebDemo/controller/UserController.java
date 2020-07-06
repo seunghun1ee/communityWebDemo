@@ -74,11 +74,15 @@ public class UserController {
         else return "error";
     }
 
-//    @PostMapping("/users/{id}/edit")
-//    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) {
-//        user.setId(id);
-//        userService.add(user);
-//        List<User> users = userService.getAll();
-//        return new RedirectView("/users");
-//    }
+    @PostMapping("/users/{id}/edit")
+    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) {
+        Optional<User> optionalUser = userService.getById(id);
+        if(optionalUser.isPresent()) {
+            User oldUser = optionalUser.get();
+            user.setId(oldUser.getId());
+            userService.add(user);
+            return new RedirectView("/users/{id}");
+        }
+        else return new RedirectView("/error");
+    }
 }

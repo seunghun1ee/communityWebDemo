@@ -7,7 +7,7 @@
     <body>
         <h2>Change user name</h2>
         <form th:action="@{/users/{id}/edit(id=${user.id})}" method="post" th:object="${user}">
-            <input type="text" id="inputTitle" name="title" th:value="${user.name}" th:object="${name}" required>
+            <input type="text" id="inputTitle" name="name" th:value="${user.name}" th:object="${name}" required>
             <br>
             <button type="submit">Save</button>
         </form>

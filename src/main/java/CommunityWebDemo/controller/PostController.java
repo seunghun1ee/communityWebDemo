@@ -83,14 +83,6 @@ public class PostController {
             return new RedirectView("/posts/{id}");
         }
         else return new RedirectView("/error");
-//        post.setId(id);
-//        Optional<User> optionalUser = userService.getById(id);
-//        if(optionalUser.isPresent()) {
-//            post.setUser(optionalUser.get());
-//            postService.add(post);
-//            return new RedirectView("/posts/{id}");
-//        }
-//        else return new RedirectView("/error");
     }
 
 }
