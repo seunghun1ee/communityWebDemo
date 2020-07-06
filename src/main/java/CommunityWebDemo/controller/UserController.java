@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -25,8 +26,9 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public @ResponseBody User showUser(@PathVariable Long id) throws Exception{
-        if(userService.getById(id).isPresent()) {
-            return userService.getById(id).get();
+        Optional<User> optionalUser = userService.getById(id);
+        if(optionalUser.isPresent()) {
+            return optionalUser.get();
         }
         else throw new Exception();
     }
