@@ -1,6 +1,8 @@
 package CommunityWebDemo.service;
 
+import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.repository.PostRepository;
 import CommunityWebDemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ public class UserService extends MyService<User>{
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @Override
     public void add(User user) {
@@ -44,5 +48,15 @@ public class UserService extends MyService<User>{
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
+    }
+
+    public List<Post> findPostsOfUser(User user) {
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(post -> {
+            if (post.getUser() != null && post.getUser().equals(user)) {
+                posts.add(post);
+            }});
+
+        return posts;
     }
 }

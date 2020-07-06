@@ -208,4 +208,23 @@ public class ServiceTests {
         userService.deleteAll();
         assertThat(userService.getAll().size()).isEqualTo(0);
     }
+
+    @Test
+    void findPostOfUserTest() {
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        userRepository.save(new User("tester"));
+        User user = userService.getAll().get(0);
+        postRepository.save(new Post("find1","body",user));
+        postRepository.save(new Post("find2","body",user));
+        postRepository.save(new Post("find3","body",user));
+        for(int i=0; i < 3; i++) {
+            postRepository.save(new Post());
+        }
+        List<Post> posts = userService.findPostsOfUser(user);
+        assertThat(posts.size()).isNotZero();
+        for(Post post : posts) {
+            assertThat(post.getUser()).isEqualTo(user);
+        }
+    }
 }

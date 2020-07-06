@@ -45,6 +45,7 @@ public class HomeController {
         }
         postService.add(new Post("first post","hello", adam));
         postService.add(new Post("second post", "nice to meet you", eve));
+        postService.add(new Post("third post","this is adam",adam));
 
         return "Test data is loaded";
     }
