@@ -15,5 +15,11 @@
     <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post">
         <button type="submit">Delete this post</button>
     </form>
+    <h3>Comments</h3>
+    <tr th:each="comment : ${comments}">
+        <p style="font-weight: bold" th:text="${comment.user.name}"></p>
+        <p th:text="${comment.message}"></p>
+        <br>
+    </tr>
 </body>
 </html>

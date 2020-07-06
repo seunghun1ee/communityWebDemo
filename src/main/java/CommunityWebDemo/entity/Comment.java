@@ -23,10 +23,10 @@ public class Comment {
 
     }
 
-    public Comment(Post post,User user, String message) {
+    public Comment(Post post, User user, String message) {
         this.post = post;
-        this.message = message;
         this.user = user;
+        this.message = message;
     }
 
     public Long getId() {

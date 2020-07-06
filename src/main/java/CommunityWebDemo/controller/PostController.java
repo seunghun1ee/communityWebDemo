@@ -1,7 +1,9 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,9 @@ public class PostController {
     PostService postService;
     @Autowired
     UserService userService;
+    @Autowired
+    CommentRepository commentRepository;
+
     User testUser = new User("tester");
 
     @GetMapping("/posts")
@@ -32,6 +38,14 @@ public class PostController {
     @GetMapping("/posts/{id}")
     public String showPostById(@PathVariable Long id, Model model) throws Exception {
         Optional<Post> optionalPost = postService.getById(id);
+
+        //temporary
+        List<Comment> comments = new ArrayList<>();
+        commentRepository.findAll().forEach(comment -> {
+            if (comment.getPost().getId().equals(id)) {
+                comments.add(comment);
+            }});
+
         Post post;
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
@@ -39,6 +53,7 @@ public class PostController {
         else throw new Exception();
 
         model.addAttribute("post",post);
+        model.addAttribute("comments",comments);
         return "post";
     }
 
