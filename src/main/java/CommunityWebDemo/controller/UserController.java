@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,4 +63,22 @@ public class UserController {
         }
         else return new RedirectView("/error");
     }
+
+    @GetMapping("/users/{id}/edit")
+    public String updateUser(@PathVariable Long id, Model model) {
+        Optional<User> optionalUser = userService.getById(id);
+        if(optionalUser.isPresent()) {
+            model.addAttribute("user",optionalUser.get());
+            return "updateUser";
+        }
+        else return "error";
+    }
+
+//    @PostMapping("/users/{id}/edit")
+//    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) {
+//        user.setId(id);
+//        userService.add(user);
+//        List<User> users = userService.getAll();
+//        return new RedirectView("/users");
+//    }
 }

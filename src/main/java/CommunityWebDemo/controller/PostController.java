@@ -1,7 +1,9 @@
 package CommunityWebDemo.controller;
 
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.User;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,8 @@ public class PostController {
 
     @Autowired
     PostService postService;
+    @Autowired
+    UserService userService;
 
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
@@ -63,16 +67,30 @@ public class PostController {
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
             model.addAttribute("post", post);
-            return "update";
+            return "updatePost";
         }
         else throw new Exception();
     }
 
     @PostMapping("/posts/{id}/edit")
     public RedirectView saveUpdatedPost(@PathVariable Long id, Post post) {
-        post.setId(id);
-        postService.add(post);
-        return new RedirectView("/posts/{id}");
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalPost.isPresent()) {
+            Post oldPost = optionalPost.get();
+            post.setId(oldPost.getId());
+            post.setUser(oldPost.getUser());
+            postService.add(post);
+            return new RedirectView("/posts/{id}");
+        }
+        else return new RedirectView("/error");
+//        post.setId(id);
+//        Optional<User> optionalUser = userService.getById(id);
+//        if(optionalUser.isPresent()) {
+//            post.setUser(optionalUser.get());
+//            postService.add(post);
+//            return new RedirectView("/posts/{id}");
+//        }
+//        else return new RedirectView("/error");
     }
 
 }

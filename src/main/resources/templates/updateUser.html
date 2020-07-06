@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+    <body>
+        <h2>Change user name</h2>
+        <form th:action="@{/users/{id}/edit(id=${user.id})}" method="post" th:object="${user}">
+            <input type="text" id="inputTitle" name="title" th:value="${user.name}" th:object="${name}" required>
+            <br>
+            <button type="submit">Save</button>
+        </form>
+    </body>
+</html>
