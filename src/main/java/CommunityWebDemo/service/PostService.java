@@ -22,6 +22,11 @@ public class PostService extends MyService<Post>{
     }
 
     @Override
+    public void addAll(Iterable<Post> posts) {
+        postRepository.saveAll(posts);
+    }
+
+    @Override
     public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
         postRepository.findAll().forEach(posts::add);
@@ -45,6 +50,10 @@ public class PostService extends MyService<Post>{
     @Override
     public void deleteAll() {
         postRepository.deleteAll();
+    }
+
+    public void deleteAll(Iterable<Post> posts) {
+        postRepository.deleteAll(posts);
     }
 
 }

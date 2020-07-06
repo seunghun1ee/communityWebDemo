@@ -25,6 +25,11 @@ public class UserService extends MyService<User>{
     }
 
     @Override
+    public void addAll(Iterable<User> users) {
+        userRepository.saveAll(users);
+    }
+
+    @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add);
@@ -48,6 +53,11 @@ public class UserService extends MyService<User>{
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAll(Iterable<User> users) {
+        userRepository.deleteAll(users);
     }
 
     public List<Post> findPostsOfUser(User user) {

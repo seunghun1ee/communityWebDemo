@@ -10,6 +10,8 @@ public abstract class MyService<T> {
 
     abstract public void add(T t);
 
+    abstract public void addAll(Iterable<T> t);
+
     abstract public List<T> getAll();
 
     abstract public Optional<T> getById(Long id);
@@ -17,4 +19,6 @@ public abstract class MyService<T> {
     abstract public boolean deleteById(Long id);
 
     abstract public void deleteAll();
+
+    abstract public void deleteAll(Iterable<T> t);
 }

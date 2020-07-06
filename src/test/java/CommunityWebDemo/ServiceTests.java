@@ -40,6 +40,19 @@ public class ServiceTests {
     }
 
     @Test
+    void addAllPostTest() {
+        postRepository.deleteAll();
+        List<Post> posts = new ArrayList<>();
+        for(int i=0; i < 8; i++) {
+            posts.add(new Post());
+        }
+        postService.addAll(posts);
+        List<Post> result = new ArrayList<>();
+        postRepository.findAll().forEach(result::add);
+        assertThat(result.size()).isEqualTo(8);
+    }
+
+    @Test
     void updatePostTest() {
         postRepository.deleteAll();
         List<Post> result = new ArrayList<>();
@@ -122,7 +135,24 @@ public class ServiceTests {
     }
 
     @Test
+    void deleteListOfPostsTest() {
+        postRepository.deleteAll();
+        for(int i=0; i < 5; i++) {
+            postRepository.save(new Post());
+        }
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(posts::add);
+        posts.remove(2);
+        posts.remove(1);
+        postService.deleteAll(posts);
+        List<Post> result = new ArrayList<>();
+        postRepository.findAll().forEach(result::add);
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
     void getAllUsersTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 3; i++) {
             userRepository.save(new User());
@@ -132,6 +162,7 @@ public class ServiceTests {
 
     @Test
     void addUserTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 2; i++) {
             userService.add(new User());
@@ -142,7 +173,22 @@ public class ServiceTests {
     }
 
     @Test
+    void addUserListTest() {
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        List<User> users = new ArrayList<>();
+        for(int i = 0; i < 3; i++) {
+            users.add(new User());
+        }
+        userService.addAll(users);
+        List<User> result = new ArrayList<>();
+        userRepository.findAll().forEach(result::add);
+        assertThat(result.size()).isEqualTo(3);
+    }
+
+    @Test
     void updateUserTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         userRepository.save(new User("change me"));
         userRepository.save(new User("don't"));
@@ -164,6 +210,7 @@ public class ServiceTests {
 
     @Test
     void getUserByIdTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         User target = new User("target");
         userRepository.save(target);
@@ -182,6 +229,7 @@ public class ServiceTests {
 
     @Test
     void deleteUserByIdTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         User target = new User("delete");
         userRepository.save(target);
@@ -201,12 +249,30 @@ public class ServiceTests {
 
     @Test
     void deleteAllUserTest() {
+        postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 5; i++) {
             userRepository.save(new User());
         }
         userService.deleteAll();
         assertThat(userService.getAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    void deleteUserListTest() {
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        for(int i=0; i < 5; i++) {
+            userRepository.save(new User());
+        }
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        users.remove(2);
+        users.remove(1);
+        userService.deleteAll(users);
+        List<User> result = new ArrayList<>();
+        userRepository.findAll().forEach(result::add);
+        assertThat(result.size()).isEqualTo(2);
     }
 
     @Test
