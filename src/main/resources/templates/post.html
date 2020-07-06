@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2 th:text="${post.title}"></h2>
-    <p th:text="${post.user.name}"></p>
+    <a th:text="${post.user.name}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>
     <br>
     <form th:action="@{/posts/{id}/edit(id=${post.id})}" method="get">
