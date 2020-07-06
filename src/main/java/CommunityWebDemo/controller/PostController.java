@@ -20,6 +20,7 @@ public class PostController {
     PostService postService;
     @Autowired
     UserService userService;
+    User testUser = new User("tester");
 
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
@@ -48,6 +49,9 @@ public class PostController {
 
     @PostMapping("/posts/new_post")
     public RedirectView saveNewPost(Post newPost) {
+        //temporary
+        userService.add(testUser);
+        newPost.setUser(testUser);
         postService.add(newPost);
         return new RedirectView("/posts");
     }
