@@ -16,6 +16,8 @@ public class User {
     private String name;
     @OneToMany
     private List<Post> posts = new ArrayList<>();
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
 
     public User() {
     }

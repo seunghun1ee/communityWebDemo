@@ -2,6 +2,8 @@ package CommunityWebDemo.entity;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,6 +15,8 @@ public class Post {
     private String body;
     @ManyToOne() @JoinColumn()
     private User user;
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
 
     public Post() {
 

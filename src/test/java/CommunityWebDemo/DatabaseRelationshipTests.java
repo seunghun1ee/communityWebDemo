@@ -1,7 +1,9 @@
 package CommunityWebDemo;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.PostRepository;
 import CommunityWebDemo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -19,9 +21,12 @@ public class DatabaseRelationshipTests {
     PostRepository postRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CommentRepository commentRepository;
 
     @Test
     void postAndUserRelationshipTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -38,6 +43,7 @@ public class DatabaseRelationshipTests {
 
     @Test
     void multiplePostUserRelationshipTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -73,5 +79,27 @@ public class DatabaseRelationshipTests {
         }
         assertThat(daves.size()).isEqualTo(2);
         assertThat(garys.size()).isEqualTo(1);
+    }
+
+    @Test
+    void postUserCommentRelationshipTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        userRepository.save(new User("dave"));
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+        User dave = users.get(0);
+        postRepository.save(new Post("dave's post","asdf",dave));
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(posts::add);
+        Post davePost = posts.get(0);
+        commentRepository.save(new Comment(davePost,dave,"test"));
+        List<Comment> comments = new ArrayList<>();
+        commentRepository.findAll().forEach(comments::add);
+        Comment daveComment = comments.get(0);
+        assertThat(daveComment.getPost()).isEqualTo(davePost);
+        assertThat(daveComment.getUser()).isEqualTo(dave);
     }
 }
