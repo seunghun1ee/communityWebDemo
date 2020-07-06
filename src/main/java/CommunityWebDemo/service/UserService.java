@@ -16,8 +16,6 @@ public class UserService extends MyService<User>{
 
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    PostRepository postRepository;
 
     @Override
     public void add(User user) {
@@ -60,13 +58,5 @@ public class UserService extends MyService<User>{
         userRepository.deleteAll(users);
     }
 
-    public List<Post> findPostsOfUser(User user) {
-        List<Post> posts = new ArrayList<>();
-        postRepository.findAll().forEach(post -> {
-            if (post.getUser() != null && post.getUser().equals(user)) {
-                posts.add(post);
-            }});
 
-        return posts;
-    }
 }

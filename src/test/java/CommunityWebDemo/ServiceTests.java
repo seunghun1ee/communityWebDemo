@@ -287,7 +287,7 @@ public class ServiceTests {
         for(int i=0; i < 3; i++) {
             postRepository.save(new Post());
         }
-        List<Post> posts = userService.findPostsOfUser(user);
+        List<Post> posts = postService.findPostsOfUser(user);
         assertThat(posts.size()).isNotZero();
         for(Post post : posts) {
             assertThat(post.getUser()).isEqualTo(user);

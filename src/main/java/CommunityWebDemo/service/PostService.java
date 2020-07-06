@@ -1,6 +1,7 @@
 package CommunityWebDemo.service;
 
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,16 @@ public class PostService extends MyService<Post>{
 
     public void deleteAll(Iterable<Post> posts) {
         postRepository.deleteAll(posts);
+    }
+
+    public List<Post> findPostsOfUser(User user) {
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(post -> {
+            if (post.getUser() != null && post.getUser().equals(user)) {
+                posts.add(post);
+            }});
+
+        return posts;
     }
 
 }
