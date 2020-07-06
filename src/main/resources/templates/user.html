@@ -8,5 +8,8 @@
         <h2>User info</h2>
         <h3 th:text="${user.name}"></h3>
         <h4>Posts</h4>
+        <tr th:each="post : ${posts}">
+            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a><br>
+        </tr>
     </body>
 </html>

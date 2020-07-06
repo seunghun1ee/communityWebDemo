@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class UserController {
     public String showUser(@PathVariable Long id, Model model) throws Exception{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
+            List<Post> posts = userService.findPostsOfUser(optionalUser.get());
             model.addAttribute("user",optionalUser.get());
+            model.addAttribute("posts",posts);
             return "user";
         }
         else throw new Exception();
