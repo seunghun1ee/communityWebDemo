@@ -3,7 +3,7 @@ package CommunityWebDemo.controller;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
-import CommunityWebDemo.repository.CommentRepository;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class CommentController {
     @Autowired
     UserService userService;
     @Autowired
-    CommentRepository commentRepository;
+    CommentService commentService;
     //temp
     User testUser = new User("tester");
 
@@ -37,7 +37,7 @@ public class CommentController {
             //temp
             userService.add(testUser);
             comment.setUser(testUser);
-            commentRepository.save(comment);
+            commentService.add(comment);
             return new RedirectView("/posts/{postId}");
         }
         else return new RedirectView("/error");
@@ -45,7 +45,7 @@ public class CommentController {
 
     @GetMapping("/posts/{postId}/comments/{commentId}/edit")
     public String editComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        Optional<Comment> optionalComment = commentService.getById(commentId);
         if(postService.getById(postId).isPresent() && optionalComment.isPresent()) {
             model.addAttribute("comment",optionalComment.get());
             return "updateComment";
@@ -55,13 +55,13 @@ public class CommentController {
 
     @PostMapping("/posts/{postId}/comments/{commentId}/edit")
     public RedirectView saveEditedComment(@PathVariable Long postId, @PathVariable Long commentId, Comment comment) {
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        Optional<Comment> optionalComment = commentService.getById(commentId);
         if(postService.getById(postId).isPresent() && optionalComment.isPresent()) {
             Comment oldComment = optionalComment.get();
             comment.setId(oldComment.getId());
             comment.setUser(oldComment.getUser());
             comment.setPost(oldComment.getPost());
-            commentRepository.save(comment);
+            commentService.add(comment);
             return new RedirectView("/posts/{postId}");
         }
         else return new RedirectView("/error");
