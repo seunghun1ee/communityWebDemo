@@ -2,6 +2,7 @@ package CommunityWebDemo;
 
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.PostRepository;
 import CommunityWebDemo.repository.UserRepository;
 import CommunityWebDemo.service.PostService;
@@ -26,10 +27,25 @@ public class ServiceTests {
     UserRepository userRepository;
     @Autowired
     UserService userService;
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Test
+    void idGeneratedValueTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        Post post = new Post();
+        postService.add(post);
+        List<Post> posts = postService.getAll();
+        assertThat(posts.get(0)).isEqualTo(post);
+    }
 
     @Test
     void addPostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         Post post0 = new Post("title", "body");
         Post post1 = new Post("title2","body");
         List<Post> result = new ArrayList<>();
@@ -41,7 +57,9 @@ public class ServiceTests {
 
     @Test
     void addAllPostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         List<Post> posts = new ArrayList<>();
         for(int i=0; i < 8; i++) {
             posts.add(new Post());
@@ -54,29 +72,24 @@ public class ServiceTests {
 
     @Test
     void updatePostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
-        List<Post> result = new ArrayList<>();
-        postService.add(new Post("update this title","body"));
-        postService.add(new Post("don't edit this title","body"));
-        postRepository.findAll().forEach(result::add);
-        Post postEdit = new Post();
-        for(Post post : result) {
-            if(post.getTitle().equals("update this title")) {
-                postEdit = post;
-                break;
-            }
-        }
-        assertThat(postEdit.getTitle()).isEqualTo("update this title");
-        Long editId = postEdit.getId();
+        userRepository.deleteAll();
+        Post postEdit = new Post("update this title","body");
+        Post post = new Post("don't edit this title","body");
+        postService.add(postEdit);
+        postService.add(post);
         postEdit.setTitle("new title");
         postService.add(postEdit);
-        assertThat(postRepository.findById(editId).isPresent()).isTrue();
-        assertThat(postRepository.findById(editId).get().getTitle()).isEqualTo("new title");
+        assertThat(postRepository.findById(postEdit.getId()).isPresent()).isTrue();
+        assertThat(postRepository.findById(postEdit.getId()).get().getTitle()).isEqualTo("new title");
     }
 
     @Test
     void getAllPostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         postRepository.save(new Post("post1","body"));
         postRepository.save(new Post("post2","body"));
         postRepository.save(new Post("post3","body"));
@@ -85,39 +98,26 @@ public class ServiceTests {
 
     @Test
     void getPostByIdTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
-        List<Post> posts = new ArrayList<>();
+        userRepository.deleteAll();
         Post targetPost = new Post("get this post","body");
         postRepository.save(targetPost);
         postRepository.save(new Post("post2","body"));
         postRepository.save(new Post("post3","body"));
-        postRepository.findAll().forEach(posts::add);
-        Post getThisPost = new Post();
-        for(Post post : posts) {
-            if(post.getTitle().equals("get this post")) {
-                getThisPost = post;
-                break;
-            }
-        }
-        targetPost.setId(getThisPost.getId());
-        assertThat(postService.getById(getThisPost.getId()).isPresent()).isTrue();
-        assertThat(postService.getById(getThisPost.getId()).get()).isEqualTo(targetPost);
+        assertThat(postService.getById(targetPost.getId()).isPresent()).isTrue();
+        assertThat(postService.getById(targetPost.getId()).get()).isEqualTo(targetPost);
     }
 
     @Test
     void deletePostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         Post targetPost = new Post("Delete this","body");
         Post post = new Post("Don't delete this","body");
         postRepository.save(targetPost);
         postRepository.save(post);
-        List<Post> posts = postService.getAll();
-        for(Post post1 : posts) {
-            if(post1.getTitle().equals("Delete this")) {
-                targetPost = post1;
-                break;
-            }
-        }
         postService.deleteById(targetPost.getId());
         List<Post> result = postService.getAll();
         assertThat(result.size()).isEqualTo(1);
@@ -126,7 +126,9 @@ public class ServiceTests {
 
     @Test
     void deleteAllPostTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         for(int i=0; i < 5; i++) {
             postRepository.save(new Post());
         }
@@ -136,7 +138,9 @@ public class ServiceTests {
 
     @Test
     void deleteListOfPostsTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
+        userRepository.deleteAll();
         for(int i=0; i < 5; i++) {
             postRepository.save(new Post());
         }
@@ -152,6 +156,7 @@ public class ServiceTests {
 
     @Test
     void getAllUsersTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 3; i++) {
@@ -162,6 +167,7 @@ public class ServiceTests {
 
     @Test
     void addUserTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 2; i++) {
@@ -174,6 +180,7 @@ public class ServiceTests {
 
     @Test
     void addUserListTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         List<User> users = new ArrayList<>();
@@ -188,59 +195,39 @@ public class ServiceTests {
 
     @Test
     void updateUserTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
-        userRepository.save(new User("change me"));
-        userRepository.save(new User("don't"));
-        List<User> users = new ArrayList<>();
-        User target = new User();
-        userRepository.findAll().forEach(users::add);
-        for(User user : users) {
-            if(user.getName().equals("change me")) {
-                target = user;
-                break;
-            }
-        }
-        Long targetId = target.getId();
+        User target = new User("change me");
+        User user = new User("don't");
+        userRepository.save(target);
+        userRepository.save(user);
         target.setName("new name");
         userService.add(target);
-        assertThat(userRepository.findById(targetId).isPresent()).isTrue();
-        assertThat(userRepository.findById(targetId).get().getName()).isEqualTo("new name");
+        assertThat(userRepository.findById(target.getId()).isPresent()).isTrue();
+        assertThat(userRepository.findById(target.getId()).get().getName()).isEqualTo("new name");
     }
 
     @Test
     void getUserByIdTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         User target = new User("target");
         userRepository.save(target);
         userRepository.save(new User("user2"));
-        List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
-        for(User user : users) {
-            if(user.getName().equals("target")) {
-                target = user;
-                break;
-            }
-        }
         assertThat(userService.getById(target.getId()).isPresent()).isTrue();
         assertThat(userService.getById(target.getId()).get()).isEqualTo(target);
     }
 
     @Test
     void deleteUserByIdTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         User target = new User("delete");
         userRepository.save(target);
         userRepository.save(new User("don't"));
-        List<User> users = userService.getAll();
-        for(User user : users) {
-            if(user.getName().equals("delete")) {
-                target = user;
-                break;
-            }
-        }
         userService.deleteById(target.getId());
         List<User> result = userService.getAll();
         assertThat(result.size()).isEqualTo(1);
@@ -249,6 +236,7 @@ public class ServiceTests {
 
     @Test
     void deleteAllUserTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 5; i++) {
@@ -260,6 +248,7 @@ public class ServiceTests {
 
     @Test
     void deleteUserListTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         for(int i=0; i < 5; i++) {
@@ -277,6 +266,7 @@ public class ServiceTests {
 
     @Test
     void findPostOfUserTest() {
+        commentRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
         userRepository.save(new User("tester"));
