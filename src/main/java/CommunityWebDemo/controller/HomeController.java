@@ -4,6 +4,7 @@ import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class HomeController {
     @Autowired
     UserService userService;
     @Autowired
-    CommentRepository commentRepository;
+    CommentService commentService;
 
     @GetMapping("/")
     public String helloWorld() {
@@ -31,6 +32,7 @@ public class HomeController {
 
     @GetMapping("/load")
     public @ResponseBody String loadTestData() {
+        commentService.deleteAll();
         postService.deleteAll();
         userService.deleteAll();
         User adam = new User("Adam");
@@ -52,7 +54,7 @@ public class HomeController {
         postService.add(new Post("third post","this is adam",adam));
 
         List<Post> posts = postService.getAll();
-        commentRepository.save(new Comment(posts.get(0),eve,"hi"));
+        commentService.add(new Comment(posts.get(0),eve,"hi"));
 
         return "Test data is loaded";
     }

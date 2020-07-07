@@ -69,7 +69,11 @@ public class PostController {
 
     @PostMapping("/posts/{id}/delete")
     public RedirectView delete(@PathVariable Long id) {
-        if(postService.deleteById(id)) {
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalPost.isPresent()) {
+            List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+            commentService.deleteAll(comments);
+            postService.deleteById(id);
             return new RedirectView("/posts");
         }
         else return new RedirectView("/error");

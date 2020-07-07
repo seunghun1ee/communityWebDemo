@@ -1,7 +1,9 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,8 @@ public class UserController {
     UserService userService;
     @Autowired
     PostService postService;
+    @Autowired
+    CommentService commentService;
 
     @GetMapping("/users")
     public @ResponseBody List<User> showUserList() {
@@ -57,6 +62,12 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             List<Post> posts = postService.findPostsOfUser(optionalUser.get());
+
+            List<Comment> comments = new ArrayList<>();
+            for(Post post : posts) {
+                comments.addAll(commentService.getCommentsOfPost(post));
+            }
+            commentService.deleteAll(comments);
             postService.deleteAll(posts);
             userService.deleteById(id);
             return new RedirectView("/users");
