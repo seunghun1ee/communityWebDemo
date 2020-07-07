@@ -19,6 +19,9 @@
     <tr th:each="comment : ${comments}">
         <p style="font-weight: bold" th:text="${comment.user.name}"></p>
         <p th:text="${comment.message}"></p>
+        <form th:action="@{/posts/{postId}/comments/{commentId}/edit(postId=${comment.post.id},commentId=${comment.id})}" method="get">
+            <button type="submit">Edit</button>
+        </form>
         <br>
     </tr>
     <h4>Add comment</h4>
