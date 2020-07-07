@@ -66,4 +66,13 @@ public class CommentController {
         }
         else return new RedirectView("/error");
     }
+
+    @PostMapping("/posts/{postId}/comments/{commentId}/delete")
+    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        if(postService.getById(postId).isPresent() && commentService.getById(commentId).isPresent()) {
+            commentService.deleteById(commentId);
+            return new RedirectView("/posts/{postId}");
+        }
+        else return new RedirectView("/error");
+    }
 }

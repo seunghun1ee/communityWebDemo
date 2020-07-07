@@ -3,7 +3,7 @@ package CommunityWebDemo.controller;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
-import CommunityWebDemo.repository.CommentRepository;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class PostController {
     @Autowired
     UserService userService;
     @Autowired
-    CommentRepository commentRepository;
+    CommentService commentService;
 
     User testUser = new User("tester");
 
@@ -40,11 +40,7 @@ public class PostController {
         Optional<Post> optionalPost = postService.getById(id);
 
         //temporary
-        List<Comment> comments = new ArrayList<>();
-        commentRepository.findAll().forEach(comment -> {
-            if (comment.getPost().getId().equals(id)) {
-                comments.add(comment);
-            }});
+        List<Comment> comments = commentService.getAll();
 
         Post post;
         if(optionalPost.isPresent()) {
