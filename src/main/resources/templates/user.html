@@ -11,6 +11,9 @@
         <tr th:each="post : ${posts}">
             <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a><br>
         </tr>
+        <form th:action="@{/users/{id}/edit(id=${user.id})}" method="get">
+            <button type="submit">Edit this user</button>
+        </form>
         <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
             <button type="submit">Delete this user</button>
         </form>
