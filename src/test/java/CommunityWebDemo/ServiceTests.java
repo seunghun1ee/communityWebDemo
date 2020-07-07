@@ -1,10 +1,12 @@
 package CommunityWebDemo;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.PostRepository;
 import CommunityWebDemo.repository.UserRepository;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -29,6 +32,8 @@ public class ServiceTests {
     UserService userService;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    CommentService commentService;
 
     @Test
     void idGeneratedValueTest() {
@@ -282,5 +287,133 @@ public class ServiceTests {
         for(Post post : posts) {
             assertThat(post.getUser()).isEqualTo(user);
         }
+    }
+
+    @Test
+    void addCommentTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        commentService.add(new Comment());
+        List<Comment> comments = (List<Comment>) commentRepository.findAll();
+        assertThat(comments.size()).isEqualTo(1);
+    }
+
+    @Test
+    void updateCommentTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        User testUser = new User("test");
+        userRepository.save(testUser);
+        Post testPost = new Post("test","body",testUser);
+        postRepository.save(testPost);
+        Comment testComment = new Comment(testPost,testUser,"change");
+        commentService.add(testComment);
+        testComment.setMessage("new");
+        commentService.add(testComment);
+        Optional<Comment> optionalComment = commentRepository.findById(testComment.getId());
+        assertThat(optionalComment.isPresent()).isTrue();
+        assertThat(optionalComment.get().getMessage()).isEqualTo("new");
+    }
+
+    @Test
+    void addMultipleComments() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        for(int i=0; i < 4; i++) {
+            commentService.add(new Comment());
+        }
+        List<Comment> comments = (List<Comment>) commentRepository.findAll();
+        assertThat(comments.size()).isEqualTo(4);
+    }
+
+    @Test
+    void addCommentListTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        List<Comment> comments = new ArrayList<>();
+        for(int i=0; i < 4; i++) {
+            comments.add(new Comment());
+        }
+        commentService.addAll(comments);
+        List<Comment> result = (List<Comment>) commentRepository.findAll();
+        assertThat(result.size()).isEqualTo(4);
+    }
+
+    @Test
+    void getAllCommentsTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        for(int i=0; i < 3; i++) {
+            commentService.add(new Comment());
+        }
+        List<Comment> comments = commentService.getAll();
+        assertThat(comments.size()).isEqualTo(3);
+    }
+
+    @Test
+    void getCommentByIdTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        Comment target = new Comment();
+        commentRepository.save(target);
+        commentRepository.save(new Comment());
+        assertThat(commentService.getById(target.getId()).isPresent()).isTrue();
+        assertThat(commentService.getById(target.getId()).get()).isEqualTo(target);
+    }
+
+    @Test
+    void deleteCommentByIdTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        Comment target = new Comment();
+        commentRepository.save(target);
+        commentRepository.save(new Comment());
+        assertThat(commentService.deleteById(target.getId())).isTrue();
+        assertThat(commentService.getById(target.getId()).isPresent()).isFalse();
+    }
+
+    @Test
+    void deleteAllCommentsTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        for(int i=0; i < 5; i++) {
+            commentRepository.save(new Comment());
+        }
+        commentService.deleteAll();
+        List<Comment> comments = (List<Comment>) commentRepository.findAll();
+        assertThat(comments.size()).isEqualTo(0);
+    }
+
+    @Test
+    void deleteSomeCommentsTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+        List<Comment> comments = new ArrayList<>();
+        for(int i=0; i < 5; i++) {
+            Comment comment = new Comment();
+            commentRepository.save(comment);
+            comments.add(comment);
+        }
+        comments.remove(1);
+        comments.remove(1);
+        commentService.deleteAll(comments);
+        List<Comment> result = (List<Comment>) commentRepository.findAll();
+        assertThat(result.size()).isEqualTo(2);
     }
 }
