@@ -416,4 +416,24 @@ public class ServiceTests {
         List<Comment> result = (List<Comment>) commentRepository.findAll();
         assertThat(result.size()).isEqualTo(2);
     }
+
+    @Test
+    void getCommentsOfPostTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        User user = new User("test");
+        userRepository.save(user);
+        Post post = new Post("test","body",user);
+        Post post1 = new Post("no","body",user);
+        postRepository.save(post);
+        postRepository.save(post1);
+        for(int i=0; i < 3; i++) {
+            commentRepository.save(new Comment(post,user,"0"));
+            commentRepository.save(new Comment(post1,user,"1"));
+        }
+        List<Comment> postComments = commentService.getCommentsOfPost(post);
+        assertThat(postComments.size()).isEqualTo(3);
+    }
 }
