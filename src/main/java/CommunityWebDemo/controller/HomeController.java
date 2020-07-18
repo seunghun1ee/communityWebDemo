@@ -2,6 +2,7 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.ThreadRepository;
@@ -43,19 +44,25 @@ public class HomeController {
         User eve = new User("Eve");
         userService.add(adam);
         userService.add(eve);
-        List<User> users = userService.getAll();
-        for(User user : users) {
-            switch (user.getName()) {
-                case "Adam":
-                    adam = user;
-                case "Eve":
-                    eve = user;
-                default:
-            }
-        }
-        postService.add(new Post("first post","hello", adam));
-        postService.add(new Post("second post", "nice to meet you", eve));
-        postService.add(new Post("third post","this is adam",adam));
+
+        Thread threadA = new Thread("a","Thread A");
+        Thread threadB = new Thread("b","Thread B");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+//        List<User> users = userService.getAll();
+//        for(User user : users) {
+//            switch (user.getName()) {
+//                case "Adam":
+//                    adam = user;
+//                case "Eve":
+//                    eve = user;
+//                default:
+//            }
+//        }
+        postService.add(new Post(threadA,"first post","hello", adam));
+        postService.add(new Post(threadA,"second post", "nice to meet you", eve));
+        postService.add(new Post(threadA,"third post","this is adam", adam));
+        postService.add(new Post(threadB,"first of /b","hello /b", eve));
 
         List<Post> posts = postService.getAll();
         commentService.add(new Comment(posts.get(0),eve,"hi"));
