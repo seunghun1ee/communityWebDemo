@@ -57,7 +57,7 @@ public class PostService extends MyService<Post>{
         postRepository.deleteAll(posts);
     }
 
-    public List<Post> findPostsOfUser(User user) {
+    public List<Post> getPostsOfUser(User user) {
         List<Post> posts = new ArrayList<>();
         postRepository.findAll().forEach(post -> {
             if (post.getUser() != null && post.getUser().equals(user)) {
