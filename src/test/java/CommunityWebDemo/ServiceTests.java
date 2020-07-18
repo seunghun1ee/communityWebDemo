@@ -10,6 +10,7 @@ import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.repository.UserRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class ServiceTests {
     CommentService commentService;
     @Autowired
     ThreadRepository threadRepository;
+    @Autowired
+    ThreadService threadService;
 
     @Test
     void idGeneratedValueTest() {
@@ -461,5 +464,21 @@ public class ServiceTests {
         List<Post> posts = postService.getPostsOfThread(threadA);
         assertThat(posts.size()).isEqualTo(3);
 
+    }
+
+    @Test
+    void getThreadByInitialTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        threadRepository.deleteAll();
+
+        Thread threadA = new Thread("a","thread a");
+        Thread threadB = new Thread("b","thread b");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+
+        assertThat(threadService.getByInitial(threadA.getInitial()).isPresent()).isTrue();
+        assertThat(threadService.getByInitial(threadA.getInitial()).get()).isEqualTo(threadA);
+        assertThat(threadService.getByInitial("c")).isEqualTo(Optional.empty());
     }
 }
