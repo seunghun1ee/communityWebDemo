@@ -10,7 +10,7 @@
     <h4>Threads</h4>
     <tr th:each="thread : ${threads}">
         <li>
-            <a th:href="@{/{ti}/(ti=${thread.initial})}" th:text="${thread.name}"></a>
+            <a th:href="@{/{ti}/posts(ti=${thread.initial})}" th:text="${thread.name}"></a>
         </li>
     </tr>
 </body>

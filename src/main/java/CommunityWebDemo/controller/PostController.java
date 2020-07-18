@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public class PostController {
         return "postList";
     }
 
-    @GetMapping("/{threadInitial}")
+    @GetMapping("/{threadInitial}/posts")
     public String showAllPostsOfThread(@PathVariable String threadInitial,Model model) throws Exception {
         Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
         List<Post> posts;
@@ -72,6 +71,30 @@ public class PostController {
         model.addAttribute("comments",comments);
         return "post";
     }
+
+    @GetMapping("/{threadInitial}/posts/{id}")
+    public String showPostById(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception {
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        if(optionalThread.isPresent()) {
+            Optional<Post> optionalPost = postService.getById(id);
+
+            List<Comment> comments;
+
+            Post post;
+            if(optionalPost.isPresent()) {
+                post = optionalPost.get();
+                comments = commentService.getCommentsOfPost(post);
+            }
+            else throw new Exception();
+
+            model.addAttribute("post",post);
+            model.addAttribute("comments",comments);
+        }
+        else throw new Exception();
+
+        return "post";
+    }
+
 
     @GetMapping("/posts/new_post")
     public String newPost() {
