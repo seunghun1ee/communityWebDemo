@@ -15,6 +15,8 @@ public class Post {
     private String body;
     @ManyToOne() @JoinColumn()
     private User user;
+    @ManyToOne
+    private Thread thread;
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
@@ -28,6 +30,13 @@ public class Post {
     }
 
     public Post(String title, String body, User user) {
+        this.title = title;
+        this.body = body;
+        this.user = user;
+    }
+
+    public Post(Thread thread, String title, String body, User user) {
+        this.thread = thread;
         this.title = title;
         this.body = body;
         this.user = user;
@@ -63,6 +72,14 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
     }
 
     @Override

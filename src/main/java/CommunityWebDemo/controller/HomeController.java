@@ -4,6 +4,7 @@ import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
+import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
@@ -24,6 +25,8 @@ public class HomeController {
     UserService userService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    ThreadRepository threadRepository;
 
     @GetMapping("/")
     public String helloWorld() {
@@ -35,6 +38,7 @@ public class HomeController {
         commentService.deleteAll();
         postService.deleteAll();
         userService.deleteAll();
+        threadRepository.deleteAll();
         User adam = new User("Adam");
         User eve = new User("Eve");
         userService.add(adam);
