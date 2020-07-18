@@ -121,6 +121,20 @@ public class PostController {
         return new RedirectView("/posts");
     }
 
+    @PostMapping("/{threadInitial}/new_post")
+    public RedirectView saveNewPost(@PathVariable String threadInitial, Post newPost) throws Exception {
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        if(optionalThread.isPresent()) {
+            newPost.setThread(optionalThread.get());
+        }
+        else throw new Exception();
+        //temporary
+        userService.add(testUser);
+        newPost.setUser(testUser);
+        postService.add(newPost);
+        return new RedirectView("/{threadInitial}/posts");
+    }
+
     @PostMapping("/posts/{id}/delete")
     public RedirectView delete(@PathVariable Long id) {
         Optional<Post> optionalPost = postService.getById(id);
