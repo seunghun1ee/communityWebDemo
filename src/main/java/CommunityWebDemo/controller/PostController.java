@@ -31,13 +31,6 @@ public class PostController {
 
     User testUser = new User("tester");
 
-    @GetMapping("/posts")
-    public String showAllPosts(Model model) {
-        List<Post> posts = postService.getAll();
-        model.addAttribute("posts",posts);
-        return "postList";
-    }
-
     @GetMapping("/{threadInitial}/posts")
     public String showAllPostsOfThread(@PathVariable String threadInitial,Model model) throws Exception {
         Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
@@ -52,24 +45,6 @@ public class PostController {
         else throw new Exception();
 
 
-    }
-
-    @GetMapping("/posts/{id}")
-    public String showPostById(@PathVariable Long id, Model model) throws Exception {
-        Optional<Post> optionalPost = postService.getById(id);
-
-        List<Comment> comments;
-
-        Post post;
-        if(optionalPost.isPresent()) {
-            post = optionalPost.get();
-            comments = commentService.getCommentsOfPost(post);
-        }
-        else throw new Exception();
-
-        model.addAttribute("post",post);
-        model.addAttribute("comments",comments);
-        return "post";
     }
 
     @GetMapping("/{threadInitial}/posts/{id}")
@@ -95,12 +70,6 @@ public class PostController {
         return "post";
     }
 
-
-    @GetMapping("/posts/new_post")
-    public String newPost() {
-        return "newPost";
-    }
-
     @GetMapping("/{threadInitial}/new_post")
     public String newPost(@PathVariable String threadInitial, Model model) throws Exception {
         Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
@@ -110,15 +79,6 @@ public class PostController {
         }
         else throw new Exception();
 
-    }
-
-    @PostMapping("/posts/new_post")
-    public RedirectView saveNewPost(Post newPost) {
-        //temporary
-        userService.add(testUser);
-        newPost.setUser(testUser);
-        postService.add(newPost);
-        return new RedirectView("/posts");
     }
 
     @PostMapping("/{threadInitial}/new_post")
@@ -133,18 +93,6 @@ public class PostController {
         newPost.setUser(testUser);
         postService.add(newPost);
         return new RedirectView("/{threadInitial}/posts");
-    }
-
-    @PostMapping("/posts/{id}/delete")
-    public RedirectView delete(@PathVariable Long id) {
-        Optional<Post> optionalPost = postService.getById(id);
-        if(optionalPost.isPresent()) {
-            List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
-            commentService.deleteAll(comments);
-            postService.deleteById(id);
-            return new RedirectView("/posts");
-        }
-        else return new RedirectView("/error");
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/delete")
@@ -164,18 +112,6 @@ public class PostController {
         else return new RedirectView("/error");
     }
 
-    @GetMapping("/posts/{id}/edit")
-    public String updatePost(@PathVariable Long id, Model model) throws Exception{
-        Optional<Post> optionalPost = postService.getById(id);
-        Post post;
-        if(optionalPost.isPresent()) {
-            post = optionalPost.get();
-            model.addAttribute("post", post);
-            return "updatePost";
-        }
-        else throw new Exception();
-    }
-
     @GetMapping("/{threadInitial}/posts/{id}/edit")
     public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception{
         Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
@@ -191,19 +127,6 @@ public class PostController {
             return "updatePost";
         }
         else throw new Exception();
-    }
-
-    @PostMapping("/posts/{id}/edit")
-    public RedirectView saveUpdatedPost(@PathVariable Long id, Post post) {
-        Optional<Post> optionalPost = postService.getById(id);
-        if(optionalPost.isPresent()) {
-            Post oldPost = optionalPost.get();
-            post.setId(oldPost.getId());
-            post.setUser(oldPost.getUser());
-            postService.add(post);
-            return new RedirectView("/posts/{id}");
-        }
-        else return new RedirectView("/error");
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/edit")
