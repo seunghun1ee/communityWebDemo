@@ -38,7 +38,7 @@ public class CommentController {
             userService.add(testUser);
             comment.setUser(testUser);
             commentService.add(comment);
-            return new RedirectView("/posts/{postId}");
+            return new RedirectView("/" + post.getThread().getInitial() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
     }
