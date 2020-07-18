@@ -11,6 +11,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -30,7 +31,9 @@ public class HomeController {
     ThreadRepository threadRepository;
 
     @GetMapping("/")
-    public String helloWorld() {
+    public String helloWorld(Model model) {
+        List<Thread> threads = (List<Thread>) threadRepository.findAll();
+        model.addAttribute("threads",threads);
         return "home";
     }
 

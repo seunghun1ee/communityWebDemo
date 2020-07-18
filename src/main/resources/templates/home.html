@@ -7,5 +7,11 @@
 <body>
     <h2>Hello world</h2>
     <a href="/posts">See posts</a>
+    <h4>Threads</h4>
+    <tr th:each="thread : ${threads}">
+        <li>
+            <a th:href="@{/{ti}(ti=${thread.initial})}" th:text="${thread.name}"></a>
+        </li>
+    </tr>
 </body>
 </html>
