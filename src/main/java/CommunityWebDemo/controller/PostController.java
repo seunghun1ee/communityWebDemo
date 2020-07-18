@@ -39,12 +39,12 @@ public class PostController {
     public String showPostById(@PathVariable Long id, Model model) throws Exception {
         Optional<Post> optionalPost = postService.getById(id);
 
-        //temporary
-        List<Comment> comments = commentService.getAll();
+        List<Comment> comments;
 
         Post post;
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
+            comments = commentService.getCommentsOfPost(post);
         }
         else throw new Exception();
 
