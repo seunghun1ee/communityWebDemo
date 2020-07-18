@@ -5,13 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-    <h2 th:text="'Posts in ' + ${threadName}"></h2>
+    <h2 th:text="'Posts in ' + ${thread.name}"></h2>
     <tr th:each="post : ${posts}">
         <li>
-            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+            <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
         </li>
     </tr>
     <br>
-    <a href="/posts/new_post">Add new post</a>
+    <a th:href="@{new_post}">Add new post</a>
 </body>
 </html>

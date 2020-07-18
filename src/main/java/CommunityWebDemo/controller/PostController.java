@@ -44,14 +44,14 @@ public class PostController {
         List<Post> posts;
         String threadName;
         if(optionalThread.isPresent()) {
-            threadName = optionalThread.get().getName();
             posts = postService.getPostsOfThread(optionalThread.get());
+            model.addAttribute("thread",optionalThread.get());
+            model.addAttribute("posts",posts);
+            return "postList";
         }
         else throw new Exception();
 
-        model.addAttribute("threadName",threadName);
-        model.addAttribute("posts",posts);
-        return "postList";
+
     }
 
     @GetMapping("/posts/{id}")
@@ -100,6 +100,17 @@ public class PostController {
     public String newPost() {
         return "newPost";
     }
+
+//    @GetMapping("/{threadInitial}/posts/new_post")
+//    public String newPost(@PathVariable String threadInitial, Model model) throws Exception {
+//        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+//        if(optionalThread.isPresent()) {
+//            model.addAttribute("threadName",optionalThread.get().getName());
+//            return "newPost";
+//        }
+//        else throw new Exception();
+//
+//    }
 
     @PostMapping("/posts/new_post")
     public RedirectView saveNewPost(Post newPost) {
