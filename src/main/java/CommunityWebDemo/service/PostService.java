@@ -1,6 +1,7 @@
 package CommunityWebDemo.service;
 
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,16 @@ public class PostService extends MyService<Post>{
                 posts.add(post);
             }});
 
+        return posts;
+    }
+
+    public List<Post> getPostsOfThread(Thread thread) {
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(post -> {
+            if (post.getThread() != null && post.getThread().equals(thread)) {
+                posts.add(post);
+            }
+        });
         return posts;
     }
 

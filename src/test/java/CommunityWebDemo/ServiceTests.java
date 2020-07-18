@@ -2,9 +2,11 @@ package CommunityWebDemo;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.PostRepository;
+import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.repository.UserRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
@@ -34,6 +36,8 @@ public class ServiceTests {
     CommentRepository commentRepository;
     @Autowired
     CommentService commentService;
+    @Autowired
+    ThreadRepository threadRepository;
 
     @Test
     void idGeneratedValueTest() {
@@ -435,5 +439,27 @@ public class ServiceTests {
         }
         List<Comment> postComments = commentService.getCommentsOfPost(post);
         assertThat(postComments.size()).isEqualTo(3);
+    }
+
+    @Test
+    void getPostsOfThreadTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        threadRepository.deleteAll();
+
+        Thread threadA = new Thread("a","thread a");
+        Thread threadB = new Thread("b","thread b");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+
+        for(int i = 0; i < 3; i++) {
+            postRepository.save(new Post(threadA));
+        }
+        for(int i = 0; i < 2; i++) {
+            postRepository.save(new Post(threadB));
+        }
+        List<Post> posts = postService.getPostsOfThread(threadA);
+        assertThat(posts.size()).isEqualTo(3);
+
     }
 }
