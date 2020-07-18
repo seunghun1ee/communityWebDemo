@@ -2,9 +2,11 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,12 +27,30 @@ public class PostController {
     UserService userService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    ThreadService threadService;
 
     User testUser = new User("tester");
 
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
         List<Post> posts = postService.getAll();
+        model.addAttribute("posts",posts);
+        return "postList";
+    }
+
+    @GetMapping("/{threadInitial}")
+    public String showAllPostsOfThread(@PathVariable String threadInitial,Model model) throws Exception {
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        List<Post> posts;
+        String threadName;
+        if(optionalThread.isPresent()) {
+            threadName = optionalThread.get().getName();
+            posts = postService.getPostsOfThread(optionalThread.get());
+        }
+        else throw new Exception();
+
+        model.addAttribute("threadName",threadName);
         model.addAttribute("posts",posts);
         return "postList";
     }
