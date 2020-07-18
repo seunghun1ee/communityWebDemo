@@ -86,7 +86,7 @@ public class PostController {
                 comments = commentService.getCommentsOfPost(post);
             }
             else throw new Exception();
-
+            model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
         }
@@ -143,6 +143,23 @@ public class PostController {
             commentService.deleteAll(comments);
             postService.deleteById(id);
             return new RedirectView("/posts");
+        }
+        else return new RedirectView("/error");
+    }
+
+    @PostMapping("/{threadInitial}/posts/{id}/delete")
+    public RedirectView delete(@PathVariable String threadInitial ,@PathVariable Long id) {
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        if (!optionalThread.isPresent()) {
+            return new RedirectView("/error");
+        }
+
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
+            List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+            commentService.deleteAll(comments);
+            postService.deleteById(id);
+            return new RedirectView("/{threadInitial}/posts");
         }
         else return new RedirectView("/error");
     }
