@@ -6,7 +6,7 @@
 </head>
     <body>
         <h2>Edit post</h2>
-        <form th:action="@{/posts/{id}/edit(id=${post.id})}" method="post" th:object="${post}">
+        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.initial})}" method="post" th:object="${post}">
             <input type="text" id="inputTitle" name="title" th:value="${post.title}" th:object="${title}" required>
             <br>
             <input type="text" id="inputBody" name="body" th:value="${post.body}" th:object="${body}" required>

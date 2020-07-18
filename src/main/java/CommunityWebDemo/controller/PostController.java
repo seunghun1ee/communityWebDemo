@@ -176,6 +176,23 @@ public class PostController {
         else throw new Exception();
     }
 
+    @GetMapping("/{threadInitial}/posts/{id}/edit")
+    public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception{
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        if(!optionalThread.isPresent()) {
+            throw new Exception();
+        }
+        Optional<Post> optionalPost = postService.getById(id);
+        Post post;
+        if(optionalPost.isPresent()) {
+            post = optionalPost.get();
+            model.addAttribute("thread",optionalThread.get());
+            model.addAttribute("post", post);
+            return "updatePost";
+        }
+        else throw new Exception();
+    }
+
     @PostMapping("/posts/{id}/edit")
     public RedirectView saveUpdatedPost(@PathVariable Long id, Post post) {
         Optional<Post> optionalPost = postService.getById(id);
@@ -185,6 +202,25 @@ public class PostController {
             post.setUser(oldPost.getUser());
             postService.add(post);
             return new RedirectView("/posts/{id}");
+        }
+        else return new RedirectView("/error");
+    }
+
+    @PostMapping("/{threadInitial}/posts/{id}/edit")
+    public RedirectView saveUpdatedPost(@PathVariable String threadInitial,@PathVariable Long id, Post post) {
+        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        if(!optionalThread.isPresent()) {
+            return new RedirectView("/error");
+        }
+
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalPost.isPresent()) {
+            Post oldPost = optionalPost.get();
+            post.setId(oldPost.getId());
+            post.setUser(oldPost.getUser());
+            post.setThread(optionalThread.get());
+            postService.add(post);
+            return new RedirectView("/{threadInitial}/posts/{id}");
         }
         else return new RedirectView("/error");
     }
