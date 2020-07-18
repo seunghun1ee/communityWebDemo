@@ -42,6 +42,10 @@ public class Post {
         this.user = user;
     }
 
+    public Post(Thread thread) {
+        this.thread = thread;
+    }
+
     public Long getId() {
         return id;
     }

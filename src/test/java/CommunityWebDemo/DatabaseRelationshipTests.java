@@ -2,9 +2,11 @@ package CommunityWebDemo;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.PostRepository;
+import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class DatabaseRelationshipTests {
     UserRepository userRepository;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    ThreadRepository threadRepository;
 
     @Test
     void postAndUserRelationshipTest() {
@@ -101,5 +105,56 @@ public class DatabaseRelationshipTests {
         Comment daveComment = comments.get(0);
         assertThat(daveComment.getPost()).isEqualTo(davePost);
         assertThat(daveComment.getUser()).isEqualTo(dave);
+    }
+
+    @Test
+    void threadCreationTest() {
+        threadRepository.deleteAll();
+        Thread threadA = new Thread("a","Thread A");
+        Thread threadB = new Thread("b","Thread B");
+        Thread threadC = new Thread("c","Thread C");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+        threadRepository.save(threadC);
+        assertThat(threadA.getInitial()).isEqualTo("a");
+        assertThat(threadB.getInitial()).isEqualTo("b");
+        assertThat(threadC.getInitial()).isEqualTo("c");
+
+    }
+
+    @Test
+    void threadPostRelationshipTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        threadRepository.deleteAll();
+        Thread threadA = new Thread("a","thread a");
+        Thread threadB = new Thread("b","thread b");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+        List<Post> threadAPosts = new ArrayList<>();
+        List<Post> threadBPosts = new ArrayList<>();
+        for(int i = 0; i < 3; i++) {
+            threadAPosts.add(new Post(threadA));
+            threadBPosts.add(new Post(threadB));
+        }
+        postRepository.saveAll(threadAPosts);
+        postRepository.saveAll(threadBPosts);
+
+        List<Post> result = (List<Post>) postRepository.findAll();
+        int a = 0;
+        int b = 0;
+
+        for(Post post : result) {
+            switch (post.getThread().getInitial()) {
+                case "a":
+                    a++;
+                    break;
+                case "b":
+                    b++;
+                    break;
+            }
+        }
+        assertThat(a).isEqualTo(3);
+        assertThat(b).isEqualTo(3);
     }
 }
