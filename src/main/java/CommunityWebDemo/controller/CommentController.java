@@ -2,9 +2,11 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,8 @@ public class CommentController {
     UserService userService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    ThreadService threadService;
     //temp
     User testUser = new User("tester");
 
@@ -38,6 +42,9 @@ public class CommentController {
             userService.add(testUser);
             comment.setUser(testUser);
             commentService.add(comment);
+            if(post.getThread() == null) {
+                return new RedirectView("/error");
+            }
             return new RedirectView("/" + post.getThread().getInitial() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
