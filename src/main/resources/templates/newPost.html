@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>New post</h2>
-    <form th:action="@{/{ti}/new_post(ti=${thread.initial})}" method="post" th:object="${newPost}">
+    <form th:action="@{/{ti}/new_post(ti=${thread.url})}" method="post" th:object="${newPost}">
         <input type="text" id="inputTitle" name="title" placeholder="Title" th:object="${title}" required>
         <br>
         <input type="text" id="inputBody" name="body" placeholder="Body" th:object="${body}" required>

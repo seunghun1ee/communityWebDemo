@@ -26,7 +26,7 @@ public class ThreadController {
 
     @PostMapping("/new_thread")
     public RedirectView saveNewThread(String url, String name, String description) {
-        Optional<Thread> optionalThread = threadService.getByInitial(url);
+        Optional<Thread> optionalThread = threadService.getByUrl(url);
         if(optionalThread.isPresent()) {
             RedirectView urlAlreadyTaken = new RedirectView("/new_thread");
 

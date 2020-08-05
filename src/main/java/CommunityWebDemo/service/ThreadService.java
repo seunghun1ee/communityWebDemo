@@ -13,7 +13,7 @@ public class ThreadService {
     @Autowired
     ThreadRepository threadRepository;
 
-    public Optional<Thread> getByInitial(String initial) {
-        return threadRepository.findById(initial);
+    public Optional<Thread> getByUrl(String url) {
+        return threadRepository.findById(url);
     }
 }

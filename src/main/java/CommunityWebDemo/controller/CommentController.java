@@ -2,7 +2,6 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
-import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
@@ -45,7 +44,7 @@ public class CommentController {
             if(post.getThread() == null) {
                 return new RedirectView("/error");
             }
-            return new RedirectView("/" + post.getThread().getInitial() + "/posts/{postId}");
+            return new RedirectView("/" + post.getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
     }
@@ -80,7 +79,7 @@ public class CommentController {
         Optional<Post> optionalPost = postService.getById(postId);
         if(optionalPost.isPresent() && commentService.getById(commentId).isPresent() && optionalPost.get().getThread() != null) {
             commentService.deleteById(commentId);
-            return new RedirectView("/" + optionalPost.get().getThread().getInitial() + "/posts/{postId}");
+            return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
     }

@@ -477,8 +477,8 @@ public class ServiceTests {
         threadRepository.save(threadA);
         threadRepository.save(threadB);
 
-        assertThat(threadService.getByInitial(threadA.getInitial()).isPresent()).isTrue();
-        assertThat(threadService.getByInitial(threadA.getInitial()).get()).isEqualTo(threadA);
-        assertThat(threadService.getByInitial("c")).isEqualTo(Optional.empty());
+        assertThat(threadService.getByUrl(threadA.getUrl()).isPresent()).isTrue();
+        assertThat(threadService.getByUrl(threadA.getUrl()).get()).isEqualTo(threadA);
+        assertThat(threadService.getByUrl("c")).isEqualTo(Optional.empty());
     }
 }

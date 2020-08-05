@@ -9,10 +9,10 @@
     <a th:text="${post.user.name}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>
     <br>
-    <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.initial})}" method="get">
+    <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
         <button type="submit">Edit this post</button>
     </form>
-    <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.initial})}" method="post">
+    <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
         <button type="submit">Delete this post</button>
     </form>
     <h3>Comments</h3>

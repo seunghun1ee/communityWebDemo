@@ -116,9 +116,9 @@ public class DatabaseRelationshipTests {
         threadRepository.save(threadA);
         threadRepository.save(threadB);
         threadRepository.save(threadC);
-        assertThat(threadA.getInitial()).isEqualTo("a");
-        assertThat(threadB.getInitial()).isEqualTo("b");
-        assertThat(threadC.getInitial()).isEqualTo("c");
+        assertThat(threadA.getUrl()).isEqualTo("a");
+        assertThat(threadB.getUrl()).isEqualTo("b");
+        assertThat(threadC.getUrl()).isEqualTo("c");
 
     }
 
@@ -145,7 +145,7 @@ public class DatabaseRelationshipTests {
         int b = 0;
 
         for(Post post : result) {
-            switch (post.getThread().getInitial()) {
+            switch (post.getThread().getUrl()) {
                 case "a":
                     a++;
                     break;

@@ -33,7 +33,7 @@ public class PostController {
 
     @GetMapping("/{threadInitial}/posts")
     public String showAllPostsOfThread(@PathVariable String threadInitial,Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         List<Post> posts;
         String threadName;
         if(optionalThread.isPresent()) {
@@ -49,7 +49,7 @@ public class PostController {
 
     @GetMapping("/{threadInitial}/posts/{id}")
     public String showPostById(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             Optional<Post> optionalPost = postService.getById(id);
 
@@ -72,7 +72,7 @@ public class PostController {
 
     @GetMapping("/{threadInitial}/new_post")
     public String newPost(@PathVariable String threadInitial, Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             model.addAttribute("thread",optionalThread.get());
             return "newPost";
@@ -83,7 +83,7 @@ public class PostController {
 
     @PostMapping("/{threadInitial}/new_post")
     public RedirectView saveNewPost(@PathVariable String threadInitial, Post newPost) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             newPost.setThread(optionalThread.get());
         }
@@ -97,7 +97,7 @@ public class PostController {
 
     @PostMapping("/{threadInitial}/posts/{id}/delete")
     public RedirectView delete(@PathVariable String threadInitial ,@PathVariable Long id) {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if (!optionalThread.isPresent()) {
             return new RedirectView("/error");
         }
@@ -114,7 +114,7 @@ public class PostController {
 
     @GetMapping("/{threadInitial}/posts/{id}/edit")
     public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception{
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(!optionalThread.isPresent()) {
             throw new Exception();
         }
@@ -131,7 +131,7 @@ public class PostController {
 
     @PostMapping("/{threadInitial}/posts/{id}/edit")
     public RedirectView saveUpdatedPost(@PathVariable String threadInitial,@PathVariable Long id, Post post) {
-        Optional<Thread> optionalThread = threadService.getByInitial(threadInitial);
+        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(!optionalThread.isPresent()) {
             return new RedirectView("/error");
         }
