@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>Opening new thread</h2>
+    <form action="/new_thread" method="post" th:method="${thread}">
+        <input id="inputName" name="name" type="text" placeholder="Thread name" th:text="${name}" required>
+        <br>
+        <input id="inputUrl" name="url" type="text" placeholder="Url of the thread" th:text="${initial}" required>
+        <br>
+        <input id="inputDescription" name="description" type="text" placeholder="Description" th:text="${description}">
+        <br>
+        <button type="submit">Open</button>
+    </form>
+</body>
+</html>
