@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>Opening new thread</h2>
-
+    <div th:if="${urlTakenError}" th:text="${urlTakenError}" role="alert"></div>
     <form action="/new_thread" method="post" th:object="${thread}">
         <input id="inputName" name="name" type="text" placeholder="Thread name" th:text="${name}" required>
         <br>

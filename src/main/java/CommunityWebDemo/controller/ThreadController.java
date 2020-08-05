@@ -29,7 +29,7 @@ public class ThreadController {
         Optional<Thread> optionalThread = threadService.getByUrl(url);
         if(optionalThread.isPresent()) {
             RedirectView urlAlreadyTaken = new RedirectView("/new_thread");
-
+            urlAlreadyTaken.addStaticAttribute("urlTakenError","The url is already in use");
             return urlAlreadyTaken;
         }
         Thread thread = new Thread(url,name);
