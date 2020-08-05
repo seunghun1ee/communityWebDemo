@@ -52,8 +52,9 @@ public class CommentController {
 
     @GetMapping("/posts/{postId}/comments/{commentId}/edit")
     public String editComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
+        Optional<Post> optionalPost = postService.getById(postId);
         Optional<Comment> optionalComment = commentService.getById(commentId);
-        if(postService.getById(postId).isPresent() && optionalComment.isPresent()) {
+        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
             model.addAttribute("comment",optionalComment.get());
             return "updateComment";
         }
