@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,10 +29,15 @@ public class ThreadController {
     @PostMapping("/new_thread")
     public ModelAndView saveNewThread(String url, String name, String description) {
         ModelAndView modelAndView = new ModelAndView("home");
-        Optional<Thread> optionalThread = threadService.getByUrl(url);
-        if(optionalThread.isPresent()) {
+        Optional<Thread> urlCheck = threadService.getByUrl(url);
+        if(urlCheck.isPresent()) {
             modelAndView.setViewName("newThread");
             modelAndView.addObject("urlTakenError","This url is already in use");
+        }
+        List<Thread> nameCheck = threadService.getByName(name);
+        if(!nameCheck.isEmpty()) {
+            modelAndView.setViewName("newThread");
+            modelAndView.addObject("nameTakenError","This name is already in use");
         }
         Thread thread = new Thread(url,name);
         threadRepository.save(thread);
