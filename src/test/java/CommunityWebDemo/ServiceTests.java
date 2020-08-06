@@ -467,7 +467,7 @@ public class ServiceTests {
     }
 
     @Test
-    void getThreadByInitialTest() {
+    void getThreadByUrlTest() {
         commentRepository.deleteAll();
         postRepository.deleteAll();
         threadRepository.deleteAll();
@@ -480,5 +480,13 @@ public class ServiceTests {
         assertThat(threadService.getByUrl(threadA.getUrl()).isPresent()).isTrue();
         assertThat(threadService.getByUrl(threadA.getUrl()).get()).isEqualTo(threadA);
         assertThat(threadService.getByUrl("c")).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    void getThreadsByNameTest() {
+        threadRepository.save(new Thread("test","Test"));
+        List<Thread> threads = threadService.getByName("Test");
+        assertThat(threads.size()).isEqualTo(1);
+        assertThat(threadService.getByName("asdfowaknvian").size()).isZero();
     }
 }
