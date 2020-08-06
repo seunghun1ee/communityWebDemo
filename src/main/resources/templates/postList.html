@@ -12,6 +12,7 @@
         </li>
     </tr>
     <br>
-    <a th:href="@{new_post}">Add new post</a>
+    <p><a th:href="@{new_post}">Add new post</a></p>
+    <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
 </body>
 </html>
