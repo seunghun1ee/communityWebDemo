@@ -8,6 +8,7 @@
     <h2>Opening new thread</h2>
     <div th:if="${urlTakenError}" th:text="${urlTakenError}" role="alert"></div>
     <div th:if="${nameTakenError}" th:text="${nameTakenError}" role="alert"></div>
+    <div th:if="${successMessage}" th:text="${successMessage}" role="alert"></div>
     <form action="/new_thread" method="post" th:object="${thread}">
         <input id="inputName" name="name" type="text" placeholder="Thread name" th:text="${name}" required>
         <br>
@@ -17,5 +18,7 @@
         <br>
         <button type="submit">Open</button>
     </form>
+    <br>
+    <p><a href="/">Return to home</a></p>
 </body>
 </html>

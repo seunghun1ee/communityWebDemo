@@ -29,21 +29,21 @@ public class ThreadController {
     }
 
     @PostMapping("/new_thread")
-    public ModelAndView saveNewThread(String url, String name, String description) {
-        ModelAndView modelAndView = new ModelAndView("home");
+    public String saveNewThread(Model model, String url, String name, String description) {
         Optional<Thread> urlCheck = threadService.getByUrl(url);
         if(urlCheck.isPresent()) {
-            modelAndView.setViewName("newThread");
-            modelAndView.addObject("urlTakenError","This url is already in use");
+            model.addAttribute("urlTakenError","This url is already in use");
+            return "newThread";
         }
         List<Thread> nameCheck = threadService.getByName(name);
         if(!nameCheck.isEmpty()) {
-            modelAndView.setViewName("newThread");
-            modelAndView.addObject("nameTakenError","This name is already in use");
+            model.addAttribute("nameTakenError","This name is already in use");
+            return "newThread";
         }
         Thread thread = new Thread(url,name);
         threadRepository.save(thread);
-        return modelAndView;
+        model.addAttribute("successMessage","The thread is opened");
+        return "newThread";
     }
 
     @GetMapping("/{threadUrl}/settings")
