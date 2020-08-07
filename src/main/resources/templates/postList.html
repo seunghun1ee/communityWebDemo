@@ -6,6 +6,7 @@
 </head>
 <body>
     <h2 th:text="'Posts in ' + ${thread.name}"></h2>
+    <p th:text="${thread.description}"></p>
     <tr th:each="post : ${posts}">
         <li>
             <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>

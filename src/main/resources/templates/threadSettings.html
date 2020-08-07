@@ -7,5 +7,12 @@
 <body>
     <h2 th:text="'Thread settings {' + ${thread.name} + '}'"></h2>
     <br>
+    <div th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div th:if="${failMessage}" th:text="${failMessage}"></div>
+    <form th:action="@{/{thread}/settings/edit(thread=${thread.url})}" method="post">
+        <input type=text id="inputDescription" name="description" th:value="${thread.description}" th:text="${description}">
+        <button type="submit">Save</button>
+    </form>
+    <p><a th:href="@{/{thread}/posts(thread=${thread.url})}">Go back to the thread</a></p>
 </body>
 </html>

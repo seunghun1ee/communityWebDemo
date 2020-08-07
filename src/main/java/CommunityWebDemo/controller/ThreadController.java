@@ -53,4 +53,23 @@ public class ThreadController {
         model.addAttribute("thread",optionalThread.get());
         return "threadSettings";
     }
+
+    @PostMapping("/{threadUrl}/settings/edit")
+    public String saveThreadSetting(@PathVariable String threadUrl, Model model, String description) {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
+        if(!optionalThread.isPresent()) {
+            return "error";
+        }
+        Thread thread = optionalThread.get();
+        if(description == null) {
+            model.addAttribute("failMessage","Saving failed");
+        }
+        else {
+            thread.setDescription(description);
+            model.addAttribute("successMessage","Saved change");
+        }
+        model.addAttribute("thread",thread);
+        threadRepository.save(thread);
+        return "threadSettings";
+    }
 }
