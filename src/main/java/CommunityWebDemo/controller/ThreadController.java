@@ -9,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +38,7 @@ public class ThreadController {
             model.addAttribute("nameTakenError","This name is already in use");
             return "newThread";
         }
-        Thread thread = new Thread(url,name);
+        Thread thread = new Thread(url, name, description);
         threadRepository.save(thread);
         model.addAttribute("successMessage","The thread is opened");
         return "newThread";
