@@ -15,7 +15,10 @@
     <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
         <button type="submit">Delete this post</button>
     </form>
+
     <h3>Comments</h3>
+    <div th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <tr th:each="comment : ${comments}">
         <p style="font-weight: bold" th:text="${comment.user.name}"></p>
         <p th:text="${comment.message}"></p>

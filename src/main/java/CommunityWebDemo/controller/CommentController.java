@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
@@ -75,7 +76,7 @@ public class CommentController {
     }
 
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
-    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password) {
+    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) {
         Optional<Post> optionalPost = postService.getById(postId);
         Optional<Comment> optionalComment = commentService.getById(commentId);
         //Post is present, comment is present, thread is not null
@@ -83,6 +84,10 @@ public class CommentController {
             //Comment password is correct
             if(optionalComment.get().getPassword().equals(password)) {
                 commentService.deleteById(commentId);
+                redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+            }
+            else {
+                redirectAttr.addFlashAttribute("failMessage","Password is incorrect");
             }
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
