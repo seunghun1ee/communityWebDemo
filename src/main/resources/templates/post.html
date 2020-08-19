@@ -30,6 +30,7 @@
     <h4>Add comment</h4>
     <form th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
         <input type="text" id="inputMessage" name="message" placeholder="Message" th:object="${message}" required>
+        <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
         <br>
         <button type="submit">Submit</button>
     </form>
