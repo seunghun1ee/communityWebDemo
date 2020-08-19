@@ -9,13 +9,15 @@ import java.util.Objects;
 @Entity
 public class Comment {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     @ManyToOne
     private Post post;
     @ManyToOne
     private User user;
 
+    private String password;
     private String message;
 
 
@@ -61,6 +63,14 @@ public class Comment {
         this.user = user;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,12 +78,13 @@ public class Comment {
         Comment comment = (Comment) o;
         return Objects.equals(id, comment.id) &&
                 Objects.equals(post, comment.post) &&
-                Objects.equals(message, comment.message) &&
-                Objects.equals(user, comment.user);
+                Objects.equals(user, comment.user) &&
+                Objects.equals(password, comment.password) &&
+                Objects.equals(message, comment.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, post, message, user);
+        return Objects.hash(id, post, user, password, message);
     }
 }
