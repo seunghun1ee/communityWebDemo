@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Controller
@@ -33,11 +34,12 @@ public class CommentController {
     User testUser = new User("tester");
 
     @PostMapping("/posts/{postId}/new_comment")
-    public RedirectView addComment(@PathVariable Long postId, Comment comment) {
+    public RedirectView addComment(@PathVariable Long postId, Comment comment, HttpServletRequest request) {
         Optional<Post> optionalPost = postService.getById(postId);
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
             comment.setPost(post);
+            comment.setIp(trimIpAddress(request.getRemoteAddr()));
             //temp
             userService.add(testUser);
             comment.setUser(testUser);
@@ -92,5 +94,10 @@ public class CommentController {
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
+    }
+
+    private String trimIpAddress(String ip) {
+        String[] strings = ip.split("\\.");
+        return strings[0] + "." + strings[1] + ".***.***";
     }
 }
