@@ -17,6 +17,7 @@ public class Comment {
     @ManyToOne
     private User user;
 
+    private String ip;
     private String password;
     private String message;
 
@@ -71,6 +72,14 @@ public class Comment {
         this.password = password;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -79,12 +88,13 @@ public class Comment {
         return Objects.equals(id, comment.id) &&
                 Objects.equals(post, comment.post) &&
                 Objects.equals(user, comment.user) &&
+                Objects.equals(ip, comment.ip) &&
                 Objects.equals(password, comment.password) &&
                 Objects.equals(message, comment.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, post, user, password, message);
+        return Objects.hash(id, post, user, ip, password, message);
     }
 }
