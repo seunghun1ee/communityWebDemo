@@ -75,10 +75,15 @@ public class CommentController {
     }
 
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
-    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
+    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password) {
         Optional<Post> optionalPost = postService.getById(postId);
-        if(optionalPost.isPresent() && commentService.getById(commentId).isPresent() && optionalPost.get().getThread() != null) {
-            commentService.deleteById(commentId);
+        Optional<Comment> optionalComment = commentService.getById(commentId);
+        //Post is present, comment is present, thread is not null
+        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
+            //Comment password is correct
+            if(optionalComment.get().getPassword().equals(password)) {
+                commentService.deleteById(commentId);
+            }
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
