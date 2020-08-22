@@ -101,7 +101,7 @@ public class PostController {
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/delete")
-    public RedirectView delete(@PathVariable String threadInitial ,@PathVariable Long id) {
+    public RedirectView delete(@PathVariable String threadInitial ,@PathVariable Long id, String password) {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if (!optionalThread.isPresent()) {
             return new RedirectView("/error");
@@ -109,10 +109,16 @@ public class PostController {
 
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
-            List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
-            commentService.deleteAll(comments);
-            postService.deleteById(id);
-            return new RedirectView("/{threadInitial}/posts");
+            if(optionalPost.get().getPassword().equals(password)) {
+                List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+                commentService.deleteAll(comments);
+                postService.deleteById(id);
+                return new RedirectView("/{threadInitial}/posts");
+            }
+            else {
+                return new RedirectView("/{threadInitial}/posts/{id}");
+            }
+
         }
         else return new RedirectView("/error");
     }

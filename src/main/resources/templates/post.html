@@ -12,9 +12,11 @@
     <p th:text="${post.body}"></p>
     <br>
     <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
+        <input type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
         <button type="submit">Edit this post</button>
     </form>
     <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
+        <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
         <button type="submit">Delete this post</button>
     </form>
 
@@ -30,7 +32,7 @@
 <!--            <button type="submit">Edit</button>-->
 <!--        </form>-->
         <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-            <input type="password" id="inputPassword_delete" name="password" placeholder="Password" th:object="${password}" required>
+            <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
             <button type="submit">Delete</button>
         </form>
         <br>
