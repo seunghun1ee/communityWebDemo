@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+    <p><a th:href="@{/{t}/posts(t=${thread.url})}" th:text="'/' + ${thread.url}"></a></p>
     <h2 th:text="${post.title}"></h2>
     <a th:text="${post.user.name}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>
