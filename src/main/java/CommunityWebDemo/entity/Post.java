@@ -13,6 +13,7 @@ public class Post {
     private Long id;
     private String title;
     private String body;
+    private Integer vote;
     @ManyToOne() @JoinColumn()
     private User user;
     @ManyToOne
@@ -80,6 +81,14 @@ public class Post {
         this.body = body;
     }
 
+    public Integer getVote() {
+        return vote;
+    }
+
+    public void setVote(Integer vote) {
+        this.vote = vote;
+    }
+
     public User getUser() {
         return user;
     }
@@ -120,6 +129,7 @@ public class Post {
         return Objects.equals(id, post.id) &&
                 Objects.equals(title, post.title) &&
                 Objects.equals(body, post.body) &&
+                Objects.equals(vote, post.vote) &&
                 Objects.equals(user, post.user) &&
                 Objects.equals(thread, post.thread) &&
                 Objects.equals(ip, post.ip) &&
@@ -128,6 +138,6 @@ public class Post {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, user, thread, ip, password);
+        return Objects.hash(id, title, body, vote, user, thread, ip, password);
     }
 }
