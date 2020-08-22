@@ -20,6 +20,7 @@ public class Post {
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
+    private String ip;
     private String password;
 
     public Post() {
