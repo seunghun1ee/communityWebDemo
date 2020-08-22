@@ -20,6 +20,8 @@ public class Post {
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
+    private String password;
+
     public Post() {
 
     }
@@ -40,6 +42,13 @@ public class Post {
         this.title = title;
         this.body = body;
         this.user = user;
+    }
+
+    public Post(String title, String body, Thread thread, String password) {
+        this.title = title;
+        this.body = body;
+        this.thread = thread;
+        this.password = password;
     }
 
     public Post(Thread thread) {
@@ -86,6 +95,14 @@ public class Post {
         this.thread = thread;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,11 +111,14 @@ public class Post {
         return Objects.equals(id, post.id) &&
                 Objects.equals(title, post.title) &&
                 Objects.equals(body, post.body) &&
-                Objects.equals(user, post.user);
+                Objects.equals(user, post.user) &&
+                Objects.equals(thread, post.thread) &&
+                Objects.equals(comments, post.comments) &&
+                Objects.equals(password, post.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, user);
+        return Objects.hash(id, title, body, user, thread, comments, password);
     }
 }
