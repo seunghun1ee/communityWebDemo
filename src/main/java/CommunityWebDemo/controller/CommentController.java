@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.IpHandler;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
@@ -30,6 +31,7 @@ public class CommentController {
     CommentService commentService;
     @Autowired
     ThreadService threadService;
+    IpHandler ipHandler = new IpHandler();
     //temp
     User testUser = new User("tester");
 
@@ -39,7 +41,7 @@ public class CommentController {
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
             comment.setPost(post);
-            comment.setIp(trimIpAddress(request.getRemoteAddr()));
+            comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
             //temp
             //userService.add(testUser);
             //comment.setUser(testUser);
@@ -94,10 +96,5 @@ public class CommentController {
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");
-    }
-
-    private String trimIpAddress(String ip) {
-        String[] strings = ip.split("\\.");
-        return strings[0] + "." + strings[1] + ".***.***";
     }
 }

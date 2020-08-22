@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.IpHandler;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +30,8 @@ public class PostController {
     CommentService commentService;
     @Autowired
     ThreadService threadService;
+
+    IpHandler ipHandler = new IpHandler();
 
     User testUser = new User("tester");
 
@@ -82,7 +86,7 @@ public class PostController {
     }
 
     @PostMapping("/{threadInitial}/new_post")
-    public RedirectView saveNewPost(@PathVariable String threadInitial, Post newPost) throws Exception {
+    public RedirectView saveNewPost(@PathVariable String threadInitial, Post newPost, HttpServletRequest request) throws Exception {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             newPost.setThread(optionalThread.get());
