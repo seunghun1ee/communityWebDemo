@@ -96,6 +96,14 @@ public class Post {
         this.thread = thread;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -114,11 +122,12 @@ public class Post {
                 Objects.equals(body, post.body) &&
                 Objects.equals(user, post.user) &&
                 Objects.equals(thread, post.thread) &&
+                Objects.equals(ip, post.ip) &&
                 Objects.equals(password, post.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, user, thread, password);
+        return Objects.hash(id, title, body, user, thread, ip, password);
     }
 }
