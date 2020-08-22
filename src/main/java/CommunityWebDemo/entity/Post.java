@@ -13,7 +13,7 @@ public class Post {
     private Long id;
     private String title;
     private String body;
-    private Integer vote;
+    private Integer vote = 0;
     @ManyToOne() @JoinColumn()
     private User user;
     @ManyToOne
