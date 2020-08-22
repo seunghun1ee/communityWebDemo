@@ -113,12 +113,11 @@ public class Post {
                 Objects.equals(body, post.body) &&
                 Objects.equals(user, post.user) &&
                 Objects.equals(thread, post.thread) &&
-                Objects.equals(comments, post.comments) &&
                 Objects.equals(password, post.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, user, thread, comments, password);
+        return Objects.hash(id, title, body, user, thread, password);
     }
 }
