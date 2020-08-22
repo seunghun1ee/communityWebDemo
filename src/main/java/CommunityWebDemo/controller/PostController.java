@@ -89,8 +89,8 @@ public class PostController {
         }
         else throw new Exception();
         //temporary
-        userService.add(testUser);
-        newPost.setUser(testUser);
+        //userService.add(testUser);
+        //newPost.setUser(testUser);
         postService.add(newPost);
         return new RedirectView("/{threadInitial}/posts");
     }
