@@ -90,6 +90,7 @@ public class PostController {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             newPost.setThread(optionalThread.get());
+            newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
         }
         else throw new Exception();
         //temporary
