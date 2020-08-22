@@ -149,11 +149,16 @@ public class PostController {
 
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalPost.isPresent()) {
-            Post oldPost = optionalPost.get();
-            post.setId(oldPost.getId());
-            post.setUser(oldPost.getUser());
-            post.setThread(optionalThread.get());
-            postService.add(post);
+            //check password
+            if(optionalPost.get().getPassword().equals(post.getPassword())) {
+                Post oldPost = optionalPost.get();
+                post.setId(oldPost.getId());
+                post.setUser(oldPost.getUser());
+                post.setIp(oldPost.getIp());
+                post.setThread(optionalThread.get());
+                postService.add(post);
+            }
+
             return new RedirectView("/{threadInitial}/posts/{id}");
         }
         else return new RedirectView("/error");

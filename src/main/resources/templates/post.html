@@ -12,7 +12,6 @@
     <p th:text="${post.body}"></p>
     <br>
     <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-        <input type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
         <button type="submit">Edit this post</button>
     </form>
     <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
