@@ -11,6 +11,7 @@
     <tr th:each="post : ${posts}">
         <li>
             <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
+            <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
         </li>
     </tr>
     <br>
