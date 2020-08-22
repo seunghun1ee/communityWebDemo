@@ -41,8 +41,8 @@ public class CommentController {
             comment.setPost(post);
             comment.setIp(trimIpAddress(request.getRemoteAddr()));
             //temp
-            userService.add(testUser);
-            comment.setUser(testUser);
+            //userService.add(testUser);
+            //comment.setUser(testUser);
             commentService.add(comment);
             if(post.getThread() == null) {
                 return new RedirectView("/error");
