@@ -34,3 +34,18 @@ function downVote() {
         voteCount.textContent = voteNum.toString();
     }
 }
+
+window.onbeforeunload = function () {
+    if(upVoteButton.getAttribute("aria-pressed") === "true") {
+        $.post({
+            url: window.location.href + "/vote/upvote",
+            cache: false
+        });
+    }
+    else if(downVoteButton.getAttribute("aria-pressed") === "true") {
+        $.post({
+            url: window.location.href + "/vote/downvote",
+            cache: false
+        });
+    }
+}
