@@ -29,6 +29,13 @@ public class VoteController {
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
             Integer vote = post.getVote();
+            JSONArray votingList = new JSONArray(post.getVoterList());
+            for(int i = 0; i < votingList.length(); i++) {
+                if(votingList.getString(i).equals(request.getRemoteAddr())) {
+                    return "already voted";
+                }
+            }
+
             switch (type) {
                 case "upvote":
                     post.setVote(vote + 1);
@@ -39,7 +46,7 @@ public class VoteController {
                 default:
                     return "failed";
             }
-            JSONArray votingList = new JSONArray(post.getVoterList());
+
             votingList.put(request.getRemoteAddr());
             String stringVoteList = votingList.toString();
             post.setVoterList(stringVoteList);
