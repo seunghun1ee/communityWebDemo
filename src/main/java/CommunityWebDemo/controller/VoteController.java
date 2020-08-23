@@ -39,10 +39,10 @@ public class VoteController {
                 default:
                     return "failed";
             }
-            JSONArray votingList = new JSONArray(post.getVotingList());
+            JSONArray votingList = new JSONArray(post.getVoterList());
             votingList.put(request.getRemoteAddr());
             String stringVoteList = votingList.toString();
-            post.setVotingList(stringVoteList);
+            post.setVoterList(stringVoteList);
             postService.add(post);
             return "success";
         }

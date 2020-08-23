@@ -1,8 +1,6 @@
 package CommunityWebDemo.entity;
 
 
-import net.minidev.json.JSONArray;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,7 @@ public class Post {
     private String ip;
     private String password;
 
-    private String votingList = "[]";
+    private String voterList = "[]";
 
     public Post() {
 
@@ -125,12 +123,12 @@ public class Post {
         this.password = password;
     }
 
-    public String getVotingList() {
-        return votingList;
+    public String getVoterList() {
+        return voterList;
     }
 
-    public void setVotingList(String votingList) {
-        this.votingList = votingList;
+    public void setVoterList(String votingList) {
+        this.voterList = votingList;
     }
 
     @Override
