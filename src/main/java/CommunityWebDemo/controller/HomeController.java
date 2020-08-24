@@ -4,7 +4,6 @@ import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
-import CommunityWebDemo.repository.CommentRepository;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
@@ -15,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -52,16 +50,7 @@ public class HomeController {
         Thread threadB = new Thread("b","Thread B");
         threadRepository.save(threadA);
         threadRepository.save(threadB);
-//        List<User> users = userService.getAll();
-//        for(User user : users) {
-//            switch (user.getName()) {
-//                case "Adam":
-//                    adam = user;
-//                case "Eve":
-//                    eve = user;
-//                default:
-//            }
-//        }
+
         postService.add(new Post(threadA,"first post","hello", adam));
         postService.add(new Post(threadA,"second post", "nice to meet you", eve));
         postService.add(new Post(threadA,"third post","this is adam", adam));
