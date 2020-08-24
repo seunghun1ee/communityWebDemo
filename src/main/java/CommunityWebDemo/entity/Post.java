@@ -24,7 +24,7 @@ public class Post {
     private String ip;
     private String password;
 
-    private String voterList = "[]";
+    private String voterList = "{\"users\":[], \"guests\":[]}";
 
     public Post() {
 

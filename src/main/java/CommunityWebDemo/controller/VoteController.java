@@ -6,6 +6,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,8 @@ public class VoteController {
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
             Integer vote = post.getVote();
-            JSONArray votingList = new JSONArray(post.getVoterList());
+            JSONObject voterObject = new JSONObject(post.getVoterList());
+            JSONArray votingList = voterObject.getJSONArray("guests");
             for(int i = 0; i < votingList.length(); i++) {
                 if(votingList.getString(i).equals(request.getRemoteAddr())) {
                     return "already voted";
@@ -48,7 +50,7 @@ public class VoteController {
             }
 
             votingList.put(request.getRemoteAddr());
-            String stringVoteList = votingList.toString();
+            String stringVoteList = voterObject.toString();
             post.setVoterList(stringVoteList);
             postService.add(post);
             return "success";
