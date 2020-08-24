@@ -1,4 +1,4 @@
-package CommunityWebDemo;
+package CommunityWebDemo.security;
 
 public class IpHandler {
     public IpHandler() {

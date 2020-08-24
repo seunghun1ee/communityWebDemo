@@ -1,6 +1,6 @@
 package CommunityWebDemo.controller;
 
-import CommunityWebDemo.IpHandler;
+import CommunityWebDemo.security.IpHandler;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.User;
