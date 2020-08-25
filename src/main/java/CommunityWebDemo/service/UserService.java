@@ -5,6 +5,9 @@ import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.PostRepository;
 import CommunityWebDemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService extends MyService<User>{
+public class UserService extends MyService<User> implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
@@ -58,5 +61,17 @@ public class UserService extends MyService<User>{
         userRepository.deleteAll(users);
     }
 
+    public Optional<User> getByUsername(String username) {
+        Optional<User> optionalUser = Optional.empty();
+        List<User> users = (List<User>) userRepository.findAll();
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                optionalUser = Optional.of(user);
+                break;
+            }
+        }
+        return optionalUser;
+
+    }
 
 }

@@ -489,4 +489,18 @@ public class ServiceTests {
         assertThat(threads.size()).isEqualTo(1);
         assertThat(threadService.getByName("asdfowaknvian").size()).isZero();
     }
+
+    @Test
+    void getByUsernameTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
+
+        userRepository.save(new User("user1"));
+        userRepository.save(new User("user2"));
+        userRepository.save(new User("user3"));
+
+        assertThat(userService.getByUsername("user1")).isPresent();
+        assertThat(userService.getByUsername("user4")).isEmpty();
+    }
 }
