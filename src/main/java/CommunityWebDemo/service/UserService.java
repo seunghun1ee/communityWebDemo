@@ -74,4 +74,10 @@ public class UserService extends MyService<User> implements UserDetailsService {
 
     }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        Optional<User> optionalUser = getByUsername(s);
+        return optionalUser.orElse(null);
+    }
 }
