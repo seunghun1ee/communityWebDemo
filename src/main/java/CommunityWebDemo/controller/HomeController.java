@@ -9,12 +9,16 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -35,6 +39,11 @@ public class HomeController {
     public String helloWorld(Model model) {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         model.addAttribute("threads",threads);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            User user = (User) auth.getPrincipal();
+            model.addAttribute("user",user);
+        }
         return "home";
     }
 
