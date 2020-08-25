@@ -9,6 +9,9 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +35,6 @@ public class CommentController {
     @Autowired
     ThreadService threadService;
     IpHandler ipHandler = new IpHandler();
-    //temp
-    User testUser = new User("tester");
 
     @PostMapping("/posts/{postId}/new_comment")
     public RedirectView addComment(@PathVariable Long postId, Comment comment, HttpServletRequest request) {
@@ -41,10 +42,16 @@ public class CommentController {
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
             comment.setPost(post);
-            comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
-            //temp
-            //userService.add(testUser);
-            //comment.setUser(testUser);
+
+            //Anonymous user or registered user?
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+            }
+            else {
+                User user = (User) auth.getPrincipal();
+                comment.setUser(user);
+            }
             commentService.add(comment);
             if(post.getThread() == null) {
                 return new RedirectView("/error");

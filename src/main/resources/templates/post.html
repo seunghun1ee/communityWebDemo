@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -32,9 +32,6 @@
         <p th:unless="${comment.user == null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
 
         <p th:text="${comment.message}"></p>
-<!--        <form th:action="@{/posts/{postId}/comments/{commentId}/edit(postId=${comment.post.id},commentId=${comment.id})}" method="get">-->
-<!--            <button type="submit">Edit</button>-->
-<!--        </form>-->
         <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
             <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
             <button type="submit">Delete</button>
@@ -44,7 +41,9 @@
     <h4>Add comment</h4>
     <form th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
         <input type="text" id="inputMessage" name="message" placeholder="Message" th:object="${message}" required>
-        <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
+        <div sec:authorize="isAnonymous()">
+            <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
+        </div>
         <br>
         <button type="submit">Submit</button>
     </form>
