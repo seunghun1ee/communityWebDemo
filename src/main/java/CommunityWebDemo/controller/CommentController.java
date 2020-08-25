@@ -92,14 +92,32 @@ public class CommentController {
         Optional<Comment> optionalComment = commentService.getById(commentId);
         //Post is present, comment is present, thread is not null
         if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
-            //Comment password is correct
-            if(optionalComment.get().getPassword().equals(password)) {
-                commentService.deleteById(commentId);
-                redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+
+            //Anonymous user or registered user?
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                //Comment password is correct
+                if(optionalComment.get().getPassword().equals(password)) {
+                    commentService.deleteById(commentId);
+                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+                }
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Password is incorrect");
+                }
             }
             else {
-                redirectAttr.addFlashAttribute("failMessage","Password is incorrect");
+                User user = (User) auth.getPrincipal();
+                //Current logged in user is the owner of the comment
+                if(optionalComment.get().getUser().equals(user)) {
+                    commentService.deleteById(commentId);
+                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+                }
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","This is not your comment");
+                }
             }
+
+
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else return new RedirectView("/error");

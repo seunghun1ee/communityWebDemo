@@ -33,7 +33,9 @@
 
         <p th:text="${comment.message}"></p>
         <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+            <div sec:authorize="isAnonymous()">
             <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+            </div>
             <button type="submit">Delete</button>
         </form>
         <br>
