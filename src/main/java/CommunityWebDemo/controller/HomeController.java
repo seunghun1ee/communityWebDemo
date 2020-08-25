@@ -9,6 +9,7 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,8 @@ public class HomeController {
     CommentService commentService;
     @Autowired
     ThreadRepository threadRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
     public String helloWorld(Model model) {
@@ -41,8 +44,8 @@ public class HomeController {
         postService.deleteAll();
         userService.deleteAll();
         threadRepository.deleteAll();
-        User adam = new User("Adam");
-        User eve = new User("Eve");
+        User adam = new User("Adam",passwordEncoder.encode("1234"));
+        User eve = new User("Eve",passwordEncoder.encode("1234"));
         userService.add(adam);
         userService.add(eve);
 
