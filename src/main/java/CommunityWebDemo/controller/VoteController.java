@@ -23,7 +23,7 @@ public class VoteController {
     @Autowired
     PostService postService;
 
-    @PostMapping("{threadUrl}/posts/{id}/vote/{type}")
+    @PostMapping("/{threadUrl}/posts/{id}/vote/{type}")
     public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @PathVariable String type, HttpServletRequest request) throws JSONException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
