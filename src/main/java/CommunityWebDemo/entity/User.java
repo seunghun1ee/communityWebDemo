@@ -1,6 +1,7 @@
 package CommunityWebDemo.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Entity;
@@ -19,6 +20,8 @@ public class User implements UserDetails {
     private Long id;
     private String username;
     private String password;
+    private Integer accountLevel = 2; //admin: 0, ???:1 ,user:2
+
     @OneToMany
     private List<Post> posts = new ArrayList<>();
     @OneToMany
@@ -29,6 +32,22 @@ public class User implements UserDetails {
 
     public User(String username) {
         this.username = username;
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(String username, Integer accountLevel) {
+        this.username = username;
+        this.accountLevel = accountLevel;
+    }
+
+    public User(String username, String password, Integer accountLevel) {
+        this.username = username;
+        this.password = password;
+        this.accountLevel = accountLevel;
     }
 
     public Long getId() {
@@ -49,17 +68,37 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getAccountLevel() {
+        return accountLevel;
+    }
+
+    public void setAccountLevel(Integer accountLevel) {
+        this.accountLevel = accountLevel;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        switch (this.accountLevel) {
+            case 0:
+                grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                break;
+            case 2:
+                grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                break;
+            default:
+                break;
+        }
+        return grantedAuthorities;
     }
 
     @Override
@@ -89,11 +128,12 @@ public class User implements UserDetails {
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(username, user.username) &&
-                Objects.equals(password, user.password);
+                Objects.equals(password, user.password) &&
+                Objects.equals(accountLevel, user.accountLevel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password);
+        return Objects.hash(id, username, password, accountLevel);
     }
 }
