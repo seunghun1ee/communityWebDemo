@@ -32,12 +32,18 @@
         <p th:unless="${comment.user == null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
 
         <p th:text="${comment.message}"></p>
-        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-            <div sec:authorize="isAnonymous()">
-            <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
-            </div>
-            <button type="submit">Delete</button>
-        </form>
+
+        <div th:if="${comment.user == null}">
+            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+        <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
+            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
         <br>
     </tr>
     <h4>Add comment</h4>

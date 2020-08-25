@@ -93,9 +93,8 @@ public class CommentController {
         //Post is present, comment is present, thread is not null
         if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
 
-            //Anonymous user or registered user?
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            //Owner of the comment Anonymous user or registered user?
+            if(optionalComment.get().getUser() == null) {
                 //Comment password is correct
                 if(optionalComment.get().getPassword().equals(password)) {
                     commentService.deleteById(commentId);
@@ -106,6 +105,7 @@ public class CommentController {
                 }
             }
             else {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User user = (User) auth.getPrincipal();
                 //Current logged in user is the owner of the comment
                 if(optionalComment.get().getUser().equals(user)) {
@@ -113,7 +113,7 @@ public class CommentController {
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
                 else {
-                    redirectAttr.addFlashAttribute("failMessage","This is not your comment");
+                    redirectAttr.addFlashAttribute("failMessage","Access denied");
                 }
             }
 

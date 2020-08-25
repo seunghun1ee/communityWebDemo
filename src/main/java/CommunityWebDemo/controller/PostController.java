@@ -10,6 +10,9 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +71,16 @@ public class PostController {
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
+            //Check if current user is registered or anonymous
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User currentUser = (User) auth.getPrincipal();
+                model.addAttribute("currentUser",currentUser);
+            }
+            else {
+                model.addAttribute("currentUser",null);
+            }
+
         }
         else throw new Exception();
 
