@@ -7,9 +7,10 @@
     <body>
         <h2>New User</h2>
         <form method="post" action="/users/new_user" th:object="${user}">
-            <input id="inputName" name="name" placeholder="Name" th:text="${name}" required>
+            <input type="text" id="inputName" name="username" placeholder="Username" th:text="${username}" required>
             <br>
-            <button type="submit">Register</button>
+            <input type="password" id="inputPassword" name="password" placeholder="Password" th:text="${password}" required>
+            <button type="submit">Sign up</button>
         </form>
     </body>
 </html>

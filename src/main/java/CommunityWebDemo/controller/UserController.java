@@ -7,6 +7,7 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +29,13 @@ public class UserController {
     PostService postService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-    @GetMapping("/users")
-    public @ResponseBody List<User> showUserList() {
-        return userService.getAll();
-    }
+//    @GetMapping("/users")
+//    public @ResponseBody List<User> showUserList() {
+//        return userService.getAll();
+//    }
 
     @GetMapping("/users/{id}")
     public String showUser(@PathVariable Long id, Model model) throws Exception{
@@ -53,8 +56,9 @@ public class UserController {
 
     @PostMapping("/users/new_user")
     public RedirectView saveNewUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.add(user);
-        return new RedirectView("/users");
+        return new RedirectView("/login");
     }
 
     @PostMapping("/users/{id}/delete")
