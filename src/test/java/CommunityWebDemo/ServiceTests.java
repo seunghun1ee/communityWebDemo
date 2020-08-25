@@ -214,10 +214,10 @@ public class ServiceTests {
         User user = new User("don't");
         userRepository.save(target);
         userRepository.save(user);
-        target.setName("new name");
+        target.setUsername("new name");
         userService.add(target);
         assertThat(userRepository.findById(target.getId()).isPresent()).isTrue();
-        assertThat(userRepository.findById(target.getId()).get().getName()).isEqualTo("new name");
+        assertThat(userRepository.findById(target.getId()).get().getUsername()).isEqualTo("new name");
     }
 
     @Test
@@ -243,7 +243,7 @@ public class ServiceTests {
         userService.deleteById(target.getId());
         List<User> result = userService.getAll();
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getName()).isEqualTo("don't");
+        assertThat(result.get(0).getUsername()).isEqualTo("don't");
     }
 
     @Test

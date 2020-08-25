@@ -58,7 +58,7 @@ public class DatabaseRelationshipTests {
         User dave = new User();
         User gary = new User();
         for(User user : users) {
-            if(user.getName().equals("dave")) {
+            if(user.getUsername().equals("dave")) {
                 dave = user;
             }
             else {

@@ -13,7 +13,7 @@
     <button id="upVoteButton" type="button" aria-pressed="false" onclick="upVote('upVoteButton','downVoteButton')">upVote</button>
     <button id="downVoteButton" type="button" aria-pressed="false" onclick="downVote('upVoteButton','downVoteButton')">downVote</button>
     <p th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></p>
-    <a th:unless="${post.user == null}" th:text="${post.user.name}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+    <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>
     <br>
     <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
@@ -29,7 +29,7 @@
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <tr th:each="comment : ${comments}">
         <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>
-        <p th:unless="${comment.user == null}" style="font-weight: bold" th:text="${comment.user?.name}"></p>
+        <p th:unless="${comment.user == null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
 
         <p th:text="${comment.message}"></p>
 <!--        <form th:action="@{/posts/{postId}/comments/{commentId}/edit(postId=${comment.post.id},commentId=${comment.id})}" method="get">-->
