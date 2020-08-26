@@ -8,11 +8,13 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -55,36 +57,36 @@ public class ThreadController {
     }
 
     @GetMapping("/{threadUrl}/settings")
-    public String threadSetting(@PathVariable String threadUrl, Model model) {
+    public String threadSetting(@PathVariable String threadUrl, Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(!optionalThread.isPresent()) {
-            return "error";
+        if(optionalThread.isPresent()) {
+            model.addAttribute("thread",optionalThread.get());
+            return "threadSettings";
         }
-        model.addAttribute("thread",optionalThread.get());
-        return "threadSettings";
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
     @PostMapping("/{threadUrl}/settings/edit")
-    public String saveThreadSetting(@PathVariable String threadUrl, Model model, String description) {
+    public String saveThreadSetting(@PathVariable String threadUrl, Model model, String description) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(!optionalThread.isPresent()) {
-            return "error";
+        if(optionalThread.isPresent()) {
+            Thread thread = optionalThread.get();
+            if(description == null) {
+                model.addAttribute("failMessage","Saving failed");
+            }
+            else {
+                thread.setDescription(description);
+                model.addAttribute("successMessage","Saved change");
+            }
+            model.addAttribute("thread",thread);
+            threadRepository.save(thread);
+            return "threadSettings";
         }
-        Thread thread = optionalThread.get();
-        if(description == null) {
-            model.addAttribute("failMessage","Saving failed");
-        }
-        else {
-            thread.setDescription(description);
-            model.addAttribute("successMessage","Saved change");
-        }
-        model.addAttribute("thread",thread);
-        threadRepository.save(thread);
-        return "threadSettings";
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
     @PostMapping("/{threadUrl}/delete")
-    public RedirectView deleteThread(@PathVariable String threadUrl) {
+    public RedirectView deleteThread(@PathVariable String threadUrl) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             Thread thread = optionalThread.get();
@@ -109,6 +111,6 @@ public class ThreadController {
             threadRepository.delete(thread);
             return new RedirectView("/");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 }

@@ -7,6 +7,7 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -32,13 +34,8 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-//    @GetMapping("/users")
-//    public @ResponseBody List<User> showUserList() {
-//        return userService.getAll();
-//    }
-
     @GetMapping("/users/{id}")
-    public String showUser(@PathVariable Long id, Model model) throws Exception{
+    public String showUser(@PathVariable Long id, Model model) throws ResponseStatusException {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             List<Post> posts = postService.getPostsOfUser(optionalUser.get());
@@ -46,7 +43,7 @@ public class UserController {
             model.addAttribute("posts",posts);
             return "user";
         }
-        else throw new Exception();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
     @GetMapping("/users/new_user")
@@ -62,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/delete")
-    public RedirectView deleteUser(@PathVariable Long id) {
+    public RedirectView deleteUser(@PathVariable Long id) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             List<Post> posts = postService.getPostsOfUser(optionalUser.get());
@@ -76,21 +73,21 @@ public class UserController {
             userService.deleteById(id);
             return new RedirectView("/users");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
     @GetMapping("/users/{id}/edit")
-    public String updateUser(@PathVariable Long id, Model model) {
+    public String updateUser(@PathVariable Long id, Model model) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             model.addAttribute("user",optionalUser.get());
             return "updateUser";
         }
-        else return "error";
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page not found");
     }
 
     @PostMapping("/users/{id}/edit")
-    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) {
+    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             User oldUser = optionalUser.get();
@@ -98,6 +95,6 @@ public class UserController {
             userService.add(user);
             return new RedirectView("/users/{id}");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 }

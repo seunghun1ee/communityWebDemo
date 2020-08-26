@@ -9,6 +9,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -41,7 +43,7 @@ public class CommentController {
     IpHandler ipHandler = new IpHandler();
 
     @PostMapping("/posts/{postId}/new_comment")
-    public RedirectView addComment(@PathVariable Long postId, Comment comment, HttpServletRequest request) {
+    public RedirectView addComment(@PathVariable Long postId, Comment comment, HttpServletRequest request) throws ResponseStatusException {
         Optional<Post> optionalPost = postService.getById(postId);
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
@@ -59,11 +61,11 @@ public class CommentController {
             }
             commentService.add(comment);
             if(post.getThread() == null) {
-                return new RedirectView("/error");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"No thread for the post");
             }
             return new RedirectView("/" + post.getThread().getUrl() + "/posts/{postId}");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
 //    @GetMapping("/posts/{postId}/comments/{commentId}/edit")
@@ -92,7 +94,7 @@ public class CommentController {
 //    }
 
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
-    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) {
+    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<Post> optionalPost = postService.getById(postId);
         Optional<Comment> optionalComment = commentService.getById(commentId);
         //Post is present, comment is present, thread is not null
@@ -132,6 +134,6 @@ public class CommentController {
 
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 }

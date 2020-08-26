@@ -155,7 +155,7 @@ public class PostController {
                 }
             }
         }
-        throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
     @GetMapping("/{threadUrl}/posts/{id}/edit")
@@ -230,7 +230,7 @@ public class PostController {
 
             return new RedirectView("/{threadUrl}/posts/{id}");
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
 }
