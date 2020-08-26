@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,8 @@ public class PostController {
     CommentService commentService;
     @Autowired
     ThreadService threadService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -103,12 +106,19 @@ public class PostController {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
         if(optionalThread.isPresent()) {
             newPost.setThread(optionalThread.get());
-            newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            //Post author Anonymous or Registered
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+                newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
+            }
+            else {
+                newPost.setUser((User) auth.getPrincipal());
+            }
         }
         else throw new Exception();
-        //temporary
-        //userService.add(testUser);
-        //newPost.setUser(testUser);
+
         postService.add(newPost);
         return new RedirectView("/{threadInitial}/posts");
     }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -11,7 +11,7 @@
         <br>
         <input type="text" id="inputBody" name="body" placeholder="Body" th:object="${body}" required>
         <br>
-        <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
+        <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
         <button type="submit">Publish</button>
     </form>
 </body>
