@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -124,26 +125,43 @@ public class PostController {
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/delete")
-    public RedirectView delete(@PathVariable String threadInitial ,@PathVariable Long id, String password) {
+    public RedirectView delete(@PathVariable String threadInitial , @PathVariable Long id, String password, RedirectAttributes redirectAttr) {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-        if (!optionalThread.isPresent()) {
-            return new RedirectView("/error");
-        }
 
         Optional<Post> optionalPost = postService.getById(id);
-        if(optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
-            if(optionalPost.get().getPassword().equals(password)) {
-                List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
-                commentService.deleteAll(comments);
-                postService.deleteById(id);
-                return new RedirectView("/{threadInitial}/posts");
+        //The thread is present, the post is present and the thread of the post is same
+        if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
+            Post post = optionalPost.get();
+            //Owner of the post Anonymous or Registered?
+            if(post.getUser() == null) {
+                //password match?
+                if(passwordEncoder.matches(password, post.getPassword())) {
+                    List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+                    commentService.deleteAll(comments);
+                    postService.deleteById(id);
+                    return new RedirectView("/{threadInitial}/posts");
+                }
+                //wrong password
+                else {
+                    return new RedirectView("/{threadInitial}/posts/{id}");
+                }
             }
+            //Registered user
             else {
-                return new RedirectView("/{threadInitial}/posts/{id}");
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                //Is current user the owner of the post?
+                if(post.getUser().equals(auth.getPrincipal())) {
+                    List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+                    commentService.deleteAll(comments);
+                    postService.deleteById(id);
+                    return new RedirectView("/{threadInitial}/posts");
+                }
+                else {
+                    return new RedirectView("/{threadInitial}/posts/{id}");
+                }
             }
-
         }
-        else return new RedirectView("/error");
+        return new RedirectView("/error");
     }
 
     @GetMapping("/{threadInitial}/posts/{id}/edit")

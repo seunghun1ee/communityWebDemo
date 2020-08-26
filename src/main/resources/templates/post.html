@@ -16,13 +16,23 @@
     <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>
     <br>
-    <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-        <button type="submit">Edit this post</button>
-    </form>
-    <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
-        <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
-        <button type="submit">Delete this post</button>
-    </form>
+    <div th:if="${post.user == null}">
+        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
+            <button type="submit">Edit this post</button>
+        </form>
+        <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
+            <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
+            <button type="submit">Delete this post</button>
+        </form>
+    </div>
+    <div th:if="${post.user != null and currentUser != null and post.user.id == currentUser.id}">
+        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
+            <button type="submit">Edit this post</button>
+        </form>
+        <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
+            <button type="submit">Delete this post</button>
+        </form>
+    </div>
 
     <h3>Comments</h3>
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
