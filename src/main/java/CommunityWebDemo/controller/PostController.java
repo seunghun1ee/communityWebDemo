@@ -202,22 +202,39 @@ public class PostController {
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/edit")
-    public RedirectView saveUpdatedPost(@PathVariable String threadInitial,@PathVariable Long id, Post post) {
+    public RedirectView saveUpdatedPost(@PathVariable String threadInitial,@PathVariable Long id, Post post,RedirectAttributes redirectAttr) {
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-        if(!optionalThread.isPresent()) {
-            return new RedirectView("/error");
-        }
-
         Optional<Post> optionalPost = postService.getById(id);
-        if(optionalPost.isPresent()) {
-            Post oldPost = optionalPost.get();
-            //check password
-            if(passwordEncoder.matches(post.getPassword(),oldPost.getPassword())) {
-                post.setId(oldPost.getId());
-                post.setUser(oldPost.getUser());
-                post.setIp(oldPost.getIp());
-                post.setThread(optionalThread.get());
-                postService.add(post);
+        //The thread and the post are present
+        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+            //apply changes
+            Post targetPost = optionalPost.get();
+            targetPost.setTitle(post.getTitle());
+            targetPost.setBody(post.getBody());
+            //the owner of the post registered or anonymous?
+            if(targetPost.getUser() != null) {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                //current user is the owner of the post
+                if(targetPost.getUser().equals(auth.getPrincipal())) {
+                    postService.add(targetPost);
+                }
+                //wrong user
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Access denied");
+                }
+            }
+            //owner of the post is anonymous
+            else {
+                //check password
+                if(passwordEncoder.matches(post.getPassword(),targetPost.getPassword())) {
+                    postService.add(targetPost);
+                }
+                //wrong password
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                    //redirectAttr.addFlashAttribute("post",post);
+                    return new RedirectView("/{threadInitial}/posts/{id}/edit");
+                }
             }
 
             return new RedirectView("/{threadInitial}/posts/{id}");

@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
     <body>
+        <div th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>Edit post</h2>
         <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="post" th:object="${post}">
             <input type="text" id="inputTitle" name="title" th:value="${post.title}" th:object="${title}" required>
             <br>
             <input type="text" id="inputBody" name="body" th:value="${post.body}" th:object="${body}" required>
             <br>
-            <input type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
+            <input sec:authorize="isAnonymous()" type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
             <button type="submit">Save</button>
         </form>
     </body>
