@@ -173,12 +173,12 @@ public class PostController {
         Optional<Post> optionalPost = postService.getById(id);
         //The thread is present, the post is present
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
+            Post post = optionalPost.get();
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //is this post owned by registered user?
             if(optionalPost.get().getUser() != null) {
                 //current user is the owner of the post
                 if(optionalPost.get().getUser().equals(auth.getPrincipal())) {
-                    Post post = optionalPost.get();
                     model.addAttribute("thread",optionalThread.get());
                     model.addAttribute("post", post);
                     return "updatePost";
@@ -189,15 +189,15 @@ public class PostController {
                     return "redirect:/{threadInitial}/posts/{id}";
                 }
             }
+            //This post was written by anonymous user
             else {
-                //This post was written by anonymous user
-                Post post = optionalPost.get();
                 model.addAttribute("thread",optionalThread.get());
                 model.addAttribute("post", post);
                 return "updatePost";
             }
 
         }
+        //thread or post is not present, throw exception
         throw new Exception();
     }
 
@@ -223,6 +223,16 @@ public class PostController {
             return new RedirectView("/{threadInitial}/posts/{id}");
         }
         else return new RedirectView("/error");
+    }
+
+    @GetMapping("/{threadUrl}/posts/{id}/password_check")
+    public String postPasswordCheck(@PathVariable String threadUrl, @PathVariable Long id) {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+            return "postPasswordCheck";
+        }
+        return "error";
     }
 
 }
