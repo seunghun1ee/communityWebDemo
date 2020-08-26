@@ -6,6 +6,8 @@
 </head>
 <body>
     <p><a th:href="@{/{t}/posts(t=${thread.url})}" th:text="'/' + ${thread.url}"></a></p>
+    <div th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <h2 th:text="${post.title}"></h2>
     <span>[vote: </span>
     <span th:id="voteCount" th:text="${post.vote}"></span>
@@ -35,8 +37,6 @@
     </div>
 
     <h3>Comments</h3>
-    <div th:if="${successMessage}" th:text="${successMessage}"></div>
-    <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <article th:each="comment : ${comments}">
         <article th:if="${comment.active}">
             <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>

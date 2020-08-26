@@ -6,6 +6,8 @@
 </head>
 <body>
     <p><a href="/">Home</a></p>
+    <div th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <h2 th:text="'Posts in ' + ${thread.name}"></h2>
     <p th:text="${thread.description}"></p>
     <tr th:each="post : ${posts}">

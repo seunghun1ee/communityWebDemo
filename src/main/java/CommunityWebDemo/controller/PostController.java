@@ -124,10 +124,9 @@ public class PostController {
         return new RedirectView("/{threadInitial}/posts");
     }
 
-    @PostMapping("/{threadInitial}/posts/{id}/delete")
-    public RedirectView delete(@PathVariable String threadInitial , @PathVariable Long id, String password, RedirectAttributes redirectAttr) {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-
+    @PostMapping("/{threadUrl}/posts/{id}/delete")
+    public RedirectView delete(@PathVariable String threadUrl, @PathVariable Long id, String password, RedirectAttributes redirectAttr) {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         //The thread is present, the post is present and the thread of the post is same
         if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
@@ -139,11 +138,13 @@ public class PostController {
                     List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                     commentService.deleteAll(comments);
                     postService.deleteById(id);
-                    return new RedirectView("/{threadInitial}/posts");
+                    redirectAttr.addFlashAttribute("successMessage","The post is deleted");
+                    return new RedirectView("/{threadUrl}/posts");
                 }
                 //wrong password
                 else {
-                    return new RedirectView("/{threadInitial}/posts/{id}");
+                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                    return new RedirectView("/{threadUrl}/posts/{id}");
                 }
             }
             //Registered user
@@ -154,10 +155,12 @@ public class PostController {
                     List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                     commentService.deleteAll(comments);
                     postService.deleteById(id);
-                    return new RedirectView("/{threadInitial}/posts");
+                    redirectAttr.addFlashAttribute("successMessage","The post is deleted");
+                    return new RedirectView("/{threadUrl}/posts");
                 }
                 else {
-                    return new RedirectView("/{threadInitial}/posts/{id}");
+                    redirectAttr.addFlashAttribute("failMessage","Access Denied");
+                    return new RedirectView("/{threadUrl}/posts/{id}");
                 }
             }
         }
