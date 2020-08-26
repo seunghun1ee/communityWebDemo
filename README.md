@@ -29,7 +29,7 @@ The project aims the website to have two major features
 * [x] Multiple threads
 * [x] Guests can post and comment
 * [x] Guests can vote
-* [ ] Sign in/Sign up
+* [x] Sign in/Sign up
 * [x] Users with account can post and comment
 * [ ] Users with account can vote
 * [ ] Frontend design
