@@ -27,8 +27,8 @@
     <h3>Comments</h3>
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
-    <tr th:each="comment : ${comments}">
-        <div th:if="${comment.active}">
+    <article th:each="comment : ${comments}">
+        <article th:if="${comment.active}">
             <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>
             <p th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
 
@@ -45,12 +45,13 @@
                     <button type="submit">Delete</button>
                 </form>
             </div>
-        </div>
-        <div th:unless="${comment.active}">
+            <p>----------------</p>
+        </article>
+        <article th:unless="${comment.active}">
             <p>[Deleted comment]</p>
-        </div>
-        <br>
-    </tr>
+            <p>----------------</p>
+        </article>
+    </article>
     <h4>Add comment</h4>
     <form th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
         <input type="text" id="inputMessage" name="message" placeholder="Message" th:object="${message}" required>
