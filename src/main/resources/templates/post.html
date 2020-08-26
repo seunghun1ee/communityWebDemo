@@ -31,9 +31,6 @@
         <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
             <button type="submit">Edit this post</button>
         </form>
-        <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
-            <button type="submit">Delete this post</button>
-        </form>
     </div>
 
     <h3>Comments</h3>

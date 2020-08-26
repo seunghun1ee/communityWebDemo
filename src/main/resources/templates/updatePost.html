@@ -16,5 +16,12 @@
             <input sec:authorize="isAnonymous()" type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
             <button type="submit">Save</button>
         </form>
+        <form th:if="${post.user == null}" th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
+            <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
+            <button type="submit">Delete this post</button>
+        </form>
+        <form th:if="${post.user != null}" th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
+            <button type="submit">Delete this post</button>
+        </form>
     </body>
 </html>
