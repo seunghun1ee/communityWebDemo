@@ -53,8 +53,8 @@ public class HomeController {
         postService.deleteAll();
         userService.deleteAll();
         threadRepository.deleteAll();
-        User adam = new User("Adam",passwordEncoder.encode("1234"));
-        User eve = new User("Eve",passwordEncoder.encode("1234"));
+        User adam = new User("adam",passwordEncoder.encode("1234"));
+        User eve = new User("eve",passwordEncoder.encode("1234"));
         userService.add(adam);
         userService.add(eve);
 
