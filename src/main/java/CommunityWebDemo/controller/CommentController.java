@@ -92,12 +92,16 @@ public class CommentController {
         Optional<Comment> optionalComment = commentService.getById(commentId);
         //Post is present, comment is present, thread is not null
         if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
-
+            Comment comment = optionalComment.get();
             //Owner of the comment Anonymous user or registered user?
-            if(optionalComment.get().getUser() == null) {
+            if(comment.getUser() == null) {
                 //Comment password is correct
-                if(optionalComment.get().getPassword().equals(password)) {
-                    commentService.deleteById(commentId);
+                if(comment.getPassword().equals(password)) {
+                    comment.setMessage(null);
+                    comment.setIp(null);
+                    comment.setPassword(null);
+                    comment.setActive(false);
+                    commentService.add(comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
                 else {
@@ -108,8 +112,11 @@ public class CommentController {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User user = (User) auth.getPrincipal();
                 //Current logged in user is the owner of the comment
-                if(optionalComment.get().getUser().equals(user)) {
-                    commentService.deleteById(commentId);
+                if(comment.getUser().equals(user)) {
+                    comment.setMessage(null);
+                    comment.setUser(null);
+                    comment.setActive(false);
+                    commentService.add(comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
                 else {

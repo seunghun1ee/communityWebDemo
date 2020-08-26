@@ -28,21 +28,26 @@
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <tr th:each="comment : ${comments}">
-        <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>
-        <p th:unless="${comment.user == null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
+        <div th:if="${comment.active}">
+            <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>
+            <p th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
 
-        <p th:text="${comment.message}"></p>
+            <p th:text="${comment.message}"></p>
 
-        <div th:if="${comment.user == null}">
-            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
-                <button type="submit">Delete</button>
-            </form>
+            <div th:if="${comment.user == null}">
+                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                    <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+            <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
+                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
         </div>
-        <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
-            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                <button type="submit">Delete</button>
-            </form>
+        <div th:unless="${comment.active}">
+            <p>[Deleted comment]</p>
         </div>
         <br>
     </tr>
