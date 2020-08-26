@@ -225,14 +225,4 @@ public class PostController {
         else return new RedirectView("/error");
     }
 
-    @GetMapping("/{threadUrl}/posts/{id}/password_check")
-    public String postPasswordCheck(@PathVariable String threadUrl, @PathVariable Long id) {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(id);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
-            return "postPasswordCheck";
-        }
-        return "error";
-    }
-
 }
