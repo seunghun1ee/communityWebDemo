@@ -21,6 +21,8 @@ public class Comment {
     private String password;
     private String message;
 
+    private boolean active = true;
+
 
     public Comment() {
 
@@ -80,12 +82,21 @@ public class Comment {
         this.ip = ip;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return Objects.equals(id, comment.id) &&
+        return active == comment.active &&
+                Objects.equals(id, comment.id) &&
                 Objects.equals(post, comment.post) &&
                 Objects.equals(user, comment.user) &&
                 Objects.equals(ip, comment.ip) &&
@@ -95,6 +106,6 @@ public class Comment {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, post, user, ip, password, message);
+        return Objects.hash(id, post, user, ip, password, message, active);
     }
 }
