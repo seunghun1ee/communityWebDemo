@@ -210,9 +210,9 @@ public class PostController {
 
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalPost.isPresent()) {
+            Post oldPost = optionalPost.get();
             //check password
-            if(optionalPost.get().getPassword().equals(post.getPassword())) {
-                Post oldPost = optionalPost.get();
+            if(passwordEncoder.matches(post.getPassword(),oldPost.getPassword())) {
                 post.setId(oldPost.getId());
                 post.setUser(oldPost.getUser());
                 post.setIp(oldPost.getIp());
