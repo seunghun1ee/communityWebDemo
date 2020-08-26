@@ -168,20 +168,37 @@ public class PostController {
     }
 
     @GetMapping("/{threadInitial}/posts/{id}/edit")
-    public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception{
+    public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model, RedirectAttributes redirectAttr) throws Exception{
         Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-        if(!optionalThread.isPresent()) {
-            throw new Exception();
-        }
         Optional<Post> optionalPost = postService.getById(id);
-        Post post;
-        if(optionalPost.isPresent()) {
-            post = optionalPost.get();
-            model.addAttribute("thread",optionalThread.get());
-            model.addAttribute("post", post);
-            return "updatePost";
+        //The thread is present, the post is present
+        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            //is this post owned by registered user?
+            if(optionalPost.get().getUser() != null) {
+                //current user is the owner of the post
+                if(optionalPost.get().getUser().equals(auth.getPrincipal())) {
+                    Post post = optionalPost.get();
+                    model.addAttribute("thread",optionalThread.get());
+                    model.addAttribute("post", post);
+                    return "updatePost";
+                }
+                //current user is not the owner of the post
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Access denied");
+                    return "redirect:/{threadInitial}/posts/{id}";
+                }
+            }
+            else {
+                //This post was written by anonymous user
+                Post post = optionalPost.get();
+                model.addAttribute("thread",optionalThread.get());
+                model.addAttribute("post", post);
+                return "updatePost";
+            }
+
         }
-        else throw new Exception();
+        throw new Exception();
     }
 
     @PostMapping("/{threadInitial}/posts/{id}/edit")
