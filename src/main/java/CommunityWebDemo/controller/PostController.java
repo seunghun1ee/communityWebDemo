@@ -10,6 +10,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -42,36 +44,25 @@ public class PostController {
 
     User testUser = new User("tester");
 
-    @GetMapping("/{threadInitial}/posts")
-    public String showAllPostsOfThread(@PathVariable String threadInitial,Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-        List<Post> posts;
-        String threadName;
+    @GetMapping("/{threadUrl}/posts")
+    public String showAllPostsOfThread(@PathVariable String threadUrl,Model model) throws ResponseStatusException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
-            posts = postService.getPostsOfThread(optionalThread.get());
+            List<Post> posts = postService.getPostsOfThread(optionalThread.get());
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("posts",posts);
             return "postList";
         }
-        else throw new Exception();
-
-
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    @GetMapping("/{threadInitial}/posts/{id}")
-    public String showPostById(@PathVariable String threadInitial, @PathVariable Long id, Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
-        if(optionalThread.isPresent()) {
-            Optional<Post> optionalPost = postService.getById(id);
-
-            List<Comment> comments;
-
-            Post post;
-            if(optionalPost.isPresent()) {
-                post = optionalPost.get();
-                comments = commentService.getCommentsOfPost(post);
-            }
-            else throw new Exception();
+    @GetMapping("/{threadUrl}/posts/{id}")
+    public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model) throws ResponseStatusException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            List<Comment> comments = commentService.getCommentsOfPost(post);
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
@@ -86,25 +77,25 @@ public class PostController {
             }
 
         }
-        else throw new Exception();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
         return "post";
     }
 
-    @GetMapping("/{threadInitial}/new_post")
-    public String newPost(@PathVariable String threadInitial, Model model) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
+    @GetMapping("/{threadUrl}/new_post")
+    public String newPost(@PathVariable String threadUrl, Model model) throws ResponseStatusException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             model.addAttribute("thread",optionalThread.get());
             return "newPost";
         }
-        else throw new Exception();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
     }
 
-    @PostMapping("/{threadInitial}/new_post")
-    public RedirectView saveNewPost(@PathVariable String threadInitial, Post newPost, HttpServletRequest request) throws Exception {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
+    @PostMapping("/{threadUrl}/new_post")
+    public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, HttpServletRequest request) throws ResponseStatusException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             newPost.setThread(optionalThread.get());
 
@@ -118,14 +109,14 @@ public class PostController {
                 newPost.setUser((User) auth.getPrincipal());
             }
         }
-        else throw new Exception();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
         postService.add(newPost);
-        return new RedirectView("/{threadInitial}/posts");
+        return new RedirectView("/{threadUrl}/posts");
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/delete")
-    public RedirectView delete(@PathVariable String threadUrl, @PathVariable Long id, String password, RedirectAttributes redirectAttr) {
+    public RedirectView delete(@PathVariable String threadUrl, @PathVariable Long id, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         //The thread is present, the post is present and the thread of the post is same
@@ -164,12 +155,12 @@ public class PostController {
                 }
             }
         }
-        return new RedirectView("/error");
+        throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    @GetMapping("/{threadInitial}/posts/{id}/edit")
-    public String updatePost(@PathVariable String threadInitial, @PathVariable Long id, Model model, RedirectAttributes redirectAttr) throws Exception{
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
+    @GetMapping("/{threadUrl}/posts/{id}/edit")
+    public String updatePost(@PathVariable String threadUrl, @PathVariable Long id, Model model, RedirectAttributes redirectAttr) throws ResponseStatusException{
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         //The thread is present, the post is present
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -186,7 +177,7 @@ public class PostController {
                 //current user is not the owner of the post
                 else {
                     redirectAttr.addFlashAttribute("failMessage","Access denied");
-                    return "redirect:/{threadInitial}/posts/{id}";
+                    return "redirect:/{threadUrl}/posts/{id}";
                 }
             }
             //This post was written by anonymous user
@@ -198,12 +189,12 @@ public class PostController {
 
         }
         //thread or post is not present, throw exception
-        throw new Exception();
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    @PostMapping("/{threadInitial}/posts/{id}/edit")
-    public RedirectView saveUpdatedPost(@PathVariable String threadInitial,@PathVariable Long id, Post post,RedirectAttributes redirectAttr) {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadInitial);
+    @PostMapping("/{threadUrl}/posts/{id}/edit")
+    public RedirectView saveUpdatedPost(@PathVariable String threadUrl,@PathVariable Long id, Post post,RedirectAttributes redirectAttr) throws ResponseStatusException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         //The thread and the post are present
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -233,13 +224,13 @@ public class PostController {
                 else {
                     redirectAttr.addFlashAttribute("failMessage","Wrong password");
                     //redirectAttr.addFlashAttribute("post",post);
-                    return new RedirectView("/{threadInitial}/posts/{id}/edit");
+                    return new RedirectView("/{threadUrl}/posts/{id}/edit");
                 }
             }
 
-            return new RedirectView("/{threadInitial}/posts/{id}");
+            return new RedirectView("/{threadUrl}/posts/{id}");
         }
-        else return new RedirectView("/error");
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
 }
