@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,9 @@ public class CommentController {
     CommentService commentService;
     @Autowired
     ThreadService threadService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     IpHandler ipHandler = new IpHandler();
 
     @PostMapping("/posts/{postId}/new_comment")
@@ -47,6 +51,7 @@ public class CommentController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+                comment.setPassword(passwordEncoder.encode(comment.getPassword()));
             }
             else {
                 User user = (User) auth.getPrincipal();
@@ -96,7 +101,7 @@ public class CommentController {
             //Owner of the comment Anonymous user or registered user?
             if(comment.getUser() == null) {
                 //Comment password is correct
-                if(comment.getPassword().equals(password)) {
+                if(passwordEncoder.matches(password, comment.getPassword())) {
                     comment.setMessage(null);
                     comment.setIp(null);
                     comment.setPassword(null);
