@@ -8,13 +8,15 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -62,16 +64,41 @@ public class UserController {
     public RedirectView deleteUser(@PathVariable Long id) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
-            List<Post> posts = postService.getPostsOfUser(optionalUser.get());
-
-            List<Comment> comments = new ArrayList<>();
-            for(Post post : posts) {
-                comments.addAll(commentService.getCommentsOfPost(post));
+            //is current user anonymous or registered?
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            //Anonymous
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
             }
-            commentService.deleteAll(comments);
-            postService.deleteAll(posts);
-            userService.deleteById(id);
-            return new RedirectView("/users");
+            //registered
+            else {
+                //is this profile of current user?
+                if(optionalUser.get().equals(auth.getPrincipal())) {
+                    List<Post> posts = postService.getPostsOfUser(optionalUser.get());
+                    List<Comment> allComments = commentService.getAll();
+                    List<Comment> comments = new ArrayList<>();
+                    for(Comment comment : allComments) {
+                        //All comments from the user
+                        if(comment.getUser().equals(optionalUser.get())) {
+                            comments.add(comment);
+                            break;
+                        }
+                        //All comments from posts that user made
+                        for(Post post : posts) {
+                            if(comment.getPost().equals(post)) {
+                                comments.add(comment);
+                                break;
+                            }
+                        }
+                    }
+                    commentService.deleteAll(comments);
+                    postService.deleteAll(posts);
+                    userService.deleteById(id);
+                    return new RedirectView("/users/{id}");
+                }
+                //no
+                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+            }
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
