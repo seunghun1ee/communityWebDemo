@@ -104,11 +104,7 @@ public class CommentController {
             if(comment.getUser() == null) {
                 //Comment password is correct
                 if(passwordEncoder.matches(password, comment.getPassword())) {
-                    comment.setMessage(null);
-                    comment.setIp(null);
-                    comment.setPassword(null);
-                    comment.setActive(false);
-                    commentService.add(comment);
+                    emptyComment(commentService,comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
                 else {
@@ -120,10 +116,7 @@ public class CommentController {
                 User user = (User) auth.getPrincipal();
                 //Current logged in user is the owner of the comment
                 if(comment.getUser().equals(user)) {
-                    comment.setMessage(null);
-                    comment.setUser(null);
-                    comment.setActive(false);
-                    commentService.add(comment);
+                    emptyComment(commentService,comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
                 else {
@@ -135,5 +128,12 @@ public class CommentController {
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+    }
+
+    public void emptyComment(CommentService commentService,Comment comment) {
+        comment.setMessage(null);
+        comment.setUser(null);
+        comment.setActive(false);
+        commentService.add(comment);
     }
 }
