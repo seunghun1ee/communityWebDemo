@@ -9,7 +9,6 @@ import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -68,39 +67,32 @@ public class UserController {
         if(optionalUser.isPresent()) {
             //is current user anonymous or registered?
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //Anonymous
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
-            }
-            //registered
-            else {
-                //is this profile of current user?
-                if(optionalUser.get().equals(auth.getPrincipal())) {
-                    List<Post> posts = postService.getPostsOfUser(optionalUser.get());
-                    List<Comment> allComments = commentService.getAll();
-                    List<Comment> commentsFromUser = new ArrayList<>();
-                    List<Comment> commentsFromPosts = new ArrayList<>();
-                    //All comments from the user
-                    for(Comment comment : allComments) {
-                        if(comment.getUser().equals(optionalUser.get())) {
-                            commentsFromUser.add(comment);
-                        }
+            //is this profile of current user?
+            if(optionalUser.get().equals(auth.getPrincipal())) {
+                List<Post> posts = postService.getPostsOfUser(optionalUser.get());
+                List<Comment> allComments = commentService.getAll();
+                List<Comment> commentsFromUser = new ArrayList<>();
+                List<Comment> commentsFromPosts = new ArrayList<>();
+                //All comments from the user
+                for(Comment comment : allComments) {
+                    if(comment.getUser().equals(optionalUser.get())) {
+                        commentsFromUser.add(comment);
                     }
-                    //All comments from posts that user made
-                    for(Post post : posts) {
-                        commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
-                    }
-                    for(Comment comment : commentsFromUser) {
-                        commentController.emptyComment(commentService,comment);
-                    }
-                    commentService.deleteAll(commentsFromPosts);
-                    postService.deleteAll(posts);
-                    userService.deleteById(id);
-                    return new RedirectView("/logout");
                 }
-                //no
-                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+                //All comments from posts that user made
+                for(Post post : posts) {
+                    commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
+                }
+                for(Comment comment : commentsFromUser) {
+                    commentController.emptyComment(commentService,comment);
+                }
+                commentService.deleteAll(commentsFromPosts);
+                postService.deleteAll(posts);
+                userService.deleteById(id);
+                return new RedirectView("/logout");
             }
+            //no
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
@@ -109,8 +101,13 @@ public class UserController {
     public String updateUser(@PathVariable Long id, Model model) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
-            model.addAttribute("user",optionalUser.get());
-            return "updateUser";
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(optionalUser.get().equals(auth.getPrincipal())) {
+                model.addAttribute("user",optionalUser.get());
+                return "updateUser";
+            }
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page not found");
     }
