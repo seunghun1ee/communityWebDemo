@@ -102,12 +102,12 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            //is this profile of current user?
             if(optionalUser.get().equals(auth.getPrincipal())) {
                 model.addAttribute("user",optionalUser.get());
                 return "updateUser";
             }
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
-
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page not found");
     }
@@ -116,10 +116,15 @@ public class UserController {
     public RedirectView saveUpdatedUser(@PathVariable Long id, User user) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
-            User oldUser = optionalUser.get();
-            user.setId(oldUser.getId());
-            userService.add(user);
-            return new RedirectView("/users/{id}");
+            //is this profile of current user?
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(optionalUser.get().equals(auth.getPrincipal())) {
+                User targetUser = optionalUser.get();
+                targetUser.setUsername(user.getUsername());
+                userService.add(targetUser);
+                return new RedirectView("/users/{id}");
+            }
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
