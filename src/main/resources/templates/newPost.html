@@ -6,10 +6,10 @@
 </head>
 <body>
     <h2>New post</h2>
-    <form th:action="@{/{ti}/new_post(ti=${thread.url})}" method="post" th:object="${newPost}">
+    <form id="newPost" th:action="@{/{ti}/new_post(ti=${thread.url})}" method="post" th:object="${newPost}">
         <input type="text" id="inputTitle" name="title" placeholder="Title" th:object="${title}" required>
         <br>
-        <input type="text" id="inputBody" name="body" placeholder="Body" th:object="${body}" required>
+        <textarea id="inputBody" form="newPost" name="body" placeholder="Body" th:object="${body}" rows="6" cols="35" required></textarea>
         <br>
         <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
         <button type="submit">Publish</button>

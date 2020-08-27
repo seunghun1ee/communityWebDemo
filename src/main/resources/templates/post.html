@@ -56,11 +56,10 @@
         </article>
     </article>
     <h4>Add comment</h4>
-    <form th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
-        <input type="text" id="inputMessage" name="message" placeholder="Message" th:object="${message}" required>
-        <div sec:authorize="isAnonymous()">
-            <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
-        </div>
+    <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
+        <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="6" cols="35" required></textarea>
+        <br>
+        <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
         <br>
         <button type="submit">Submit</button>
     </form>

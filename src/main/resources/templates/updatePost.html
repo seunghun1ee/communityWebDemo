@@ -8,11 +8,12 @@
         <div th:if="${successMessage}" th:text="${successMessage}"></div>
         <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>Edit post</h2>
-        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="post" th:object="${post}">
-            <input type="text" id="inputTitle" name="title" th:value="${post.title}" th:object="${title}" required>
+        <form id="editPost" th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="post" th:object="${post}">
+            <input type="text" id="inputTitle" name="title" placeholder="Title" th:value="${post.title}" th:object="${title}" required>
             <br>
-            <input type="text" id="inputBody" name="body" th:value="${post.body}" th:object="${body}" required>
+            <textarea id="inputBody" form="editPost" name="body" placeholder="Body" th:text="${post.body}" th:object="${body}" rows="6" cols="35" required></textarea>
             <br>
+
             <input sec:authorize="isAnonymous()" type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
             <button type="submit">Save</button>
         </form>
