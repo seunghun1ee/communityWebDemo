@@ -42,8 +42,6 @@ public class PostController {
 
     IpHandler ipHandler = new IpHandler();
 
-    User testUser = new User("tester");
-
     @GetMapping("/{threadUrl}/posts")
     public String showAllPostsOfThread(@PathVariable String threadUrl,Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
