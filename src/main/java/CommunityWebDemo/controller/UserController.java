@@ -35,6 +35,8 @@ public class UserController {
     CommentService commentService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CommentController commentController;
 
     @GetMapping("/users/{id}")
     public String showUser(@PathVariable Long id, Model model) throws ResponseStatusException {
@@ -76,25 +78,25 @@ public class UserController {
                 if(optionalUser.get().equals(auth.getPrincipal())) {
                     List<Post> posts = postService.getPostsOfUser(optionalUser.get());
                     List<Comment> allComments = commentService.getAll();
-                    List<Comment> comments = new ArrayList<>();
+                    List<Comment> commentsFromUser = new ArrayList<>();
+                    List<Comment> commentsFromPosts = new ArrayList<>();
+                    //All comments from the user
                     for(Comment comment : allComments) {
-                        //All comments from the user
                         if(comment.getUser().equals(optionalUser.get())) {
-                            comments.add(comment);
-                            break;
-                        }
-                        //All comments from posts that user made
-                        for(Post post : posts) {
-                            if(comment.getPost().equals(post)) {
-                                comments.add(comment);
-                                break;
-                            }
+                            commentsFromUser.add(comment);
                         }
                     }
-                    commentService.deleteAll(comments);
+                    //All comments from posts that user made
+                    for(Post post : posts) {
+                        commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
+                    }
+                    for(Comment comment : commentsFromUser) {
+                        commentController.emptyComment(commentService,comment);
+                    }
+                    commentService.deleteAll(commentsFromPosts);
                     postService.deleteAll(posts);
                     userService.deleteById(id);
-                    return new RedirectView("/users/{id}");
+                    return new RedirectView("/logout");
                 }
                 //no
                 else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
