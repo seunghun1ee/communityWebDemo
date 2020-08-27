@@ -65,7 +65,6 @@ public class UserController {
     public RedirectView deleteUser(@PathVariable Long id) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
-            //is current user anonymous or registered?
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //is this profile of current user?
             if(optionalUser.get().equals(auth.getPrincipal())) {
