@@ -231,4 +231,18 @@ public class PostController {
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
+    @GetMapping("/posts/{id}")
+    public RedirectView redirectPostToThread(@PathVariable Long id) throws ResponseStatusException{
+        Optional<Post> optionalPost = postService.getById(id);
+        if(optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            Optional<Thread> optionalThread = threadService.getByUrl(post.getThread().getUrl());
+            if(optionalThread.isPresent()) {
+                String threadUrl = optionalThread.get().getUrl();
+                return new RedirectView("/"+threadUrl+"/posts/{id}");
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+    }
+
 }
