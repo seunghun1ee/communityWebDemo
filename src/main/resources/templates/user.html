@@ -9,7 +9,7 @@
         <h3 th:text="${user.username}"></h3>
         <h4>Posts</h4>
         <tr th:each="post : ${posts}">
-            <a th:text="${post.title}" th:href="@{/{thread}/posts/{id}(thread=${post.thread.url} ,id=${post.id})}"></a><br>
+            <li><a th:text="${post.title}" th:href="@{/{thread}/posts/{id}(thread=${post.thread.url} ,id=${post.id})}"></a></li>
         </tr>
         <form th:action="@{/users/{id}/edit(id=${user.id})}" method="get">
             <button type="submit">Edit this user</button>
