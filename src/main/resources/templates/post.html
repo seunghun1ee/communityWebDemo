@@ -22,10 +22,6 @@
         <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
             <button type="submit">Edit this post</button>
         </form>
-        <form th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
-            <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
-            <button type="submit">Delete this post</button>
-        </form>
     </div>
     <div th:if="${post.user != null and currentUser != null and post.user.id == currentUser.id}">
         <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
