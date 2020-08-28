@@ -11,5 +11,16 @@
             <br>
             <button type="submit">Save</button>
         </form>
+
+        <h2>Change password</h2>
+        <form>
+            <input type="password" id="inputCurrentPassword" name="currentPassword" placeholder="Current password" th:object="${currentPassword}" required>
+            <br>
+            <input type="password" id="inputNewPassword" name="newPassword" placeholder="New password" th:object="${newPassword}" required>
+            <br>
+            <input type="password" id="inputRepeatPassword" name="repeatPassword" placeholder="Confirm new password" th:object="${repeatPassword}" required>
+            <br>
+            <button type="submit">Save</button>
+        </form>
     </body>
 </html>
