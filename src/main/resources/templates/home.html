@@ -7,7 +7,7 @@
 <body>
     <h2>Hello world</h2>
     <div sec:authorize="isAuthenticated()">
-        <p>Welcome, <a th:href="@{/users/{id}(id=${user.id})}" sec:authentication="name"></a></p>
+        <p>Welcome, <a th:href="@{/users/{id}(id=${user.id})}" th:text="${user.username}"></a></p>
         <p><a href="/logout">Sign out</a></p>
     </div>
     <div sec:authorize="isAnonymous()">

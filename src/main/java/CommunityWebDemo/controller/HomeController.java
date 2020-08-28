@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
@@ -41,8 +42,12 @@ public class HomeController {
         model.addAttribute("threads",threads);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-            User user = (User) auth.getPrincipal();
-            model.addAttribute("user",user);
+            User authUser = (User) auth.getPrincipal();
+            Optional<User> loginUser = userService.getById(authUser.getId());
+            if(loginUser.isPresent()) {
+                model.addAttribute("user",loginUser.get());
+            }
+            else return "redirect:/logout";
         }
         return "home";
     }
