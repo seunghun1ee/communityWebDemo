@@ -31,7 +31,7 @@ public class VoteController {
     PostService postService;
 
     @PostMapping("/{threadUrl}/posts/{id}/vote/{type}")
-    public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @PathVariable String type, HttpServletRequest request) throws JSONException {
+    public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @PathVariable String type, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -44,24 +44,13 @@ public class VoteController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //Anonymous
             if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                for(int i = 0; i < guestVoterList.length(); i++) {
-                    if(guestVoterList.getString(i).equals(request.getRemoteAddr())) {
-                        return "already voted";
-                    }
-                }
                 guestVoterList.put(request.getRemoteAddr());
             }
             //registered
             else {
                 User currentUser = (User) auth.getPrincipal();
-                for(int i = 0; i < userVoterList.length(); i++) {
-                    if(userVoterList.getLong(i) == currentUser.getId()) {
-                        return "already voted";
-                    }
-                }
                 userVoterList.put(currentUser.getId());
             }
-            //not voted before
             switch (type) {
                 case "upvote":
                     post.setVote(vote + 1);
@@ -72,13 +61,12 @@ public class VoteController {
                 default:
                     return "failed";
             }
-
             String stringVoteList = voterObject.toString();
             post.setVoterList(stringVoteList);
             postService.add(post);
             return "success";
         }
-        return "failed";
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/checkVoteBefore")
