@@ -123,16 +123,23 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/changeUsername")
-    public RedirectView saveNewUsername(@PathVariable Long id, User user) throws ResponseStatusException{
+    public RedirectView saveNewUsername(@PathVariable Long id, String username, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             //is this profile of current user?
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(optionalUser.get().equals(auth.getPrincipal())) {
                 User targetUser = optionalUser.get();
-                targetUser.setUsername(user.getUsername());
-                userService.add(targetUser);
-                return new RedirectView("/users/{id}");
+                if(passwordEncoder.matches(password,targetUser.getPassword())) {
+                    targetUser.setUsername(username);
+                    userService.add(targetUser);
+                    redirectAttr.addFlashAttribute("successMessage","Username change success");
+                    return new RedirectView("/users/{id}");
+                }
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                    return new RedirectView("/users/{id}/edit");
+                }
             }
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }

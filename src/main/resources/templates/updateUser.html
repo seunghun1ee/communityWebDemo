@@ -8,8 +8,10 @@
         <div th:if="${successMessage}" th:text="${successMessage}"></div>
         <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>Change user name</h2>
-        <form th:action="@{/users/{id}/changeUsername(id=${user.id})}" method="post" th:object="${user}">
-            <input type="text" id="inputUsername" name="username" placeholder="Username" th:value="${user.username}" th:object="${name}" required>
+        <form th:action="@{/users/{id}/changeUsername(id=${user.id})}" method="post">
+            <input type="text" id="inputUsername" name="username" placeholder="Username" th:value="${user.username}" th:object="${username}" required>
+            <br>
+            <input type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
             <br>
             <button type="submit">Save</button>
         </form>
