@@ -77,8 +77,9 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) auth.getPrincipal();
             //is this profile of current user?
-            if(optionalUser.get().equals(auth.getPrincipal())) {
+            if(optionalUser.get().getId().equals(authUser.getId())) {
                 List<Post> posts = postService.getPostsOfUser(optionalUser.get());
                 List<Comment> allComments = commentService.getAll();
                 List<Comment> commentsFromUser = new ArrayList<>();
@@ -112,8 +113,9 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) auth.getPrincipal();
             //is this profile of current user?
-            if(optionalUser.get().equals(auth.getPrincipal())) {
+            if(optionalUser.get().getId().equals(authUser.getId())) {
                 model.addAttribute("user",optionalUser.get());
                 return "updateUser";
             }
@@ -128,7 +130,8 @@ public class UserController {
         if(optionalUser.isPresent()) {
             //is this profile of current user?
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(optionalUser.get().equals(auth.getPrincipal())) {
+            User authUser = (User) auth.getPrincipal();
+            if(optionalUser.get().getId().equals(authUser.getId())) {
                 User targetUser = optionalUser.get();
                 if(passwordEncoder.matches(password,targetUser.getPassword())) {
                     targetUser.setUsername(username);
@@ -151,7 +154,8 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(optionalUser.get().equals(auth.getPrincipal())) {
+            User authUser = (User) auth.getPrincipal();
+            if(optionalUser.get().getId().equals(authUser.getId())) {
                 User targetUser = optionalUser.get();
                 //correct current password?
                 if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {

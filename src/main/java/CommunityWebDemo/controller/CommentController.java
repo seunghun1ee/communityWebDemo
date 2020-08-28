@@ -56,8 +56,13 @@ public class CommentController {
                 comment.setPassword(passwordEncoder.encode(comment.getPassword()));
             }
             else {
-                User user = (User) auth.getPrincipal();
-                comment.setUser(user);
+                User authUser = (User) auth.getPrincipal();
+                Optional<User> optionalUser = userService.getById(authUser.getId());
+                if(optionalUser.isPresent()) {
+                    comment.setUser(optionalUser.get());
+                }
+                else return new RedirectView("/logout");
+
             }
             commentService.add(comment);
             if(post.getThread() == null) {
@@ -115,7 +120,7 @@ public class CommentController {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 User user = (User) auth.getPrincipal();
                 //Current logged in user is the owner of the comment
-                if(comment.getUser().equals(user)) {
+                if(comment.getUser().getId().equals(user.getId())) {
                     emptyComment(commentService,comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
@@ -123,8 +128,6 @@ public class CommentController {
                     redirectAttr.addFlashAttribute("failMessage","Access denied");
                 }
             }
-
-
             return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");

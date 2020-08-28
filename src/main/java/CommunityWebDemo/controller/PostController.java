@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,13 +105,18 @@ public class PostController {
                 newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
             }
             else {
-                newPost.setUser((User) auth.getPrincipal());
+                User authUser = (User) auth.getPrincipal();
+                Optional<User> author = userService.getById(authUser.getId());
+                if(author.isPresent()) {
+                    newPost.setUser(author.get());
+                }
+                else return new RedirectView("/logout");
             }
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
         postService.add(newPost);
-        return new RedirectView("/{threadUrl}/posts");
+        return new RedirectView("/{threadUrl}/posts/"+newPost.getId());
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/delete")
@@ -138,18 +144,25 @@ public class PostController {
             }
             //Registered user
             else {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                //Is current user the owner of the post?
-                if(post.getUser().equals(auth.getPrincipal())) {
-                    List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
-                    commentService.deleteAll(comments);
-                    postService.deleteById(id);
-                    redirectAttr.addFlashAttribute("successMessage","The post is deleted");
-                    return new RedirectView("/{threadUrl}/posts");
+                User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                Optional<User> currentUser = userService.getById(authUser.getId());
+                //current user exists
+                if(currentUser.isPresent()) {
+                    //Is current user the owner of the post?
+                    if(post.getUser().equals(currentUser.get())) {
+                        List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+                        commentService.deleteAll(comments);
+                        postService.deleteById(id);
+                        redirectAttr.addFlashAttribute("successMessage","The post is deleted");
+                        return new RedirectView("/{threadUrl}/posts");
+                    }
+                    else {
+                        redirectAttr.addFlashAttribute("failMessage","Access Denied");
+                        return new RedirectView("/{threadUrl}/posts/{id}");
+                    }
                 }
                 else {
-                    redirectAttr.addFlashAttribute("failMessage","Access Denied");
-                    return new RedirectView("/{threadUrl}/posts/{id}");
+                    return new RedirectView("/logout");
                 }
             }
         }
@@ -166,17 +179,26 @@ public class PostController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //is this post owned by registered user?
             if(optionalPost.get().getUser() != null) {
-                //current user is the owner of the post
-                if(optionalPost.get().getUser().equals(auth.getPrincipal())) {
-                    model.addAttribute("thread",optionalThread.get());
-                    model.addAttribute("post", post);
-                    return "updatePost";
+                User authUser = (User) auth.getPrincipal();
+                Optional<User> currentUser = userService.getById(authUser.getId());
+                //current user is present
+                if(currentUser.isPresent()) {
+                    //current user is the owner of the post
+                    if(optionalPost.get().getUser().equals(currentUser.get())) {
+                        model.addAttribute("thread",optionalThread.get());
+                        model.addAttribute("post", post);
+                        return "updatePost";
+                    }
+                    //current user is not the owner of the post
+                    else {
+                        redirectAttr.addFlashAttribute("failMessage","Access denied");
+                        return "redirect:/{threadUrl}/posts/{id}";
+                    }
                 }
-                //current user is not the owner of the post
                 else {
-                    redirectAttr.addFlashAttribute("failMessage","Access denied");
-                    return "redirect:/{threadUrl}/posts/{id}";
+                    return "redirect:/logout";
                 }
+
             }
             //This post was written by anonymous user
             else {
@@ -203,13 +225,21 @@ public class PostController {
             //the owner of the post registered or anonymous?
             if(targetPost.getUser() != null) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                //current user is the owner of the post
-                if(targetPost.getUser().equals(auth.getPrincipal())) {
-                    postService.add(targetPost);
+                User authUser = (User) auth.getPrincipal();
+                Optional<User> currentUser = userService.getById(authUser.getId());
+                //current user exists
+                if(currentUser.isPresent()) {
+                    //current user is the owner of the post
+                    if(targetPost.getUser().equals(currentUser.get())) {
+                        postService.add(targetPost);
+                    }
+                    //wrong user
+                    else {
+                        redirectAttr.addFlashAttribute("failMessage","Access denied");
+                    }
                 }
-                //wrong user
                 else {
-                    redirectAttr.addFlashAttribute("failMessage","Access denied");
+                    return new RedirectView("/logout");
                 }
             }
             //owner of the post is anonymous
