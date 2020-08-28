@@ -5,6 +5,8 @@
     <title>Title</title>
 </head>
     <body>
+        <div th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>User info</h2>
         <h3 th:text="${user.username}"></h3>
         <h4>Posts</h4>

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -121,8 +122,8 @@ public class UserController {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Page not found");
     }
 
-    @PostMapping("/users/{id}/edit")
-    public RedirectView saveUpdatedUser(@PathVariable Long id, User user) throws ResponseStatusException{
+    @PostMapping("/users/{id}/changeUsername")
+    public RedirectView saveNewUsername(@PathVariable Long id, User user) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             //is this profile of current user?
@@ -134,6 +135,37 @@ public class UserController {
                 return new RedirectView("/users/{id}");
             }
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+    }
+
+    @PostMapping("/users/{id}/changePassword")
+    public RedirectView saveNewPassword(@PathVariable Long id, String currentPassword, String newPassword, String repeatPassword, RedirectAttributes redirectAttr) throws ResponseStatusException {
+        Optional<User> optionalUser = userService.getById(id);
+        if(optionalUser.isPresent()) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(optionalUser.get().equals(auth.getPrincipal())) {
+                User targetUser = optionalUser.get();
+                //correct current password?
+                if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {
+                    //newPassword == repeatPassword?
+                    if(newPassword.equals(repeatPassword)) {
+                        targetUser.setPassword(passwordEncoder.encode(newPassword));
+                        userService.add(targetUser);
+                        redirectAttr.addFlashAttribute("successMessage","Password change success");
+                        return new RedirectView("/users/{id}");
+                    }
+                    else {
+                        redirectAttr.addFlashAttribute("failMessage","New passwords do not match");
+                        return new RedirectView("/users/{id}/edit");
+                    }
+                }
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                    return new RedirectView("/users/{id}/edit");
+                }
+            }
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
