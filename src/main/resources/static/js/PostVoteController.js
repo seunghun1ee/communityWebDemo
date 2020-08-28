@@ -4,38 +4,73 @@ var voteNum = parseInt(voteCount.textContent);
 var upVoteButton = document.getElementById("upVoteButton");
 var downVoteButton = document.getElementById("downVoteButton");
 
-toggles.forEach(toggle => {
-    toggle.addEventListener("click", (e) => {
-        let pressed = e.target.getAttribute("aria-pressed") === "true";
-        e.target.setAttribute("aria-pressed", String(!pressed));
-    })
-})
+// toggles.forEach(toggle => {
+//     toggle.addEventListener("click", (e) => {
+//         let pressed = e.target.getAttribute("aria-pressed") === "true";
+//         e.target.setAttribute("aria-pressed", String(!pressed));
+//     })
+// })
 
 function upVote() {
     if(upVoteButton.getAttribute("aria-pressed") !== "true") {
-        //turning toggle on
-        voteCount.textContent = (voteNum + 1).toString();
-        downVoteButton.setAttribute("aria-pressed", String(false));
+        $.post({
+            url: window.location.href + "/checkVoteBefore",
+            success: function (response) {
+                if(response) {
+                    alert("You already voted");
+                }
+                else {
+                    upVoteButton.setAttribute("aria-pressed", String(true));
+                    voteCount.textContent = (voteNum + 1).toString();
+                    downVoteButton.setAttribute("aria-pressed", String(false));
+                }
+            }
+        });
     }
     else {
-        //turning toggle off
+        upVoteButton.setAttribute("aria-pressed", String(false));
         voteCount.textContent = voteNum.toString();
     }
 }
 
 function downVote() {
     if(downVoteButton.getAttribute("aria-pressed") !== "true") {
-        //turning toggle on
-        voteCount.textContent = (voteNum - 1).toString();
-        upVoteButton.setAttribute("aria-pressed", String(false));
+        $.post({
+            url: window.location.href + "/checkVoteBefore",
+            success: function (response) {
+                if(response) {
+                    alert("You already voted");
+                }
+                else {
+                    downVoteButton.setAttribute("aria-pressed", String(true));
+                    voteCount.textContent = (voteNum - 1).toString();
+                    upVoteButton.setAttribute("aria-pressed", String(false));
+                }
+            }
+        });
     }
     else {
-        //turning toggle off
+        downVoteButton.setAttribute("aria-pressed", String(false));
         voteCount.textContent = voteNum.toString();
     }
 }
 
-window.onbeforeunload = function () {
+// window.onbeforeunload = function () {
+//     if(upVoteButton.getAttribute("aria-pressed") === "true") {
+//         $.post({
+//             url: window.location.href + "/vote/upvote",
+//             cache: false
+//         });
+//     }
+//     else if(downVoteButton.getAttribute("aria-pressed") === "true") {
+//         $.post({
+//             url: window.location.href + "/vote/downvote",
+//             cache: false
+//         });
+//     }
+// }
+
+function submit() {
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
         $.post({
             url: window.location.href + "/vote/upvote",
