@@ -11,11 +11,13 @@
         <tr th:each="post : ${posts}">
             <li><a th:text="${post.title}" th:href="@{/{thread}/posts/{id}(thread=${post.thread.url} ,id=${post.id})}"></a></li>
         </tr>
-        <form th:action="@{/users/{id}/edit(id=${user.id})}" method="get">
-            <button type="submit">Edit this user</button>
-        </form>
-        <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
-            <button type="submit">Delete this user</button>
-        </form>
+        <div th:if="${currentUser != null and user.id == currentUser.id}">
+            <form th:action="@{/users/{id}/edit(id=${user.id})}" method="get">
+                <button type="submit">Edit this user</button>
+            </form>
+            <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
+                <button type="submit">Delete this user</button>
+            </form>
+        </div>
     </body>
 </html>

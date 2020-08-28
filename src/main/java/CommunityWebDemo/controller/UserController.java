@@ -9,6 +9,7 @@ import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,15 @@ public class UserController {
             List<Post> posts = postService.getPostsOfUser(optionalUser.get());
             model.addAttribute("user",optionalUser.get());
             model.addAttribute("posts",posts);
+            //Check if current user is registered or anonymous
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User currentUser = (User) auth.getPrincipal();
+                model.addAttribute("currentUser",currentUser);
+            }
+            else {
+                model.addAttribute("currentUser",null);
+            }
             return "user";
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
