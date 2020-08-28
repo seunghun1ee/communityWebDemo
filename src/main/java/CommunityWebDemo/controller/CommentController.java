@@ -73,31 +73,6 @@ public class CommentController {
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
-//    @GetMapping("/posts/{postId}/comments/{commentId}/edit")
-//    public String editComment(@PathVariable Long postId, @PathVariable Long commentId, Model model) {
-//        Optional<Post> optionalPost = postService.getById(postId);
-//        Optional<Comment> optionalComment = commentService.getById(commentId);
-//        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
-//            model.addAttribute("comment",optionalComment.get());
-//            return "updateComment";
-//        }
-//        return "error";
-//    }
-//
-//    @PostMapping("/posts/{postId}/comments/{commentId}/edit")
-//    public RedirectView saveEditedComment(@PathVariable Long postId, @PathVariable Long commentId, Comment comment) {
-//        Optional<Comment> optionalComment = commentService.getById(commentId);
-//        if(postService.getById(postId).isPresent() && optionalComment.isPresent()) {
-//            Comment oldComment = optionalComment.get();
-//            comment.setId(oldComment.getId());
-//            comment.setUser(oldComment.getUser());
-//            comment.setPost(oldComment.getPost());
-//            commentService.add(comment);
-//            return new RedirectView("/posts/{postId}");
-//        }
-//        else return new RedirectView("/error");
-//    }
-
     @PostMapping("/posts/{postId}/comments/{commentId}/delete")
     public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<Post> optionalPost = postService.getById(postId);
