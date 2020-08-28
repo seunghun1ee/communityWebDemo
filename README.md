@@ -30,9 +30,20 @@ The project aims the website to have two major features
 * [x] Guests can post and comment
 * [x] Guests can vote
 * [x] Sign in/Sign up
+* [x] Username and password change
 * [x] Users with account can post and comment
-* [ ] Users with account can vote
-* [ ] Frontend design
+* [x] Users with account can vote
+* [x] Save votes instantly
+* [ ] Be able to cancel vote
+* [ ] Reply to comments
+* [ ] Voting system for comments and replies
+* [ ] Frontend design {
+    * [ ] Homepage
+    * [ ] Thread (with banner)
+    * [ ] Post page
+    * [ ] User profile
+    
+    }
 
 Not fixed. They are subject to change.
 
