@@ -1,6 +1,5 @@
-const toggles = document.querySelectorAll('[aria-pressed]');
 var voteCount = document.getElementById("voteCount");
-var voteNum = parseInt(voteCount.textContent);
+const voteNum = parseInt(voteCount.textContent);
 var upVoteButton = document.getElementById("upVoteButton");
 var downVoteButton = document.getElementById("downVoteButton");
 
@@ -16,6 +15,7 @@ function upVote() {
                     upVoteButton.setAttribute("aria-pressed", String(true));
                     voteCount.textContent = (voteNum + 1).toString();
                     downVoteButton.setAttribute("aria-pressed", String(false));
+                    submit();
                 }
                 else {
                     upVoteButton.setAttribute("aria-pressed", String(false));
@@ -38,6 +38,7 @@ function downVote() {
                     downVoteButton.setAttribute("aria-pressed", String(true));
                     voteCount.textContent = (voteNum - 1).toString();
                     upVoteButton.setAttribute("aria-pressed", String(false));
+                    submit();
                 }
                 else {
                     downVoteButton.setAttribute("aria-pressed", String(false));
@@ -47,21 +48,6 @@ function downVote() {
         }
     });
 }
-
-// window.onbeforeunload = function () {
-//     if(upVoteButton.getAttribute("aria-pressed") === "true") {
-//         $.post({
-//             url: window.location.href + "/vote/upvote",
-//             cache: false
-//         });
-//     }
-//     else if(downVoteButton.getAttribute("aria-pressed") === "true") {
-//         $.post({
-//             url: window.location.href + "/vote/downvote",
-//             cache: false
-//         });
-//     }
-// }
 
 function submit() {
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
