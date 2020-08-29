@@ -74,26 +74,23 @@ public class VoteController {
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
             JSONObject voters;
+            String key;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //anonymous or registered user?
             if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 voters = voterObject.getJSONObject("guests");
-                if(voters.isNull(request.getRemoteAddr())) {
-                    return false;
-                }
-                else {
-                    return isUpvote == voters.getBoolean(request.getRemoteAddr());
-                }
+                key = request.getRemoteAddr();
             }
             else {
                 voters = voterObject.getJSONObject("users");
                 User currentUser = (User) auth.getPrincipal();
-                if(voters.isNull(String.valueOf(currentUser.getId()))) {
-                    return false;
-                }
-                else {
-                    return isUpvote == voters.getBoolean(String.valueOf(currentUser.getId()));
-                }
+                key = String.valueOf(currentUser.getId());
+            }
+            if(voters.isNull(key)) {
+                return false;
+            }
+            else {
+                return isUpvote == voters.getBoolean(key);
             }
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
