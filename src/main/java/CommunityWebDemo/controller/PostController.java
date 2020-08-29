@@ -46,17 +46,7 @@ public class PostController {
 
     IpHandler ipHandler = new IpHandler();
 
-    @GetMapping("/{threadUrl}/")
-    public String showAllPostsOfThread(@PathVariable String threadUrl,Model model) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            List<Post> posts = postService.getPostsOfThread(optionalThread.get());
-            model.addAttribute("thread",optionalThread.get());
-            model.addAttribute("posts",posts);
-            return "postList";
-        }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-    }
+
 
     @GetMapping("/{threadUrl}/posts/{id}")
     public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model, HttpServletRequest request) throws ResponseStatusException, JSONException {
