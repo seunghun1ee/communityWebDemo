@@ -29,30 +29,16 @@ function upVote() {
             url: window.location.href + "/checkVoteBefore?isUpvote=true",
             success: function (response) {
                 if(response) {
-                    alert("you already voted");
+                    alert("You already voted");
                 }
                 else {
-                    let reverse = false;
-                    if(downVoteButton.getAttribute("aria-pressed") === "true") {
-                        reverse = true;
-                    }
-                    upVoteButton.setAttribute("aria-pressed", String(true));
-                    voteCount.textContent = numList[2];
-                    downVoteButton.setAttribute("aria-pressed", String(false));
-                    if(reverse) {
-                        reverseVote();
-                    }
-                    else {
-                        submit();
-                    }
+                    doUpVote();
                 }
             }
         })
     }
     else {
-        upVoteButton.setAttribute("aria-pressed", String(false));
-        voteCount.textContent = numList[1];
-        cancelVote();
+        cancelUpVote()
     }
 }
 
@@ -65,43 +51,64 @@ function downVote() {
                     alert("You already voted");
                 }
                 else {
-                    let reverse = false;
-                    if(upVoteButton.getAttribute("aria-pressed") === "true") {
-                        reverse = true;
-                    }
-                    downVoteButton.setAttribute("aria-pressed", String(true));
-                    voteCount.textContent = numList[0];
-                    upVoteButton.setAttribute("aria-pressed", String(false));
-                    if(reverse) {
-                        reverseVote();
-                    }
-                    else {
-                        submit();
-                    }
+                    doDownVote();
                 }
             }
         });
     }
     else {
-        downVoteButton.setAttribute("aria-pressed", String(false));
-        voteCount.textContent = numList[1];
-        cancelVote();
+        cancelDownVote();
     }
 }
 
-function submit() {
+function doUpVote() {
+    if(downVoteButton.getAttribute("aria-pressed") === "true") {
+        submitDownToUp();
+    }
+    else {
+        submitUpVote();
+    }
+    upVoteButton.setAttribute("aria-pressed", String(true));
+    downVoteButton.setAttribute("aria-pressed", String(false));
+    voteCount.textContent = numList[2];
+}
+
+function cancelUpVote() {
+    upVoteButton.setAttribute("aria-pressed", String(false));
+    voteCount.textContent = numList[1];
+    cancelVote();
+}
+
+function doDownVote() {
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
-        $.post({
-            url: window.location.href + "/vote?type=upvote",
-            cache: false
-        });
+        submitUpToDown();
     }
-    else if(downVoteButton.getAttribute("aria-pressed") === "true") {
-        $.post({
-            url: window.location.href + "/vote?type=downvote",
-            cache: false
-        });
+    else {
+        submitDownVote();
     }
+    downVoteButton.setAttribute("aria-pressed", String(true));
+    upVoteButton.setAttribute("aria-pressed", String(false));
+    voteCount.textContent = numList[0];
+}
+
+function cancelDownVote() {
+    downVoteButton.setAttribute("aria-pressed", String(false));
+    voteCount.textContent = numList[1];
+    cancelVote();
+}
+
+function submitUpVote() {
+    $.post({
+        url: window.location.href + "/vote?type=upvote",
+        cache: false
+    });
+}
+
+function submitDownVote() {
+    $.post({
+        url: window.location.href + "/vote?type=downvote",
+        cache: false
+    });
 }
 
 function cancelVote() {
@@ -111,13 +118,25 @@ function cancelVote() {
     })
 }
 
-function reverseVote() {
+function submitDownToUp() {
     $.post({
         url: window.location.href + "/cancelVote",
         cache: false,
         success: function (response) {
             if(response === "success") {
-                submit();
+                submitUpVote();
+            }
+        }
+    })
+}
+
+function submitUpToDown() {
+    $.post({
+        url: window.location.href + "/cancelVote",
+        cache: false,
+        success: function (response) {
+            if(response === "success") {
+                submitDownVote();
             }
         }
     })
