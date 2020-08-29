@@ -59,7 +59,7 @@ public class PostController {
     }
 
     @GetMapping("/{threadUrl}/posts/{id}")
-    public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model, HttpServletRequest request) throws ResponseStatusException {
+    public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model, HttpServletRequest request) throws ResponseStatusException, JSONException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -77,23 +77,19 @@ public class PostController {
             else {
                 model.addAttribute("currentUser",null);
             }
-            try {
-                if(voteController.checkVoteBefore(threadUrl,id,true,request)) {
-                    model.addAttribute("upVoted",true);
-                    model.addAttribute("downVoted",false);
-                }
-                else if(voteController.checkVoteBefore(threadUrl,id,false,request)) {
-                    model.addAttribute("upVoted",false);
-                    model.addAttribute("downVoted",true);
-                }
-                else {
-                    model.addAttribute("upVoted",false);
-                    model.addAttribute("downVoted",false);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
+            if(voteController.checkVoteBefore(threadUrl,id,true,request)) {
+                model.addAttribute("upVoted",true);
+                model.addAttribute("downVoted",false);
+            }
+            else if(voteController.checkVoteBefore(threadUrl,id,false,request)) {
+                model.addAttribute("upVoted",false);
+                model.addAttribute("downVoted",true);
+            }
+            else {
+                model.addAttribute("upVoted",false);
+                model.addAttribute("downVoted",false);
+            }
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
