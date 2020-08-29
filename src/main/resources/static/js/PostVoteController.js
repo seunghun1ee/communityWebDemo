@@ -5,7 +5,7 @@ var downVoteButton = document.getElementById("downVoteButton");
 
 function upVote() {
     $.post({
-        url: window.location.href + "/checkVoteBefore",
+        url: window.location.href + "/checkVoteBefore?isUpvote=true",
         success: function (response) {
             if(response) {
                 alert("You already voted");
@@ -28,7 +28,7 @@ function upVote() {
 
 function downVote() {
     $.post({
-        url: window.location.href + "/checkVoteBefore",
+        url: window.location.href + "/checkVoteBefore?isUpvote=false",
         success: function (response) {
             if(response) {
                 alert("You already voted");

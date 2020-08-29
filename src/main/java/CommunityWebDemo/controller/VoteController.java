@@ -35,64 +35,97 @@ public class VoteController {
             Post post = optionalPost.get();
             Integer vote = post.getVote();
             JSONObject voterObject = new JSONObject(post.getVoterList());
-            JSONArray guestVoterList = voterObject.getJSONArray("guests");
-            JSONArray userVoterList = voterObject.getJSONArray("users");
-            //Current user anonymous or registered?
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //Anonymous
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                guestVoterList.put(request.getRemoteAddr());
-            }
-            //registered
-            else {
-                User currentUser = (User) auth.getPrincipal();
-                userVoterList.put(currentUser.getId());
-            }
+            JSONObject voters;
+            boolean isUpvote;
             switch (type) {
                 case "upvote":
                     post.setVote(vote + 1);
+                    isUpvote = true;
                     break;
                 case "downvote":
                     post.setVote(vote - 1);
+                    isUpvote = false;
                     break;
                 default:
-                    return "failed";
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
             }
-            String stringVoteList = voterObject.toString();
-            post.setVoterList(stringVoteList);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                voters = voterObject.getJSONObject("guests");
+                voters.put(request.getRemoteAddr(),isUpvote);
+            }
+            else {
+                voters = voterObject.getJSONObject("users");
+                User currentUser = (User) auth.getPrincipal();
+                voters.put(String.valueOf(currentUser.getId()),isUpvote);
+            }
+            String stringVoterObject = voterObject.toString();
+            post.setVoterList(stringVoterObject);
             postService.add(post);
             return "success";
         }
+//            Post post = optionalPost.get();
+//            Integer vote = post.getVote();
+//            JSONObject voterObject = new JSONObject(post.getVoterList());
+//            JSONArray guestVoterList = voterObject.getJSONArray("guests");
+//            JSONArray userVoterList = voterObject.getJSONArray("users");
+//            //Current user anonymous or registered?
+//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//            //Anonymous
+//            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+//                guestVoterList.put(request.getRemoteAddr());
+//            }
+//            //registered
+//            else {
+//                User currentUser = (User) auth.getPrincipal();
+//                userVoterList.put(currentUser.getId());
+//            }
+//            switch (type) {
+//                case "upvote":
+//                    post.setVote(vote + 1);
+//                    break;
+//                case "downvote":
+//                    post.setVote(vote - 1);
+//                    break;
+//                default:
+//                    return "failed";
+//            }
+//            String stringVoteList = voterObject.toString();
+//            post.setVoterList(stringVoteList);
+//            postService.add(post);
+//            return "success";
+//        }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/checkVoteBefore")
-    public @ResponseBody boolean checkVoteBefore(@PathVariable String threadUrl, @PathVariable Long id, HttpServletRequest request) throws JSONException, ResponseStatusException {
+    public @ResponseBody boolean checkVoteBefore(@PathVariable String threadUrl, @PathVariable Long id, @RequestParam boolean isUpvote, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
-            JSONArray voters;
+            JSONObject voters;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //anonymous or registered user?
             if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                voters = voterObject.getJSONArray("guests");
-                for(int i=0; i < voters.length(); i++) {
-                    if(voters.getString(i).equals(request.getRemoteAddr())) {
-                        return true;
-                    }
+                voters = voterObject.getJSONObject("guests");
+                if(voters.isNull(request.getRemoteAddr())) {
+                    return false;
+                }
+                else {
+                    return isUpvote == voters.getBoolean(request.getRemoteAddr());
                 }
             }
             else {
-                voters = voterObject.getJSONArray("users");
+                voters = voterObject.getJSONObject("users");
                 User currentUser = (User) auth.getPrincipal();
-                for(int i=0; i < voters.length(); i++) {
-                    if(voters.getLong(i) == currentUser.getId()) {
-                        return true;
-                    }
+                if(voters.isNull(String.valueOf(currentUser.getId()))) {
+                    return false;
+                }
+                else {
+                    return isUpvote == voters.getBoolean(String.valueOf(currentUser.getId()));
                 }
             }
-            return false;
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
