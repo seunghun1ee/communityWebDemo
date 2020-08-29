@@ -14,6 +14,7 @@
     <span>]</span>
     <button id="upVoteButton" type="button" aria-pressed="false" onclick="upVote()">upVote</button>
     <button id="downVoteButton" type="button" aria-pressed="false" onclick="downVote()">downVote</button>
+    <button type="button" onclick="cancelVote()">Cancel vote</button>
     <p th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></p>
     <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
     <p th:text="${post.body}"></p>

@@ -67,3 +67,10 @@ function submit() {
         });
     }
 }
+
+function cancelVote() {
+    $.post({
+        url: window.location.href + "/cancelVote",
+        cache: false
+    })
+}
