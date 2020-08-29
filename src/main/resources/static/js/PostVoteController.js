@@ -52,13 +52,13 @@ function downVote() {
 function submit() {
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
         $.post({
-            url: window.location.href + "/vote/upvote",
+            url: window.location.href + "/vote?type=upvote",
             cache: false
         });
     }
     else if(downVoteButton.getAttribute("aria-pressed") === "true") {
         $.post({
-            url: window.location.href + "/vote/downvote",
+            url: window.location.href + "/vote?type=downvote",
             cache: false
         });
     }

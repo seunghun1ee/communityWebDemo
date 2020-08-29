@@ -13,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +27,8 @@ public class VoteController {
     @Autowired
     PostService postService;
 
-    @PostMapping("/{threadUrl}/posts/{id}/vote/{type}")
-    public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @PathVariable String type, HttpServletRequest request) throws JSONException, ResponseStatusException {
+    @PostMapping("/{threadUrl}/posts/{id}/vote")
+    public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @RequestParam String type, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
