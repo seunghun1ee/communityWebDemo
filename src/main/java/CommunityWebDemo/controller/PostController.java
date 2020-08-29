@@ -9,6 +9,7 @@ import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -40,6 +41,8 @@ public class PostController {
     ThreadService threadService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    VoteController voteController;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -56,7 +59,7 @@ public class PostController {
     }
 
     @GetMapping("/{threadUrl}/posts/{id}")
-    public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model) throws ResponseStatusException {
+    public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model, HttpServletRequest request) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -73,6 +76,22 @@ public class PostController {
             }
             else {
                 model.addAttribute("currentUser",null);
+            }
+            try {
+                if(voteController.checkVoteBefore(threadUrl,id,true,request)) {
+                    model.addAttribute("upVoted",true);
+                    model.addAttribute("downVoted",false);
+                }
+                else if(voteController.checkVoteBefore(threadUrl,id,false,request)) {
+                    model.addAttribute("upVoted",false);
+                    model.addAttribute("downVoted",true);
+                }
+                else {
+                    model.addAttribute("upVoted",false);
+                    model.addAttribute("downVoted",false);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
         }
