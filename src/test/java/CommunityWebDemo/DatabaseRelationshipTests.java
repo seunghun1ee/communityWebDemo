@@ -109,6 +109,9 @@ public class DatabaseRelationshipTests {
 
     @Test
     void threadCreationTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        userRepository.deleteAll();
         threadRepository.deleteAll();
         Thread threadA = new Thread("a","Thread A");
         Thread threadB = new Thread("b","Thread B");
@@ -156,5 +159,17 @@ public class DatabaseRelationshipTests {
         }
         assertThat(a).isEqualTo(3);
         assertThat(b).isEqualTo(3);
+    }
+
+    @Test
+    void childParentCommentsRelationshipTest() {
+        commentRepository.deleteAll();
+        Comment parent = new Comment();
+        Comment child = new Comment();
+        child.setParentComment(parent);
+        commentRepository.save(parent);
+        commentRepository.save(child);
+        assertThat(commentRepository.findById(parent.getId())).isPresent();
+        assertThat(commentRepository.findById(parent.getId()).get().getSubComments()).contains(child);
     }
 }

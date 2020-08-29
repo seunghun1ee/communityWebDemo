@@ -1,9 +1,7 @@
 package CommunityWebDemo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +20,11 @@ public class Comment {
     private String message;
 
     private boolean active = true;
+
+    @ManyToOne
+    private Comment parentComment;
+    @OneToMany(mappedBy = "parentComment",fetch = FetchType.EAGER)
+    private List<Comment> subComments;
 
 
     public Comment() {
@@ -88,6 +91,18 @@ public class Comment {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Comment getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public List<Comment> getSubComments() {
+        return subComments;
     }
 
     @Override
