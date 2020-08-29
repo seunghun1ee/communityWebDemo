@@ -77,6 +77,7 @@ public class HomeController {
         commentService.add(new Comment(posts.get(0),eve,"hi"));
         Comment parent = new Comment(posts.get(0),adam,"reply me");
         Comment child = new Comment(posts.get(0),eve,"reply");
+        child.setParentComment(parent);
         commentService.add(parent);
         commentService.add(child);
 

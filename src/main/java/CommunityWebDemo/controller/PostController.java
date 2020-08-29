@@ -25,6 +25,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +55,13 @@ public class PostController {
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
-            List<Comment> comments = commentService.getCommentsOfPost(post);
+            List<Comment> allComments = commentService.getCommentsOfPost(post);
+            List<Comment> comments = new ArrayList<>();
+            for(Comment comment : allComments) {
+                if(comment.getParentComment() == null) {
+                    comments.add(comment);
+                }
+            }
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);

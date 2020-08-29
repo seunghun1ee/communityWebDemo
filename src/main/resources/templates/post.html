@@ -48,7 +48,33 @@
                     <button type="submit">Delete</button>
                 </form>
             </div>
-            <p>----------------</p>
+            <article th:each="subComment : ${comment.subComments}">→
+                <article th:if="${subComment.active}">
+                    <p th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></p>
+                    <p th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></p>
+
+                    <p th:text="${subComment.message}"></p>
+
+                    <div th:if="${subComment.user == null}">
+                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                            <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                    <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
+                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                    <p>-------*--------</p>
+                </article>
+                <article th:unless="${subComment.active}">
+                    <p>[Deleted comment]</p>
+                    <p>-------*--------</p>
+                </article>
+                <p>----------------</p>
+            </article>
+
         </article>
         <article th:unless="${comment.active}">
             <p>[Deleted comment]</p>
