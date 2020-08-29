@@ -64,37 +64,6 @@ public class VoteController {
             postService.add(post);
             return "success";
         }
-//            Post post = optionalPost.get();
-//            Integer vote = post.getVote();
-//            JSONObject voterObject = new JSONObject(post.getVoterList());
-//            JSONArray guestVoterList = voterObject.getJSONArray("guests");
-//            JSONArray userVoterList = voterObject.getJSONArray("users");
-//            //Current user anonymous or registered?
-//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//            //Anonymous
-//            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-//                guestVoterList.put(request.getRemoteAddr());
-//            }
-//            //registered
-//            else {
-//                User currentUser = (User) auth.getPrincipal();
-//                userVoterList.put(currentUser.getId());
-//            }
-//            switch (type) {
-//                case "upvote":
-//                    post.setVote(vote + 1);
-//                    break;
-//                case "downvote":
-//                    post.setVote(vote - 1);
-//                    break;
-//                default:
-//                    return "failed";
-//            }
-//            String stringVoteList = voterObject.toString();
-//            post.setVoterList(stringVoteList);
-//            postService.add(post);
-//            return "success";
-//        }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
