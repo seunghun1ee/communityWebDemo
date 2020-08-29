@@ -1,5 +1,5 @@
 var voteCount = document.getElementById("voteCount");
-const voteNum = parseInt(voteCount.textContent);
+let voteNum = parseInt(voteCount.textContent);
 var upVoteButton = document.getElementById("upVoteButton");
 var downVoteButton = document.getElementById("downVoteButton");
 
@@ -16,6 +16,8 @@ function upVote() {
                     voteCount.textContent = (voteNum + 1).toString();
                     downVoteButton.setAttribute("aria-pressed", String(false));
                     submit();
+                    //update voteNum
+                    voteNum = parseInt(voteCount.textContent);
                 }
                 else {
                     upVoteButton.setAttribute("aria-pressed", String(false));
@@ -39,6 +41,8 @@ function downVote() {
                     voteCount.textContent = (voteNum - 1).toString();
                     upVoteButton.setAttribute("aria-pressed", String(false));
                     submit();
+                    //Update voteNum
+                    voteNum = parseInt(voteCount.textContent);
                 }
                 else {
                     downVoteButton.setAttribute("aria-pressed", String(false));
