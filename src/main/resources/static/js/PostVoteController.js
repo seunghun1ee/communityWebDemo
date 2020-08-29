@@ -4,14 +4,14 @@ var upVoteButton = document.getElementById("upVoteButton");
 var downVoteButton = document.getElementById("downVoteButton");
 
 function upVote() {
-    $.post({
-        url: window.location.href + "/checkVoteBefore?isUpvote=true",
-        success: function (response) {
-            if(response) {
-                alert("You already voted");
-            }
-            else {
-                if(upVoteButton.getAttribute("aria-pressed") !== "true") {
+    if(upVoteButton.getAttribute("aria-pressed") !== "true") {
+        $.post({
+            url: window.location.href + "/checkVoteBefore?isUpvote=true",
+            success: function (response) {
+                if(response) {
+                    alert("you already voted");
+                }
+                else {
                     upVoteButton.setAttribute("aria-pressed", String(true));
                     voteCount.textContent = (voteNum + 1).toString();
                     downVoteButton.setAttribute("aria-pressed", String(false));
@@ -19,24 +19,27 @@ function upVote() {
                     //update voteNum
                     voteNum = parseInt(voteCount.textContent);
                 }
-                else {
-                    upVoteButton.setAttribute("aria-pressed", String(false));
-                    voteCount.textContent = voteNum.toString();
-                }
             }
-        }
-    });
+        })
+    }
+    else {
+        upVoteButton.setAttribute("aria-pressed", String(false));
+        voteCount.textContent = (voteNum - 1).toString();
+        cancelVote();
+        //update voteNum
+        voteNum = parseInt(voteCount.textContent);
+    }
 }
 
 function downVote() {
-    $.post({
-        url: window.location.href + "/checkVoteBefore?isUpvote=false",
-        success: function (response) {
-            if(response) {
-                alert("You already voted");
-            }
-            else {
-                if(downVoteButton.getAttribute("aria-pressed") !== "true") {
+    if(downVoteButton.getAttribute("aria-pressed") !== "true") {
+        $.post({
+            url: window.location.href + "/checkVoteBefore?isUpvote=false",
+            success: function (response) {
+                if(response) {
+                    alert("You already voted");
+                }
+                else {
                     downVoteButton.setAttribute("aria-pressed", String(true));
                     voteCount.textContent = (voteNum - 1).toString();
                     upVoteButton.setAttribute("aria-pressed", String(false));
@@ -44,13 +47,16 @@ function downVote() {
                     //Update voteNum
                     voteNum = parseInt(voteCount.textContent);
                 }
-                else {
-                    downVoteButton.setAttribute("aria-pressed", String(false));
-                    voteCount.textContent = voteNum.toString();
-                }
             }
-        }
-    });
+        });
+    }
+    else {
+        downVoteButton.setAttribute("aria-pressed", String(false));
+        voteCount.textContent = (voteNum + 1).toString();
+        cancelVote();
+        //update voteNum
+        voteNum = parseInt(voteCount.textContent);
+    }
 }
 
 function submit() {
