@@ -16,6 +16,6 @@
     <form th:action="@{/{thread}/delete(thread=${thread.url})}" method="post">
         <button type="submit">Delete this thread</button>
     </form>
-    <p><a th:href="@{/{thread}/posts(thread=${thread.url})}">Go back to the thread</a></p>
+    <p><a th:href="@{/{thread}/(thread=${thread.url})}">Go back to the thread</a></p>
 </body>
 </html>

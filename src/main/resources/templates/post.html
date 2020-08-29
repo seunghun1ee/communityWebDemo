@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-    <p><a th:href="@{/{t}/posts(t=${thread.url})}" th:text="'/' + ${thread.url}"></a></p>
+    <p><a th:href="@{/{t}/(t=${thread.url})}" th:text="'/' + ${thread.url}"></a></p>
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <h2 th:text="${post.title}"></h2>
