@@ -75,6 +75,10 @@ public class HomeController {
 
         List<Post> posts = postService.getAll();
         commentService.add(new Comment(posts.get(0),eve,"hi"));
+        Comment parent = new Comment(posts.get(0),adam,"reply me");
+        Comment child = new Comment(posts.get(0),eve,"reply");
+        commentService.add(parent);
+        commentService.add(child);
 
         return "Test data is loaded";
     }
