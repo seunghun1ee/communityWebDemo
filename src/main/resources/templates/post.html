@@ -36,7 +36,7 @@
             <div th:if="${comment.active}">
                 <span th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></span>
                 <span th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></span>
-
+                <span th:text="${comment.getFormattedDateTime()}"></span>
                 <p th:text="${comment.message}"></p>
 
                 <div th:if="${comment.user == null}">
@@ -54,7 +54,7 @@
                     <div th:if="${subComment.active}" style="margin-left: 16px;">
                         <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
                         <span th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></span>
-
+                        <span th:text="${subComment.getFormattedDateTime()}"></span>
                         <p th:text="${subComment.message}"></p>
 
                         <div th:if="${subComment.user == null}">
