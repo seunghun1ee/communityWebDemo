@@ -3,6 +3,8 @@ package CommunityWebDemo.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +29,9 @@ public class Post {
     private String password;
 
     private String voterList = "{\"users\":{}, \"guests\":{}}";
+
+    @Transient
+    private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
     public Post() {
 
@@ -107,6 +112,14 @@ public class Post {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getFormattedDateTime() {
+        return this.dateTime.format(defaultDateTimeFormat);
+    }
+
+    public String getFormattedDateTime(DateTimeFormatter dateTimeFormatter) {
+        return this.dateTime.format(dateTimeFormatter);
     }
 
     public Integer getVote() {
