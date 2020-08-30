@@ -1,5 +1,7 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.compartor.SortByPostDateTime;
+import CommunityWebDemo.compartor.SortByPostVote;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -34,10 +37,19 @@ public class ThreadController {
     CommentService commentService;
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
-    public String showAllPostsOfThread(@PathVariable String threadUrl,Model model) throws ResponseStatusException {
+    public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sortBy, Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
+            switch (sortBy) {
+                case "vote":
+                    posts.sort(new SortByPostVote());
+                    break;
+                case "date":
+                default:
+                    posts.sort(new SortByPostDateTime());
+                    break;
+            }
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("posts",posts);
             return "postList";
