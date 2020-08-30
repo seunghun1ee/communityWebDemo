@@ -35,7 +35,7 @@ The project aims the website to have two major features
 * [x] Users with account can vote
 * [x] Save votes instantly
 * [x] Be able to cancel vote
-* [ ] Reply to comments
+* [x] Reply to comments
 * [ ] Voting system for comments and replies
 * [ ] Frontend design {
     * [ ] Homepage
