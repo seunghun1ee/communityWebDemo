@@ -1,6 +1,9 @@
 package CommunityWebDemo.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +21,7 @@ public class Comment {
     private String ip;
     private String password;
     private String message;
+    private LocalDateTime dateTime = LocalDateTime.now();
 
     private boolean active = true;
 
@@ -25,6 +29,9 @@ public class Comment {
     private Comment parentComment;
     @OneToMany(mappedBy = "parentComment",fetch = FetchType.EAGER)
     private List<Comment> subComments;
+
+    @Transient
+    private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
 
     public Comment() {
@@ -59,6 +66,22 @@ public class Comment {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getFormattedDateTime() {
+        return this.dateTime.format(defaultDateTimeFormat);
+    }
+
+    public String getFormattedDateTime(DateTimeFormatter dateTimeFormatter) {
+        return this.dateTime.format(dateTimeFormatter);
     }
 
     public User getUser() {
@@ -116,11 +139,13 @@ public class Comment {
                 Objects.equals(user, comment.user) &&
                 Objects.equals(ip, comment.ip) &&
                 Objects.equals(password, comment.password) &&
-                Objects.equals(message, comment.message);
+                Objects.equals(message, comment.message) &&
+                Objects.equals(dateTime, comment.dateTime) &&
+                Objects.equals(parentComment, comment.parentComment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, post, user, ip, password, message, active);
+        return Objects.hash(id, post, user, ip, password, message, dateTime, active, parentComment);
     }
 }
