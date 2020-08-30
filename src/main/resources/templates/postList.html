@@ -13,6 +13,9 @@
     <tr th:each="post : ${posts}">
         <li>
             <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
+            <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
+            <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+            <span th:text="${post.getFormattedDateTime()}"></span>
             <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
         </li>
     </tr>
