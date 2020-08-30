@@ -52,7 +52,7 @@ public class ThreadController {
             }
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("posts",posts);
-            return "postList";
+            return "thread";
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
