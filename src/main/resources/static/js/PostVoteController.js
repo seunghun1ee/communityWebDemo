@@ -61,52 +61,55 @@ function downVote() {
     }
 }
 
-function doUpVote() {
-    if(downVoteButton.getAttribute("aria-pressed") === "true") {
-        submitDownToUp();
-    }
-    else {
-        submitUpVote();
-    }
+function up() {
+    voteCount.textContent = numList[2];
     upVoteButton.setAttribute("aria-pressed", String(true));
     downVoteButton.setAttribute("aria-pressed", String(false));
-    voteCount.textContent = numList[2];
+}
+
+function down() {
+    voteCount.textContent = numList[0];
+    downVoteButton.setAttribute("aria-pressed", String(true));
+    upVoteButton.setAttribute("aria-pressed", String(false));
+}
+
+function doUpVote() {
+    if(downVoteButton.getAttribute("aria-pressed") === "true") {
+        up();
+        reverseVote("upvote");
+    }
+    else {
+        up();
+        submitVote("upvote");
+    }
 }
 
 function cancelUpVote() {
-    upVoteButton.setAttribute("aria-pressed", String(false));
     voteCount.textContent = numList[1];
+    upVoteButton.setAttribute("aria-pressed", String(false));
     cancelVote();
 }
 
 function doDownVote() {
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
-        submitUpToDown();
+        down();
+        reverseVote("downvote");
     }
     else {
-        submitDownVote();
+        down();
+        submitVote("downvote")
     }
-    downVoteButton.setAttribute("aria-pressed", String(true));
-    upVoteButton.setAttribute("aria-pressed", String(false));
-    voteCount.textContent = numList[0];
 }
 
 function cancelDownVote() {
-    downVoteButton.setAttribute("aria-pressed", String(false));
     voteCount.textContent = numList[1];
+    downVoteButton.setAttribute("aria-pressed", String(false));
     cancelVote();
 }
 
-function submitUpVote() {
+function submitVote(type) {
     $.post({
-        url: window.location.href + "/vote?type=upvote",
-        cache: false
-    });
-}
-
-function submitDownVote() {
-    $.post({
-        url: window.location.href + "/vote?type=downvote",
+        url: window.location.href + "/vote?type=" + type,
         cache: false
     });
 }
@@ -118,25 +121,13 @@ function cancelVote() {
     })
 }
 
-function submitDownToUp() {
+function reverseVote(type) {
     $.post({
         url: window.location.href + "/cancelVote",
         cache: false,
         success: function (response) {
             if(response === "success") {
-                submitUpVote();
-            }
-        }
-    })
-}
-
-function submitUpToDown() {
-    $.post({
-        url: window.location.href + "/cancelVote",
-        cache: false,
-        success: function (response) {
-            if(response === "success") {
-                submitDownVote();
+                submitVote(type);
             }
         }
     })
