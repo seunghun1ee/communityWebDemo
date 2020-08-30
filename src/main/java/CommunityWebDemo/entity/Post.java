@@ -2,6 +2,7 @@ package CommunityWebDemo.entity;
 
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class Post {
     private Long id;
     private String title;
     private String body;
+    private LocalDateTime dateTime = LocalDateTime.now();
     private Integer vote = 0;
     @ManyToOne() @JoinColumn()
     private User user;
@@ -55,6 +57,22 @@ public class Post {
         this.password = password;
     }
 
+    public Post(String title, String body, LocalDateTime dateTime, User user, Thread thread) {
+        this.title = title;
+        this.body = body;
+        this.dateTime = dateTime;
+        this.user = user;
+        this.thread = thread;
+    }
+
+    public Post(String title, String body, LocalDateTime dateTime, Thread thread, String password) {
+        this.title = title;
+        this.body = body;
+        this.dateTime = dateTime;
+        this.thread = thread;
+        this.password = password;
+    }
+
     public Post(Thread thread) {
         this.thread = thread;
     }
@@ -81,6 +99,14 @@ public class Post {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     public Integer getVote() {
@@ -139,15 +165,17 @@ public class Post {
         return Objects.equals(id, post.id) &&
                 Objects.equals(title, post.title) &&
                 Objects.equals(body, post.body) &&
+                Objects.equals(dateTime, post.dateTime) &&
                 Objects.equals(vote, post.vote) &&
                 Objects.equals(user, post.user) &&
                 Objects.equals(thread, post.thread) &&
                 Objects.equals(ip, post.ip) &&
-                Objects.equals(password, post.password);
+                Objects.equals(password, post.password) &&
+                Objects.equals(voterList, post.voterList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, vote, user, thread, ip, password);
+        return Objects.hash(id, title, body, dateTime, vote, user, thread, ip, password, voterList);
     }
 }
