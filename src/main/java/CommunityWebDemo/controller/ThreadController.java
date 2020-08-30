@@ -37,11 +37,11 @@ public class ThreadController {
     CommentService commentService;
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
-    public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sortBy, Model model) throws ResponseStatusException {
+    public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sort, Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
-            switch (sortBy) {
+            switch (sort) {
                 case "vote":
                     posts.sort(new SortByPostVote());
                     break;
