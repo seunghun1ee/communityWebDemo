@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2>Reply</h2>
-    <form id="reply" method="post" th:object="${reply}">
+    <form id="reply" th:action="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${parentComment.id})}" method="post" th:object="${reply}">
         <textarea id="inputMessage" form="reply" name="message" placeholder="Message" th:object="${message}" rows="6" cols="35" required></textarea>
         <br>
         <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>

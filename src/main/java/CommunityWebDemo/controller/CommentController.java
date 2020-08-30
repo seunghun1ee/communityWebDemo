@@ -108,10 +108,56 @@ public class CommentController {
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
+    @GetMapping("/posts/{postId}/comments/{commentId}/reply")
+    public String newReply(@PathVariable Long postId, @PathVariable Long commentId, Model model) throws ResponseStatusException{
+        Optional<Post> optionalPost = postService.getById(postId);
+        Optional<Comment> optionalComment = commentService.getById(commentId);
+        //post and comment exist and the comment is from the post
+        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalComment.get().getPost().equals(optionalPost.get())) {
+            model.addAttribute("post",optionalPost.get());
+            model.addAttribute("parentComment",optionalComment.get());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                model.addAttribute("currentUser", auth.getPrincipal());
+            }
+            return "reply";
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request url");
+    }
+
+    @PostMapping("/posts/{postId}/comments/{commentId}/reply")
+    public RedirectView saveNewReply(@PathVariable Long postId, @PathVariable Long commentId, Comment reply, HttpServletRequest request) {
+        Optional<Post> optionalPost = postService.getById(postId);
+        Optional<Comment> optionalComment = commentService.getById(commentId);
+        //post and comment exist and the comment is from the post
+        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalComment.get().getPost().equals(optionalPost.get())) {
+            //Anonymous user or registered user?
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                reply.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+                reply.setPassword(passwordEncoder.encode(reply.getPassword()));
+            }
+            else {
+                User authUser = (User) auth.getPrincipal();
+                Optional<User> optionalUser = userService.getById(authUser.getId());
+                if(optionalUser.isPresent()) {
+                    reply.setUser(optionalUser.get());
+                }
+                else return new RedirectView("/logout");
+            }
+            reply.setPost(optionalPost.get());
+            reply.setParentComment(optionalComment.get());
+            commentService.add(reply);
+            return new RedirectView("/posts/{postId}");
+        }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request url");
+    }
+
     public void emptyComment(CommentService commentService,Comment comment) {
         comment.setMessage(null);
         comment.setUser(null);
         comment.setActive(false);
         commentService.add(comment);
     }
+
 }

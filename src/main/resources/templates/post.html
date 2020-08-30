@@ -50,6 +50,7 @@
                         <button type="submit">Delete</button>
                     </form>
                 </div>
+                <p><a th:href="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}">Reply</a></p>
                 <article th:each="subComment : ${comment.subComments}">↳
                     <div th:if="${subComment.active}" style="margin-left: 16px;">
                         <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>

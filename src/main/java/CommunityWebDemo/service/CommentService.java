@@ -58,7 +58,7 @@ public class CommentService extends MyService<Comment>{
     public List<Comment> getCommentsOfPost(Post post) {
         List<Comment> comments = new ArrayList<>();
         commentRepository.findAll().forEach(comment -> {
-            if (comment.getPost().equals(post)) {
+            if (comment.getPost() != null && comment.getPost().equals(post)) {
                 comments.add(comment);
             }});
         return comments;
