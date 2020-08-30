@@ -30,55 +30,57 @@
     </div>
 
     <h3>Comments</h3>
-    <article th:each="comment : ${comments}">
-        <article th:if="${comment.active}">
-            <p th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></p>
-            <p th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></p>
+    <article>
+        <article th:each="comment : ${comments}">
+            <div th:if="${comment.active}">
+                <span th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></span>
+                <span th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></span>
 
-            <p th:text="${comment.message}"></p>
+                <p th:text="${comment.message}"></p>
 
-            <div th:if="${comment.user == null}">
-                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                    <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
-                    <button type="submit">Delete</button>
-                </form>
-            </div>
-            <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
-                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                    <button type="submit">Delete</button>
-                </form>
-            </div>
-            <article th:each="subComment : ${comment.subComments}">→
-                <article th:if="${subComment.active}">
-                    <p th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></p>
-                    <p th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></p>
+                <div th:if="${comment.user == null}">
+                    <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                        <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+                <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
+                    <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+                <article th:each="subComment : ${comment.subComments}">↳
+                    <div th:if="${subComment.active}" style="margin-left: 16px;">
+                        <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
+                        <span th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></span>
 
-                    <p th:text="${subComment.message}"></p>
+                        <p th:text="${subComment.message}"></p>
 
-                    <div th:if="${subComment.user == null}">
-                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
-                            <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
-                            <button type="submit">Delete</button>
-                        </form>
+                        <div th:if="${subComment.user == null}">
+                            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                                <input type="password" name="password" placeholder="Password" th:object="${password}" required>
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                        <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
+                            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                        <p>-------*--------</p>
                     </div>
-                    <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
-                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
-                            <button type="submit">Delete</button>
-                        </form>
+                    <div th:unless="${subComment.active}" style="margin-left: 16px;">
+                        <p>[Deleted comment]</p>
+                        <p>-------*--------</p>
                     </div>
-                    <p>-------*--------</p>
-                </article>
-                <article th:unless="${subComment.active}">
-                    <p>[Deleted comment]</p>
-                    <p>-------*--------</p>
+
                 </article>
                 <p>----------------</p>
-            </article>
-
-        </article>
-        <article th:unless="${comment.active}">
-            <p>[Deleted comment]</p>
-            <p>----------------</p>
+            </div>
+            <div th:unless="${comment.active}">
+                <p>[Deleted comment]</p>
+                <p>----------------</p>
+            </div>
         </article>
     </article>
     <h4>Add comment</h4>
