@@ -13,7 +13,7 @@
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <form th:action="@{/{thread}/settings/edit(thread=${thread.url})}" method="post">
-        <input type=text id="inputDescription" name="description" th:value="${thread.description}" th:text="${description}">
+        <input type=text id="inputDescription" name="description" placeholder="Thread description" th:value="${thread.description}" th:text="${description}">
         <button type="submit">Save</button>
     </form>
     <form th:action="@{/{thread}/delete(thread=${thread.url})}" method="post">

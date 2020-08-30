@@ -13,15 +13,17 @@
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <h2 th:text="'Posts in ' + ${thread.name}"></h2>
     <p th:text="${thread.description}"></p>
-    <tr th:each="post : ${posts}">
-        <li>
+    <article>
+        <article th:each="post : ${posts}">
             <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
-            <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
-            <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
-            <span th:text="${post.getFormattedDateTime()}"></span>
-            <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
-        </li>
-    </tr>
+            <p>
+                <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
+                <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                <span th:text="${post.getFormattedDateTime()}"></span>
+                <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
+            </p>
+        </article>
+    </article>
     <br>
     <p><a th:href="@{new_post}">Add new post</a></p>
     <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
