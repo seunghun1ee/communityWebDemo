@@ -15,24 +15,33 @@
         <div class="container">
             <h2 th:text="${thread.name}"></h2>
             <h6 th:text="'/' + ${thread.url}"></h6>
-            <p th:text="${thread.description}"></p>
         </div>
     </div>
     <div class="container">
-        <article>
-            <article th:each="post : ${posts}">
-                <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
-                <p>
-                    <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
-                    <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
-                    <span th:text="${post.getFormattedDateTime()}"></span>
-                    <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
-                </p>
-            </article>
-        </article>
-        <br>
-        <p><a th:href="@{new_post}">Add new post</a></p>
-        <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
+        <div class="row">
+            <div class="col-md-3">
+                <h5>About</h5>
+                <p th:text="${thread.description}"></p>
+                <h5>Guideline</h5>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </div>
+            <div class="col-md-9">
+                <article>
+                    <article th:each="post : ${posts}">
+                        <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
+                        <p>
+                            <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
+                            <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                            <span th:text="${post.getFormattedDateTime()}"></span>
+                            <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
+                        </p>
+                    </article>
+                </article>
+                <br>
+                <p><a th:href="@{new_post}">Add new post</a></p>
+                <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
+            </div>
+        </div>
     </div>
 
     <!-- jQuery CDN -->
