@@ -13,7 +13,8 @@
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <div class="jumbotron">
         <div class="container">
-            <h2 th:text="'Posts in ' + ${thread.name}"></h2>
+            <h2 th:text="${thread.name}"></h2>
+            <h6 th:text="'/' + ${thread.url}"></h6>
             <p th:text="${thread.description}"></p>
         </div>
     </div>
