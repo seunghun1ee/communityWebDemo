@@ -47,13 +47,14 @@ The project aims the website to have two major features
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
-    * [ ] Thread (with banner)
+    * [x] Thread (with banner)
     * [x] Post page
     * [ ] User profile
     
     }
 * [ ] Show subscribed threads first at the homepage (Users)
 * [ ] Custom themes for each threads
+* [ ] Verify passwords from frontend
 
 Not fixed. They are subject to change.
 
