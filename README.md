@@ -43,6 +43,7 @@ The project aims the website to have two major features
 * [ ] Users can open threads
 * [ ] Users can bookmark posts
 * [ ] Be able to attach an image in posts
+* [ ] post tags
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
