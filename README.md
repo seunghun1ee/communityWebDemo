@@ -42,6 +42,7 @@ The project aims the website to have two major features
 * [ ] Be able to sort posts in various order (New, hot, best etc)
 * [ ] Users can open threads
 * [ ] Users can bookmark posts
+* [ ] Be able to attach an image in posts
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
