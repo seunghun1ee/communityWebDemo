@@ -147,7 +147,7 @@ public class PostController {
                     commentService.deleteAll(comments);
                     postService.deleteById(id);
                     redirectAttr.addFlashAttribute("successMessage","The post is deleted");
-                    return new RedirectView("/{threadUrl}/posts");
+                    return new RedirectView("/{threadUrl}/");
                 }
                 //wrong password
                 else {
@@ -167,7 +167,7 @@ public class PostController {
                         commentService.deleteAll(comments);
                         postService.deleteById(id);
                         redirectAttr.addFlashAttribute("successMessage","The post is deleted");
-                        return new RedirectView("/{threadUrl}/posts");
+                        return new RedirectView("/{threadUrl}/");
                     }
                     else {
                         redirectAttr.addFlashAttribute("failMessage","Access Denied");
