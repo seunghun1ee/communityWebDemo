@@ -69,7 +69,18 @@
                             <button type="submit">Delete</button>
                         </form>
                     </div>
-                    <p><a th:href="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}">Reply</a></p>
+
+                    <p><a data-toggle="collapse" th:href="'#replyCollapse' + ${comment.id}" role="button" aria-expanded="false" th:aria-controls="'#replyCollapse' + ${comment.id}">
+                        Reply
+                    </a></p>
+                    <form class="collapse" th:id="'replyCollapse' + ${comment.id}" th:action="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}" method="post" th:object="${reply}">
+                        <textarea th:id="'inputReplyMessage' + ${comment.id}" th:form="'replyCollapse'+${comment.id}" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
+                        <br>
+                        <input sec:authorize="isAnonymous()" th:id="'inputReplyPassword' + ${comment.id}" type="password" name="password" placeholder="Password" th:object="${password}" required>
+                        <br sec:authorize="isAnonymous()">
+                        <button type="submit">Reply</button>
+                    </form>
+
                     <article th:each="subComment : ${comment.subComments}">↳
                         <div th:if="${subComment.active}" style="margin-left: 16px;">
                             <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
