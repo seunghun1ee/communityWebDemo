@@ -46,6 +46,7 @@ The project aims the website to have two major features
 * [ ] post tags
 * [ ] Use markdown for posts
 * [ ] Use markdown for comments
+* [ ] Keep replies of the comment after the comment is deleted
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
