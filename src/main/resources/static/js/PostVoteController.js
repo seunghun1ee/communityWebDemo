@@ -64,13 +64,17 @@ function downVote() {
 function up() {
     voteCount.textContent = numList[2];
     upVoteButton.setAttribute("aria-pressed", String(true));
+    upVoteButton.classList.add("active");
     downVoteButton.setAttribute("aria-pressed", String(false));
+    downVoteButton.classList.remove("active");
 }
 
 function down() {
     voteCount.textContent = numList[0];
     downVoteButton.setAttribute("aria-pressed", String(true));
+    downVoteButton.classList.add("active");
     upVoteButton.setAttribute("aria-pressed", String(false));
+    upVoteButton.classList.remove("active");
 }
 
 function doUpVote() {
