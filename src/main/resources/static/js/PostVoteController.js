@@ -7,11 +7,13 @@ var numList = [];
 document.addEventListener("DOMContentLoaded", function () {
 
     if(upVoteButton.getAttribute("aria-pressed") === "true") {
+        upVoteButton.classList.add("active");
         numList[0] = (voteNum - 2).toString();
         numList[1] = (voteNum - 1).toString();
         numList[2] = voteNum.toString();
     }
     else if(downVoteButton.getAttribute("aria-pressed") === "true") {
+        downVoteButton.classList.add("active");
         numList[0] = voteNum.toString();
         numList[1] = (voteNum + 1).toString();
         numList[2] = (voteNum + 2).toString();
