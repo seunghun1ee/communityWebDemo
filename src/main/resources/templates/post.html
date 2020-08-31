@@ -7,94 +7,106 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 </head>
 <body>
-    <p><a th:href="@{/{t}/(t=${thread.url})}" th:text="'/' + ${thread.url}"></a></p>
+    <p><a href="/">Home</a></p>
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
-    <h2 th:text="${post.title}"></h2>
-    <p th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></p>
-    <p th:unless="${post.user == null}"><a th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a></p>
-    <p th:text="${post.getFormattedDateTime()}"></p>
-    <span>[vote: </span>
-    <span th:id="voteCount" th:text="${post.vote}"></span>
-    <span>]</span>
-    <button id="upVoteButton" type="button" th:aria-pressed="${upVoted}" onclick="upVote()">upVote</button>
-    <button id="downVoteButton" type="button" th:aria-pressed="${downVoted}" onclick="downVote()">downVote</button>
-    <p th:text="${post.body}"></p>
-    <br>
-    <div th:if="${post.user == null}">
-        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-            <button type="submit">Edit this post</button>
-        </form>
+    <div class="jumbotron">
+        <div class="container">
+            <h3><a th:href="@{/{t}/(t=${thread.url})}" th:text="${thread.name}"></a></h3>
+        </div>
     </div>
-    <div th:if="${post.user != null and currentUser != null and post.user.id == currentUser.id}">
-        <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-            <button type="submit">Edit this post</button>
+    <div class="container">
+        <h3 th:text="${post.title}"></h3>
+        <span>[vote: </span>
+        <span th:id="voteCount" th:text="${post.vote}"></span>
+        <span>]</span>
+        <button id="upVoteButton" type="button" th:aria-pressed="${upVoted}" onclick="upVote()">upVote</button>
+        <button id="downVoteButton" type="button" th:aria-pressed="${downVoted}" onclick="downVote()">downVote</button>
+
+        <small th:if="${post.user == null}" th:text="' | Posted by Anonymous ' + ' (' + ${post.ip} + ')'"></small>
+        <small th:unless="${post.user == null}"> | Posted by <a th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a></small>
+        <small th:text="' | ' + ${post.getFormattedDateTime()}"></small>
+        <hr>
+        <p th:text="${post.body}"></p>
+        <br>
+        <div th:if="${post.user == null}">
+            <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
+                <button type="submit">Edit this post</button>
+            </form>
+        </div>
+        <div th:if="${post.user != null and currentUser != null and post.user.id == currentUser.id}">
+            <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
+                <button type="submit">Edit this post</button>
+            </form>
+        </div>
+
+        <h6 th:if="${currentUser == null}">Comment as Anonymous</h6>
+        <h6 th:unless="${currentUser == null}">Comment as <a th:href="@{/users/{id}(id=${currentUser.id})}" th:text="${currentUser.username}"></a></h6>
+        <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
+            <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="6" cols="35" required></textarea>
+            <br>
+            <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
+            <br sec:authorize="isAnonymous()">
+            <button type="submit">Comment</button>
         </form>
-    </div>
+        <br>
+        <h6>Comments</h6>
+        <hr>
+        <article>
+            <article th:each="comment : ${comments}">
+                <div th:if="${comment.active}">
+                    <span th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></span>
+                    <span th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></span>
+                    <span th:text="${comment.getFormattedDateTime()}"></span>
+                    <p th:text="${comment.message}"></p>
 
-    <h3>Comments</h3>
-    <article>
-        <article th:each="comment : ${comments}">
-            <div th:if="${comment.active}">
-                <span th:if="${comment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${comment?.ip} + ')'"></span>
-                <span th:if="${comment.user != null}" style="font-weight: bold" th:text="${comment.user?.username}"></span>
-                <span th:text="${comment.getFormattedDateTime()}"></span>
-                <p th:text="${comment.message}"></p>
-
-                <div th:if="${comment.user == null}">
-                    <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                        <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
-                        <button type="submit">Delete</button>
-                    </form>
-                </div>
-                <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
-                    <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
-                        <button type="submit">Delete</button>
-                    </form>
-                </div>
-                <p><a th:href="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}">Reply</a></p>
-                <article th:each="subComment : ${comment.subComments}">↳
-                    <div th:if="${subComment.active}" style="margin-left: 16px;">
-                        <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
-                        <span th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></span>
-                        <span th:text="${subComment.getFormattedDateTime()}"></span>
-                        <p th:text="${subComment.message}"></p>
-
-                        <div th:if="${subComment.user == null}">
-                            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
-                                <input type="password" name="password" placeholder="Password" th:object="${password}" required>
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                        <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
-                            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </div>
-                        <p>-------*--------</p>
+                    <div th:if="${comment.user == null}">
+                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                            <input type="password" id="inputPassword_delete2" name="password" placeholder="Password" th:object="${password}" required>
+                            <button type="submit">Delete</button>
+                        </form>
                     </div>
-                    <div th:unless="${subComment.active}" style="margin-left: 16px;">
-                        <p>[Deleted comment]</p>
-                        <p>-------*--------</p>
+                    <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
+                        <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
                     </div>
+                    <p><a th:href="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}">Reply</a></p>
+                    <article th:each="subComment : ${comment.subComments}">↳
+                        <div th:if="${subComment.active}" style="margin-left: 16px;">
+                            <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
+                            <span th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></span>
+                            <span th:text="${subComment.getFormattedDateTime()}"></span>
+                            <p th:text="${subComment.message}"></p>
 
-                </article>
-                <p>----------------</p>
-            </div>
-            <div th:unless="${comment.active}">
-                <p>[Deleted comment]</p>
-                <p>----------------</p>
-            </div>
+                            <div th:if="${subComment.user == null}">
+                                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                                    <input type="password" name="password" placeholder="Password" th:object="${password}" required>
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                            <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
+                                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                            <hr>
+                        </div>
+                        <div th:unless="${subComment.active}" style="margin-left: 16px;">
+                            <p>[Deleted comment]</p>
+                            <hr>
+                        </div>
+
+                    </article>
+                    <hr>
+                </div>
+                <div th:unless="${comment.active}">
+                    <p>[Deleted comment]</p>
+                    <hr>
+                </div>
+            </article>
         </article>
-    </article>
-    <h4>Add comment</h4>
-    <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
-        <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="6" cols="35" required></textarea>
-        <br>
-        <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+    </div>
 
     <script th:src="@{/js/PostVoteController.js}"></script>
     <!-- jQuery CDN -->
