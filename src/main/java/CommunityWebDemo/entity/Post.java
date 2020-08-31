@@ -12,10 +12,9 @@ import java.util.Objects;
 @Entity
 public class Post {
 
-    @Id @GeneratedValue
-    private Long id;
+    @Id @GeneratedValue private Long id;
     private String title;
-    private String body;
+    @Column(length = 1000) private String body;
     private LocalDateTime dateTime = LocalDateTime.now();
     private Integer vote = 0;
     @ManyToOne() @JoinColumn()
