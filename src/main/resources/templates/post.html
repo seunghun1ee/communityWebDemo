@@ -21,8 +21,8 @@
         <span>[vote: </span>
         <span th:id="voteCount" th:text="${post.vote}"></span>
         <span>]</span>
-        <button id="upVoteButton" type="button" th:aria-pressed="${upVoted}" onclick="upVote()">upVote</button>
-        <button id="downVoteButton" type="button" th:aria-pressed="${downVoted}" onclick="downVote()">downVote</button>
+        <button id="upVoteButton" type="button" class="btn btn-outline-success btn-sm" th:aria-pressed="${upVoted}" onclick="upVote()">upVote</button>
+        <button id="downVoteButton" type="button" class="btn btn-outline-danger btn-sm" th:aria-pressed="${downVoted}" onclick="downVote()">downVote</button>
 
         <small th:if="${post.user == null}" th:text="' | Posted by Anonymous ' + ' (' + ${post.ip} + ')'"></small>
         <small th:unless="${post.user == null}"> | Posted by <a th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a></small>
@@ -31,24 +31,20 @@
         <p th:text="${post.body}"></p>
         <br>
         <div th:if="${post.user == null}">
-            <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-                <button type="submit">Edit this post</button>
-            </form>
+            <p><small><a th:href="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}">Edit this post</a></small></p>
         </div>
         <div th:if="${post.user != null and currentUser != null and post.user.id == currentUser.id}">
-            <form th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="get">
-                <button type="submit">Edit this post</button>
-            </form>
+            <p><small><a th:href="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}">Edit this post</a></small></p>
         </div>
 
         <h6 th:if="${currentUser == null}">Comment as Anonymous</h6>
         <h6 th:unless="${currentUser == null}">Comment as <a th:href="@{/users/{id}(id=${currentUser.id})}" th:text="${currentUser.username}"></a></h6>
         <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
-            <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="6" cols="35" required></textarea>
+            <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
             <br>
             <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
             <br sec:authorize="isAnonymous()">
-            <button type="submit">Comment</button>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Comment</button>
         </form>
         <br>
         <h6 th:if="${allComments.size() == 1}">1 Comment</h6>
