@@ -24,6 +24,7 @@ The project aims the website to have two major features
 
 ## Roadmap
 
+#### Backend
 * [x] Core features for posting and commenting
 * [x] Core features for threads
 * [x] Multiple threads
@@ -37,13 +38,19 @@ The project aims the website to have two major features
 * [x] Be able to cancel vote
 * [x] Reply to comments
 * [ ] Voting system for comments and replies
-* [ ] Frontend design {
+* [ ] Users can subscribe to threads
+* [ ] Be able to posts in various order (New, hot, best etc)
+* [ ] Users can open threads
+#### Frontend
+* [ ] Basic frontend design {
     * [ ] Homepage
     * [ ] Thread (with banner)
-    * [ ] Post page
+    * [x] Post page
     * [ ] User profile
     
     }
+* [ ] Show subscribed threads first at the homepage (Users)
+* [ ] Custom themes for each threads
 
 Not fixed. They are subject to change.
 
