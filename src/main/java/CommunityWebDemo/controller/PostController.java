@@ -65,6 +65,7 @@ public class PostController {
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
+            model.addAttribute("allComments",allComments);
             //Check if current user is registered or anonymous
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {

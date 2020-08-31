@@ -50,7 +50,8 @@
             <button type="submit">Comment</button>
         </form>
         <br>
-        <h6>Comments</h6>
+        <h6 th:if="${allComments.size() == 1}">1 Comment</h6>
+        <h6 th:unless="${allComments.size() == 1}" th:text="${allComments.size()} + ' Comments'"></h6>
         <hr>
         <article>
             <article th:each="comment : ${comments}">
