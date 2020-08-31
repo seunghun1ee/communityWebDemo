@@ -25,6 +25,9 @@
                 <p th:text="${thread.description}"></p>
                 <h5>Guideline</h5>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <br>
+                <p><a th:href="@{new_post}">Add new post</a></p>
+                <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
             </div>
             <div class="col-md-9">
                 <article>
@@ -38,9 +41,6 @@
                         </p>
                     </article>
                 </article>
-                <br>
-                <p><a th:href="@{new_post}">Add new post</a></p>
-                <p><a th:href="@{/{id}/settings(id=${thread.url})}">Thread settings</a></p>
             </div>
         </div>
     </div>
