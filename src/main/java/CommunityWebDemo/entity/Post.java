@@ -12,7 +12,7 @@ import java.util.Objects;
 @Entity
 public class Post {
 
-    @Id @GeneratedValue private Long id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     private String title;
     @Column(length = 1000) private String body;
     private LocalDateTime dateTime = LocalDateTime.now();
