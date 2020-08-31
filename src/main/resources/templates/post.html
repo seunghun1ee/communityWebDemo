@@ -6,6 +6,7 @@
     <title>Title</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <p><a href="/">Home</a></p>
@@ -40,7 +41,7 @@
         <h6 th:if="${currentUser == null}">Comment as Anonymous</h6>
         <h6 th:unless="${currentUser == null}">Comment as <a th:href="@{/users/{id}(id=${currentUser.id})}" th:text="${currentUser.username}"></a></h6>
         <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">
-            <textarea id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
+            <textarea class="comment-box" id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
             <br>
             <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
             <br sec:authorize="isAnonymous()">
@@ -74,7 +75,7 @@
                         Reply
                     </a></p>
                     <form class="collapse" th:id="'replyCollapse' + ${comment.id}" th:action="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}" method="post" th:object="${reply}">
-                        <textarea th:id="'inputReplyMessage' + ${comment.id}" th:form="'replyCollapse'+${comment.id}" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
+                        <textarea class="comment-box" th:id="'inputReplyMessage' + ${comment.id}" th:form="'replyCollapse'+${comment.id}" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
                         <br>
                         <input sec:authorize="isAnonymous()" th:id="'inputReplyPassword' + ${comment.id}" type="password" name="password" placeholder="Password" th:object="${password}" required>
                         <br sec:authorize="isAnonymous()">
