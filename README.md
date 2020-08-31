@@ -39,8 +39,9 @@ The project aims the website to have two major features
 * [x] Reply to comments
 * [ ] Voting system for comments and replies
 * [ ] Users can subscribe to threads
-* [ ] Be able to posts in various order (New, hot, best etc)
+* [ ] Be able to sort posts in various order (New, hot, best etc)
 * [ ] Users can open threads
+* [ ] Users can bookmark posts
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
