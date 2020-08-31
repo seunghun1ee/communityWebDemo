@@ -44,6 +44,8 @@ The project aims the website to have two major features
 * [ ] Users can bookmark posts
 * [ ] Be able to attach an image in posts
 * [ ] post tags
+* [ ] Use markdown for posts
+* [ ] Use markdown for comments
 #### Frontend
 * [ ] Basic frontend design {
     * [ ] Homepage
@@ -55,6 +57,8 @@ The project aims the website to have two major features
 * [ ] Show subscribed threads first at the homepage (Users)
 * [ ] Custom themes for each threads
 * [ ] Verify passwords from frontend
+* [ ] Show character count for posts and comments
+* [ ] Markdown editor
 
 Not fixed. They are subject to change.
 
