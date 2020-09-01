@@ -21,9 +21,7 @@
             </li>
         </tr>
         <div th:if="${currentUser != null and user.id == currentUser.id}">
-            <form th:action="@{/users/{id}/edit(id=${user.id})}" method="get">
-                <button type="submit">Edit this user</button>
-            </form>
+            <p><a th:href="@{/users/{id}/edit(id=${user.id})}">Edit this user</a></p>
             <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
                 <button type="submit">Delete this user</button>
             </form>

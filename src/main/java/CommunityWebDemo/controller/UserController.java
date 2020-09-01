@@ -155,6 +155,7 @@ public class UserController {
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             User authUser = (User) auth.getPrincipal();
+            //logged in user == user profile?
             if(optionalUser.get().getId().equals(authUser.getId())) {
                 User targetUser = optionalUser.get();
                 //correct current password?
