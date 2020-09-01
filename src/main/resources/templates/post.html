@@ -53,19 +53,14 @@
 
         <h6 th:if="${currentUser == null}">Comment as Anonymous</h6>
         <h6 th:unless="${currentUser == null}">Comment as <a th:href="@{/users/{id}(id=${currentUser.id})}" th:text="${currentUser.username}"></a></h6>
-<!--        <form id="addComment" th:action="@{/posts/{postId}/new_comment(postId=${post.id})}" method="post" th:object="${comment}">-->
-<!--            <textarea class="comment-box" id="inputMessage" form="addComment" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>-->
-<!--            <br>-->
-<!--            <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>-->
-<!--            <br sec:authorize="isAnonymous()">-->
-<!--            <button class="btn btn-outline-primary btn-sm" type="submit">Comment</button>-->
-<!--        </form>-->
 
-        <textarea class="comment-box" id="inputMessage" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
-        <br>
-        <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" th:object="${password}" required>
-        <br sec:authorize="isAnonymous()">
-        <button class="btn btn-outline-primary btn-sm" type="button" onclick="addComment()">Comment</button>
+        <form onsubmit="addComment();return false;">
+            <textarea class="comment-box" id="inputMessage" name="message" placeholder="Message" rows="3" cols="80" required></textarea>
+            <br>
+            <input sec:authorize="isAnonymous()" type="password" id="inputPassword" name="password" placeholder="Password" required>
+            <br sec:authorize="isAnonymous()">
+            <button class="btn btn-outline-primary btn-sm" type="submit">Comment</button>
+        </form>
 
         <br>
         <h6 th:if="${allComments.size() == 1}">1 Comment</h6>

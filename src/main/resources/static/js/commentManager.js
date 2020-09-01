@@ -21,7 +21,7 @@ function addComment() {
                 window.location.href = "/";
             }
         }
-    })
+    });
 }
 
 function deleteComment(postId, commentId) {
@@ -45,5 +45,5 @@ function deleteComment(postId, commentId) {
                 window.location.href = "/";
             }
         }
-    })
+    });
 }
