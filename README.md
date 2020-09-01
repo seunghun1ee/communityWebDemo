@@ -60,6 +60,7 @@ The project aims the website to have two major features
 * [ ] Verify passwords from frontend
 * [ ] Show character count for posts and comments
 * [ ] Markdown editor
+* [ ] Navigation bar
 
 Not fixed. They are subject to change.
 

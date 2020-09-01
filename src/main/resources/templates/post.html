@@ -9,7 +9,20 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <p><a href="/">Home</a></p>
+    <div id="navbar">
+        <nav sec:authorize="isAnonymous()">
+            <a th:if="${#httpServletRequest.requestURI == '/'}">Home</a>
+            <a th:unless="${#httpServletRequest.requestURI == '/'}" href="/">Home</a>
+            <a th:unless="${#httpServletRequest.requestURI == '/login'}" href="/login">Sign in</a>
+            <a th:if="${#httpServletRequest.requestURI == '/login'}">Sign in</a>
+        </nav>
+        <nav sec:authorize="isAuthenticated()">
+            <a th:if="${#httpServletRequest.requestURI == '/'}">Home</a>
+            <a th:unless="${#httpServletRequest.requestURI == '/'}" href="/">Home</a>
+            <a href="/logout">Sign out</a>
+        </nav>
+    </div>
+
     <div th:if="${successMessage}" th:text="${successMessage}"></div>
     <div th:if="${failMessage}" th:text="${failMessage}"></div>
     <div class="jumbotron">
