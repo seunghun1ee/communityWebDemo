@@ -86,7 +86,7 @@ public class UserController {
                 List<Comment> commentsFromPosts = new ArrayList<>();
                 //All comments from the user
                 for(Comment comment : allComments) {
-                    if(comment.getUser().equals(optionalUser.get())) {
+                    if(comment.getUser() != null && comment.getUser().equals(optionalUser.get())) {
                         commentsFromUser.add(comment);
                     }
                 }
