@@ -48,22 +48,7 @@ public class CommentController {
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
             comment.setPost(post);
-
-            //Anonymous user or registered user?
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
-                comment.setPassword(passwordEncoder.encode(comment.getPassword()));
-            }
-            else {
-                User authUser = (User) auth.getPrincipal();
-                Optional<User> optionalUser = userService.getById(authUser.getId());
-                if(optionalUser.isPresent()) {
-                    comment.setUser(optionalUser.get());
-                }
-                else return new RedirectView("/logout");
-
-            }
+            setupComment(comment, request);
             commentService.add(comment);
             if(post.getThread() == null) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"No thread for the post");
@@ -93,9 +78,9 @@ public class CommentController {
             }
             else {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User user = (User) auth.getPrincipal();
+                User authUser = (User) auth.getPrincipal();
                 //Current logged in user is the owner of the comment
-                if(comment.getUser().getId().equals(user.getId())) {
+                if(comment.getUser().equals(authUser)) {
                     emptyComment(commentService,comment);
                     redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
                 }
@@ -131,26 +116,26 @@ public class CommentController {
         Optional<Comment> optionalComment = commentService.getById(commentId);
         //post and comment exist and the comment is from the post
         if(optionalPost.isPresent() && optionalComment.isPresent() && optionalComment.get().getPost().equals(optionalPost.get())) {
-            //Anonymous user or registered user?
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                reply.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
-                reply.setPassword(passwordEncoder.encode(reply.getPassword()));
-            }
-            else {
-                User authUser = (User) auth.getPrincipal();
-                Optional<User> optionalUser = userService.getById(authUser.getId());
-                if(optionalUser.isPresent()) {
-                    reply.setUser(optionalUser.get());
-                }
-                else return new RedirectView("/logout");
-            }
+            setupComment(reply, request);
             reply.setPost(optionalPost.get());
             reply.setParentComment(optionalComment.get());
             commentService.add(reply);
             return new RedirectView("/posts/{postId}");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request url");
+    }
+
+    private void setupComment(Comment comment, HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //Anonymous user or registered user?
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            comment.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+            comment.setPassword(passwordEncoder.encode(comment.getPassword()));
+        }
+        else {
+            User authUser = (User) auth.getPrincipal();
+            comment.setUser(authUser);
+        }
     }
 
     public void emptyComment(CommentService commentService,Comment comment) {
