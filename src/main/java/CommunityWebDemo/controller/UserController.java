@@ -77,33 +77,37 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User authUser = (User) auth.getPrincipal();
-            //is this profile of current user?
-            if(optionalUser.get().getId().equals(authUser.getId())) {
-                List<Post> posts = postService.getPostsOfUser(optionalUser.get());
-                List<Comment> allComments = commentService.getAll();
-                List<Comment> commentsFromUser = new ArrayList<>();
-                List<Comment> commentsFromPosts = new ArrayList<>();
-                //All comments from the user
-                for(Comment comment : allComments) {
-                    if(comment.getUser() != null && comment.getUser().equals(optionalUser.get())) {
-                        commentsFromUser.add(comment);
+            //logged in?
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //is this profile of current user?
+                if(optionalUser.get().getId().equals(authUser.getId())) {
+                    List<Post> posts = postService.getPostsOfUser(optionalUser.get());
+                    List<Comment> allComments = commentService.getAll();
+                    List<Comment> commentsFromUser = new ArrayList<>();
+                    List<Comment> commentsFromPosts = new ArrayList<>();
+                    //All comments from the user
+                    for(Comment comment : allComments) {
+                        if(comment.getUser() != null && comment.getUser().equals(optionalUser.get())) {
+                            commentsFromUser.add(comment);
+                        }
                     }
+                    //All comments from posts that user made
+                    for(Post post : posts) {
+                        commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
+                    }
+                    for(Comment comment : commentsFromUser) {
+                        commentController.emptyComment(commentService,comment);
+                    }
+                    commentService.deleteAll(commentsFromPosts);
+                    postService.deleteAll(posts);
+                    userService.deleteById(id);
+                    return new RedirectView("/logout");
                 }
-                //All comments from posts that user made
-                for(Post post : posts) {
-                    commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
-                }
-                for(Comment comment : commentsFromUser) {
-                    commentController.emptyComment(commentService,comment);
-                }
-                commentService.deleteAll(commentsFromPosts);
-                postService.deleteAll(posts);
-                userService.deleteById(id);
-                return new RedirectView("/logout");
+                //no
+                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
             }
-            //no
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
@@ -113,11 +117,15 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User authUser = (User) auth.getPrincipal();
-            //is this profile of current user?
-            if(optionalUser.get().getId().equals(authUser.getId())) {
-                model.addAttribute("user",optionalUser.get());
-                return "updateUser";
+            //logged in?
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //is this profile of current user?
+                if(optionalUser.get().getId().equals(authUser.getId())) {
+                    model.addAttribute("user",optionalUser.get());
+                    return "updateUser";
+                }
+                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
             }
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
@@ -128,23 +136,27 @@ public class UserController {
     public RedirectView saveNewUsername(@PathVariable Long id, String username, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
-            //is this profile of current user?
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User authUser = (User) auth.getPrincipal();
-            if(optionalUser.get().getId().equals(authUser.getId())) {
-                User targetUser = optionalUser.get();
-                if(passwordEncoder.matches(password,targetUser.getPassword())) {
-                    targetUser.setUsername(username);
-                    userService.add(targetUser);
-                    redirectAttr.addFlashAttribute("successMessage","Username change success");
-                    return new RedirectView("/users/{id}");
+            //logged in?
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //is this profile of current user?
+                if(optionalUser.get().getId().equals(authUser.getId())) {
+                    User targetUser = optionalUser.get();
+                    if(passwordEncoder.matches(password,targetUser.getPassword())) {
+                        targetUser.setUsername(username);
+                        userService.add(targetUser);
+                        redirectAttr.addFlashAttribute("successMessage","Username change success");
+                        return new RedirectView("/users/{id}");
+                    }
+                    else {
+                        redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                        return new RedirectView("/users/{id}/edit");
+                    }
                 }
-                else {
-                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
-                    return new RedirectView("/users/{id}/edit");
-                }
+                else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
             }
-            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
@@ -154,28 +166,32 @@ public class UserController {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User authUser = (User) auth.getPrincipal();
-            //logged in user == user profile?
-            if(optionalUser.get().getId().equals(authUser.getId())) {
-                User targetUser = optionalUser.get();
-                //correct current password?
-                if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {
-                    //newPassword == repeatPassword?
-                    if(newPassword.equals(repeatPassword)) {
-                        targetUser.setPassword(passwordEncoder.encode(newPassword));
-                        userService.add(targetUser);
-                        redirectAttr.addFlashAttribute("successMessage","Password change success");
-                        return new RedirectView("/users/{id}");
+            //logged in?
+            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //logged in user == user profile?
+                if(optionalUser.get().getId().equals(authUser.getId())) {
+                    User targetUser = optionalUser.get();
+                    //correct current password?
+                    if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {
+                        //newPassword == repeatPassword?
+                        if(newPassword.equals(repeatPassword)) {
+                            targetUser.setPassword(passwordEncoder.encode(newPassword));
+                            userService.add(targetUser);
+                            redirectAttr.addFlashAttribute("successMessage","Password change success");
+                            return new RedirectView("/users/{id}");
+                        }
+                        else {
+                            redirectAttr.addFlashAttribute("failMessage","New passwords do not match");
+                            return new RedirectView("/users/{id}/edit");
+                        }
                     }
                     else {
-                        redirectAttr.addFlashAttribute("failMessage","New passwords do not match");
+                        redirectAttr.addFlashAttribute("failMessage","Wrong password");
                         return new RedirectView("/users/{id}/edit");
                     }
                 }
-                else {
-                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
-                    return new RedirectView("/users/{id}/edit");
-                }
+                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
             }
             else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
