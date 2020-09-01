@@ -93,6 +93,7 @@ function doUpVote() {
 function cancelUpVote() {
     voteCount.textContent = numList[1];
     upVoteButton.setAttribute("aria-pressed", String(false));
+    upVoteButton.classList.remove("active");
     cancelVote();
 }
 
@@ -110,6 +111,7 @@ function doDownVote() {
 function cancelDownVote() {
     voteCount.textContent = numList[1];
     downVoteButton.setAttribute("aria-pressed", String(false));
+    downVoteButton.classList.remove("active");
     cancelVote();
 }
 
