@@ -89,10 +89,10 @@
                     <p><a data-toggle="collapse" th:href="'#replyCollapse' + ${comment.id}" role="button" aria-expanded="false" th:aria-controls="'#replyCollapse' + ${comment.id}">
                         Reply
                     </a></p>
-                    <form class="collapse" th:id="'replyCollapse' + ${comment.id}" th:action="@{/posts/{postId}/comments/{commentId}/reply(postId=${post.id},commentId=${comment.id})}" method="post" th:object="${reply}">
-                        <textarea class="comment-box" th:id="'inputReplyMessage' + ${comment.id}" th:form="'replyCollapse'+${comment.id}" name="message" placeholder="Message" th:object="${message}" rows="3" cols="80" required></textarea>
+                    <form class="collapse" th:id="'replyCollapse' + ${comment.id}" th:onsubmit="'replyComment(\''+${comment.post.id}+'\',\''+${comment.id}+'\');return false;'">
+                        <textarea class="comment-box" th:id="'inputReplyMessage' + ${comment.id}" th:form="'replyCollapse'+${comment.id}" name="message" placeholder="Message" rows="3" cols="80" required></textarea>
                         <br>
-                        <input sec:authorize="isAnonymous()" th:id="'inputReplyPassword' + ${comment.id}" type="password" name="password" placeholder="Password" th:object="${password}" required>
+                        <input sec:authorize="isAnonymous()" th:id="'inputReplyPassword' + ${comment.id}" type="password" name="password" placeholder="Password" required>
                         <br sec:authorize="isAnonymous()">
                         <button type="submit">Reply</button>
                     </form>
@@ -105,13 +105,13 @@
                             <p th:text="${subComment.message}"></p>
 
                             <div th:if="${subComment.user == null}">
-                                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
-                                    <input type="password" name="password" placeholder="Password" th:object="${password}" required>
+                                <form th:onsubmit="'deleteComment(\''+${subComment.post.id}+'\',\''+${subComment.id}+'\');return false;'">
+                                    <input th:id="'inputCommentPassword'+${subComment.id}" type="password" name="password" placeholder="Password" required>
                                     <button type="submit">Delete</button>
                                 </form>
                             </div>
                             <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
-                                <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${subComment.post.id},commentId=${subComment.id})}" method="post">
+                                <form th:onsubmit="'deleteComment(\''+${subComment.post.id}+'\',\''+${subComment.id}+'\');return false;'">
                                     <button type="submit">Delete</button>
                                 </form>
                             </div>
