@@ -73,19 +73,10 @@ public class VoteController {
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
-            JSONObject voters;
-            String key;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //anonymous or registered user?
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                voters = voterObject.getJSONObject("guests");
-                key = request.getRemoteAddr();
-            }
-            else {
-                voters = voterObject.getJSONObject("users");
-                User currentUser = (User) auth.getPrincipal();
-                key = String.valueOf(currentUser.getId());
-            }
+            JSONObject voters = getVoters(voterObject,auth);
+            String key = getKey(request,auth);
+
             if(voters.isNull(key)) {
                 return false;
             }
@@ -103,18 +94,10 @@ public class VoteController {
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
-            JSONObject voters;
-            String key;
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                voters = voterObject.getJSONObject("guests");
-                key = request.getRemoteAddr();
-            }
-            else {
-                voters = voterObject.getJSONObject("users");
-                User currentUser = (User) auth.getPrincipal();
-                key = String.valueOf(currentUser.getId());
-            }
+            JSONObject voters = getVoters(voterObject,auth);
+            String key = getKey(request,auth);
+
             if(voters.isNull(key)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"The user did not vote before");
             }
@@ -135,5 +118,24 @@ public class VoteController {
             return "success";
         }
         else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+    }
+
+    private JSONObject getVoters(JSONObject voterObject, Authentication auth) throws JSONException {
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            return voterObject.getJSONObject("guests");
+        }
+        else {
+            return voterObject.getJSONObject("users");
+        }
+    }
+
+    private String getKey(HttpServletRequest request, Authentication auth) {
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            return request.getRemoteAddr();
+        }
+        else {
+            User currentUser = (User) auth.getPrincipal();
+            return String.valueOf(currentUser.getId());
+        }
     }
 }
