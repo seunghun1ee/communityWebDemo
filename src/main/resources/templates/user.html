@@ -22,9 +22,6 @@
         </tr>
         <div th:if="${currentUser != null and user.id == currentUser.id}">
             <p><a th:href="@{/users/{id}/edit(id=${user.id})}">Edit this user</a></p>
-            <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
-                <button type="submit">Delete this user</button>
-            </form>
         </div>
 
         <!-- jQuery CDN -->
