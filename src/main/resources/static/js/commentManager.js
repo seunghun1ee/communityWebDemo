@@ -20,6 +20,12 @@ function addComment() {
                 alert("Error");
                 window.location.href = "/";
             }
+        },
+        statusCode: {
+            404: function () {
+                alert("The post is deleted. Press OK to go back to the thread.");
+                window.location.href = "../";
+            }
         }
     });
 }

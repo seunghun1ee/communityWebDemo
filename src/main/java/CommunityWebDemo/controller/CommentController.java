@@ -12,6 +12,7 @@ import CommunityWebDemo.service.UserService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +43,7 @@ public class CommentController {
 
     @PostMapping(value = "/{threadUrl}/posts/{postId}/new_comment", consumes = "application/json")
     @ResponseBody
-    public boolean saveNewComment(@PathVariable String threadUrl, @PathVariable Long postId, @RequestBody String payload, HttpServletRequest request) throws JSONException {
+    public boolean saveNewComment(@PathVariable String threadUrl, @PathVariable Long postId, @RequestBody String payload, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(postId);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
@@ -53,7 +54,7 @@ public class CommentController {
             commentService.add(comment);
             return true;
         }
-        return false;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
     @PostMapping(value = "/posts/{postId}/comments/{commentId}/delete", consumes = "application/json")
