@@ -93,7 +93,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     List<Post> posts = postService.getPostsOfUser(optionalUser.get());
                     List<Comment> allComments = commentService.getAll();
                     List<Comment> commentsFromUser = new ArrayList<>();
@@ -133,7 +133,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     model.addAttribute("user",optionalUser.get());
                     return "updateUser";
                 }
@@ -153,7 +153,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     User targetUser = optionalUser.get();
                     if(passwordEncoder.matches(password,targetUser.getPassword())) {
                         targetUser.setUsername(username);
@@ -186,7 +186,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //logged in user == user profile?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     User targetUser = optionalUser.get();
                     //correct current password?
                     if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {
