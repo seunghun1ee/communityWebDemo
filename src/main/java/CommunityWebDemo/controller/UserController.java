@@ -149,7 +149,7 @@ public class UserController {
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
                 if(optionalUser.get().getId().equals(authUser.getId())) {
@@ -178,7 +178,7 @@ public class UserController {
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //logged in user == user profile?
                 if(optionalUser.get().getId().equals(authUser.getId())) {
