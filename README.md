@@ -53,11 +53,12 @@ The project aims the website to have two major features
     * [x] Thread (with banner)
     * [x] Post page
     * [ ] User profile
+    * [ ] Navbar
     
     }
 * [ ] Show subscribed threads first at the homepage (Users)
 * [ ] Custom themes for each threads
-* [ ] Verify passwords from frontend
+* [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
 * [ ] Markdown editor
 * [ ] Navigation bar
