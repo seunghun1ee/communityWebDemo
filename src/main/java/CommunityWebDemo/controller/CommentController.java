@@ -75,14 +75,51 @@ public class CommentController {
         return false;
     }
 
-    @PostMapping("/posts/{postId}/comments/{commentId}/delete")
-    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
+    //@PostMapping("/posts/{postId}/comments/{commentId}/delete")
+//    public RedirectView deleteComment(@PathVariable Long postId, @PathVariable Long commentId, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
+//        Optional<Post> optionalPost = postService.getById(postId);
+//        Optional<Comment> optionalComment = commentService.getById(commentId);
+//        //Post is present, comment is present, thread is not null
+//        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
+//            Comment comment = optionalComment.get();
+//            //Owner of the comment Anonymous user or registered user?
+//            if(comment.getUser() == null) {
+//                //Comment password is correct
+//                if(passwordEncoder.matches(password, comment.getPassword())) {
+//                    emptyComment(commentService,comment);
+//                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+//                }
+//                else {
+//                    redirectAttr.addFlashAttribute("failMessage","Password is incorrect");
+//                }
+//            }
+//            else {
+//                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//                User authUser = (User) auth.getPrincipal();
+//                //Current logged in user is the owner of the comment
+//                if(comment.getUser().equals(authUser)) {
+//                    emptyComment(commentService,comment);
+//                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
+//                }
+//                else {
+//                    redirectAttr.addFlashAttribute("failMessage","Access denied");
+//                }
+//            }
+//            return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
+//        }
+//        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+//    }
+
+    @PostMapping(value = "/posts/{postId}/comments/{commentId}/delete", consumes = "application/json")
+    @ResponseBody
+    public boolean deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, RedirectAttributes redirectAttr) throws JSONException {
         Optional<Post> optionalPost = postService.getById(postId);
         Optional<Comment> optionalComment = commentService.getById(commentId);
-        //Post is present, comment is present, thread is not null
         if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
+            JSONObject passwordJson = new JSONObject(payload);
+            String password = passwordJson.optString("password");
             Comment comment = optionalComment.get();
-            //Owner of the comment Anonymous user or registered user?
+            //anonymous or registered?
             if(comment.getUser() == null) {
                 //Comment password is correct
                 if(passwordEncoder.matches(password, comment.getPassword())) {
@@ -105,27 +142,27 @@ public class CommentController {
                     redirectAttr.addFlashAttribute("failMessage","Access denied");
                 }
             }
-            return new RedirectView("/" + optionalPost.get().getThread().getUrl() + "/posts/{postId}");
+            return true;
         }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+        else return false;
     }
 
-    @GetMapping("/posts/{postId}/comments/{commentId}/reply")
-    public String newReply(@PathVariable Long postId, @PathVariable Long commentId, Model model) throws ResponseStatusException{
-        Optional<Post> optionalPost = postService.getById(postId);
-        Optional<Comment> optionalComment = commentService.getById(commentId);
-        //post and comment exist and the comment is from the post
-        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalComment.get().getPost().equals(optionalPost.get())) {
-            model.addAttribute("post",optionalPost.get());
-            model.addAttribute("parentComment",optionalComment.get());
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                model.addAttribute("currentUser", auth.getPrincipal());
-            }
-            return "reply";
-        }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request url");
-    }
+//    @GetMapping("/posts/{postId}/comments/{commentId}/reply")
+//    public String newReply(@PathVariable Long postId, @PathVariable Long commentId, Model model) throws ResponseStatusException{
+//        Optional<Post> optionalPost = postService.getById(postId);
+//        Optional<Comment> optionalComment = commentService.getById(commentId);
+//        //post and comment exist and the comment is from the post
+//        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalComment.get().getPost().equals(optionalPost.get())) {
+//            model.addAttribute("post",optionalPost.get());
+//            model.addAttribute("parentComment",optionalComment.get());
+//            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+//                model.addAttribute("currentUser", auth.getPrincipal());
+//            }
+//            return "reply";
+//        }
+//        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Bad request url");
+//    }
 
     @PostMapping("/posts/{postId}/comments/{commentId}/reply")
     public RedirectView saveNewReply(@PathVariable Long postId, @PathVariable Long commentId, Comment reply, HttpServletRequest request) {

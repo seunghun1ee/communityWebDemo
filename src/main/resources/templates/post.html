@@ -84,13 +84,14 @@
                             <input type="password" name="password" placeholder="Password" th:object="${password}" required>
                             <button type="submit">Delete</button>
                         </form>
-                        <button type="button" th:onclick="'deleteComment(\'/posts/'+${comment.post.id}+'/comments/'+${comment.id}+'/delete\')'">Delete test</button>
+                        <input th:id="'inputCommentPassword' + ${comment.id}" type="password" name="password" placeholder="Password test" th:object="${password}" required>
+                        <button type="button" th:onclick="'deleteComment(\''+${comment.post.id}+'\',\''+${comment.id}+'\')'">Delete test</button>
                     </div>
                     <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
                         <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${comment.post.id},commentId=${comment.id})}" method="post">
                             <button type="submit">Delete</button>
                         </form>
-                        <button type="button" th:onclick="deleteComment('/posts/'+${comment.post.id}+'/comments/'+${comment.id}+'/delete')">Delete test</button>
+                        <button type="button" th:onclick="'deleteComment(\''+${comment.post.id}+'\',\''+${comment.id}+'\')'">Delete test</button>
                     </div>
 
                     <p><a data-toggle="collapse" th:href="'#replyCollapse' + ${comment.id}" role="button" aria-expanded="false" th:aria-controls="'#replyCollapse' + ${comment.id}">

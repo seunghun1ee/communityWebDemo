@@ -24,6 +24,26 @@ function addComment() {
     })
 }
 
-function deleteComment(url) {
-    console.log(url);
+function deleteComment(postId, commentId) {
+    var commentPassword = document.getElementById("inputCommentPassword"+commentId);
+    var password = {
+        "password": commentPassword?.value.toString()
+    };
+    console.log(postId, commentId);
+    $.post({
+        url: "/posts/"+postId+"/comments/"+commentId +"/delete",
+        data: JSON.stringify(password),
+        cache: false,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            if(response) {
+                location.reload();
+            }
+            else {
+                alert("Error");
+                window.location.href = "/";
+            }
+        }
+    })
 }
