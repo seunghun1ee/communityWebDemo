@@ -1,7 +1,7 @@
-var message = document.getElementById("inputMessage");
-var password = document.getElementById("inputPassword");
-
 function addComment() {
+    var message = document.getElementById("inputMessage");
+    var password = document.getElementById("inputPassword");
+
     var comment = {
         "message": message?.value.toString(),
         "password": password?.value.toString()
@@ -22,4 +22,8 @@ function addComment() {
             }
         }
     })
+}
+
+function deleteComment(url) {
+    console.log(url);
 }
