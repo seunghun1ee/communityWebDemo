@@ -66,10 +66,21 @@ public class UserController {
     }
 
     @PostMapping("/users/new_user")
-    public RedirectView saveNewUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.add(user);
-        return new RedirectView("/login");
+    public RedirectView saveNewUser(String username, String password, String repeatPassword, RedirectAttributes redirectAttr) {
+        Optional<User> existingUser = userService.getByUsername(username);
+        if(existingUser.isPresent()) {
+            redirectAttr.addFlashAttribute("failMessage","The username is already in use");
+            return new RedirectView("/users/new_user");
+        }
+        if(password.equals(repeatPassword)) {
+            User user = new User(username,passwordEncoder.encode(password));
+            userService.add(user);
+            return new RedirectView("/login");
+        }
+        else {
+            redirectAttr.addFlashAttribute("failMessage","Passwords don't match");
+            return new RedirectView("/users/new_user");
+        }
     }
 
     @PostMapping("/users/{id}/delete")

@@ -9,11 +9,16 @@
 
 </head>
     <body>
+        <div th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>New User</h2>
-        <form method="post" action="/users/new_user" th:object="${user}">
+        <form method="post" action="/users/new_user">
             <input type="text" id="inputName" name="username" placeholder="Username" th:text="${username}" required>
             <br>
             <input type="password" id="inputPassword" name="password" placeholder="Password" th:text="${password}" required>
+            <br>
+            <input type="password" id="inputRepeat" name="repeatPassword" placeholder="Confirm password" th:text="${repeatPassword}" required>
+            <br>
             <button type="submit">Sign up</button>
         </form>
 
