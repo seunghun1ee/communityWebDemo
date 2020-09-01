@@ -29,7 +29,7 @@ function deleteComment(postId, commentId) {
     var password = {
         "password": commentPassword?.value.toString()
     };
-    console.log(postId, commentId);
+
     $.post({
         url: "/posts/"+postId+"/comments/"+commentId +"/delete",
         data: JSON.stringify(password),
