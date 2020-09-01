@@ -8,6 +8,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -157,6 +158,10 @@ public class UserController {
                     if(passwordEncoder.matches(password,targetUser.getPassword())) {
                         targetUser.setUsername(username);
                         userService.add(targetUser);
+                        //new auth with new username
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(targetUser,null,auth.getAuthorities());
+                        //apply new auth
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthToken);
                         redirectAttr.addFlashAttribute("successMessage","Username change success");
                         return new RedirectView("/users/{id}");
                     }
@@ -189,6 +194,10 @@ public class UserController {
                         if(newPassword.equals(repeatPassword)) {
                             targetUser.setPassword(passwordEncoder.encode(newPassword));
                             userService.add(targetUser);
+                            //new auth with new password
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(targetUser,null,auth.getAuthorities());
+                            //apply new auth
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthToken);
                             redirectAttr.addFlashAttribute("successMessage","Password change success");
                             return new RedirectView("/users/{id}");
                         }
