@@ -23,8 +23,12 @@ function addComment() {
         },
         statusCode: {
             404: function () {
-                alert("The post is deleted. Press OK to go back to the thread.");
+                alert("The post was deleted. Press OK to go back to the thread.");
                 window.location.href = "../";
+            },
+            500: function () {
+                alert("The thread was deleted. Press OK to go back to the homepage.");
+                window.location.href = "/";
             }
         }
     });

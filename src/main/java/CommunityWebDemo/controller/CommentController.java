@@ -46,7 +46,10 @@ public class CommentController {
     public boolean saveNewComment(@PathVariable String threadUrl, @PathVariable Long postId, @RequestBody String payload, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(postId);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+        if(!optionalThread.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Thread is deleted");
+        }
+        if(optionalPost.isPresent()) {
             JSONObject commentJson = new JSONObject(payload);
             Comment comment = parseJsonToComment(commentJson);
             setupCommentUser(comment,request);
