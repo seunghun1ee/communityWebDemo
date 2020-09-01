@@ -40,15 +40,6 @@ public class HomeController {
     public String helloWorld(Model model) {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         model.addAttribute("threads",threads);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-            User authUser = (User) auth.getPrincipal();
-            Optional<User> loginUser = userService.getById(authUser.getId());
-            if(loginUser.isPresent()) {
-                model.addAttribute("user",loginUser.get());
-            }
-            else return "redirect:/logout";
-        }
         return "home";
     }
 

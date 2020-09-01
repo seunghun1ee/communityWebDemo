@@ -8,6 +8,7 @@ import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -92,7 +93,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     List<Post> posts = postService.getPostsOfUser(optionalUser.get());
                     List<Comment> allComments = commentService.getAll();
                     List<Comment> commentsFromUser = new ArrayList<>();
@@ -132,7 +133,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     model.addAttribute("user",optionalUser.get());
                     return "updateUser";
                 }
@@ -152,11 +153,15 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //is this profile of current user?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     User targetUser = optionalUser.get();
                     if(passwordEncoder.matches(password,targetUser.getPassword())) {
                         targetUser.setUsername(username);
                         userService.add(targetUser);
+                        //new auth with new username
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(targetUser,null,auth.getAuthorities());
+                        //apply new auth
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthToken);
                         redirectAttr.addFlashAttribute("successMessage","Username change success");
                         return new RedirectView("/users/{id}");
                     }
@@ -181,7 +186,7 @@ public class UserController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User authUser = (User) auth.getPrincipal();
                 //logged in user == user profile?
-                if(optionalUser.get().getId().equals(authUser.getId())) {
+                if(optionalUser.get().equals(authUser)) {
                     User targetUser = optionalUser.get();
                     //correct current password?
                     if(passwordEncoder.matches(currentPassword,targetUser.getPassword())) {
@@ -189,6 +194,10 @@ public class UserController {
                         if(newPassword.equals(repeatPassword)) {
                             targetUser.setPassword(passwordEncoder.encode(newPassword));
                             userService.add(targetUser);
+                            //new auth with new password
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(targetUser,null,auth.getAuthorities());
+                            //apply new auth
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthToken);
                             redirectAttr.addFlashAttribute("successMessage","Password change success");
                             return new RedirectView("/users/{id}");
                         }
