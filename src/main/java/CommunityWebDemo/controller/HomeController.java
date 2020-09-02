@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.compartor.SortByPostVote;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
@@ -39,7 +40,10 @@ public class HomeController {
     @GetMapping("/")
     public String helloWorld(Model model) {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
+        List<Post> posts = postService.getAll();
+        posts.sort(new SortByPostVote());
         model.addAttribute("threads",threads);
+        model.addAttribute("posts",posts);
         return "home";
     }
 

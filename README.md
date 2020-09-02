@@ -49,7 +49,7 @@ The project aims the website to have two major features
 
 #### Frontend
 * [ ] Basic frontend design {
-    * [ ] Homepage
+    * [x] Homepage
     * [x] Thread (with banner)
     * [x] Post page
     * [ ] User profile
