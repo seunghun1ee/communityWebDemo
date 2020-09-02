@@ -47,7 +47,7 @@ public class CommentController {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(postId);
         if(!optionalThread.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Thread is deleted");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The thread was deleted. Press OK to go back to the homepage.");
         }
         if(optionalPost.isPresent()) {
             JSONObject commentJson = new JSONObject(payload);
@@ -57,44 +57,50 @@ public class CommentController {
             commentService.add(comment);
             return true;
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"The post was deleted. Press OK to go back to the thread.");
     }
 
-    @PostMapping(value = "/posts/{postId}/comments/{commentId}/delete", consumes = "application/json")
+    @PostMapping(value = "/{threadUrl}/posts/{postId}/comments/{commentId}/delete", consumes = "application/json")
     @ResponseBody
-    public boolean deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, RedirectAttributes redirectAttr) throws JSONException {
+    public boolean deleteComment(@PathVariable String threadUrl,@PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, RedirectAttributes redirectAttr) throws JSONException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(postId);
         Optional<Comment> optionalComment = commentService.getById(commentId);
-        if(optionalPost.isPresent() && optionalComment.isPresent() && optionalPost.get().getThread() != null) {
-            JSONObject passwordJson = new JSONObject(payload);
-            String password = passwordJson.optString("password");
-            Comment comment = optionalComment.get();
-            //anonymous or registered?
-            if(comment.getUser() == null) {
-                //Comment password is correct
-                if(passwordEncoder.matches(password, comment.getPassword())) {
-                    emptyComment(commentService,comment);
-                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
-                }
-                else {
-                    redirectAttr.addFlashAttribute("failMessage","Password is incorrect");
-                }
+        if(!optionalThread.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_thread");
+        }
+        else if(!optionalPost.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_post");
+        }
+        else if(!optionalComment.isPresent() || !optionalComment.get().isActive()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
+        }
+
+        JSONObject passwordJson = new JSONObject(payload);
+        String password = passwordJson.optString("password");
+        Comment comment = optionalComment.get();
+        //anonymous or registered?
+        if(comment.getUser() == null) {
+            //Comment password is correct
+            if(passwordEncoder.matches(password, comment.getPassword())) {
+                emptyComment(commentService,comment);
             }
             else {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                User authUser = (User) auth.getPrincipal();
-                //Current logged in user is the owner of the comment
-                if(comment.getUser().equals(authUser)) {
-                    emptyComment(commentService,comment);
-                    redirectAttr.addFlashAttribute("successMessage","The Comment is deleted");
-                }
-                else {
-                    redirectAttr.addFlashAttribute("failMessage","Access denied");
-                }
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Wrong password");
             }
-            return true;
         }
-        else return false;
+        else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) auth.getPrincipal();
+            //Current logged in user is the owner of the comment
+            if(comment.getUser().equals(authUser)) {
+                emptyComment(commentService,comment);
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+            }
+        }
+        return true;
     }
 
     @PostMapping("/posts/{postId}/comments/{commentId}/reply")

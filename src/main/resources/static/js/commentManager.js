@@ -22,12 +22,13 @@ function addComment() {
             }
         },
         statusCode: {
-            404: function () {
-                alert("The post was deleted. Press OK to go back to the thread.");
+            404: function (response) {
+                response?.responseJSON?.message
+                alert(response?.responseJSON?.message);
                 window.location.href = "../";
             },
             500: function () {
-                alert("The thread was deleted. Press OK to go back to the homepage.");
+                alert("Internal Server Error");
                 window.location.href = "/";
             }
         }
@@ -55,6 +56,11 @@ function replyComment(postId, commentId) {
                 alert("Error");
                 window.location.href = "/";
             }
+        },
+        statusCode: {
+            404: function (response) {
+
+            }
         }
     });
 }
@@ -66,7 +72,7 @@ function deleteComment(postId, commentId) {
     };
 
     $.post({
-        url: "/posts/"+postId+"/comments/"+commentId +"/delete",
+        url: window.location.href+"/comments/"+commentId +"/delete",
         data: JSON.stringify(password),
         cache: false,
         contentType: "application/json; charset=utf-8",
@@ -78,6 +84,34 @@ function deleteComment(postId, commentId) {
             else {
                 alert("Error");
                 window.location.href = "/";
+            }
+        },
+        statusCode: {
+            400:function () {
+                alert("The password for the comment is incorrect.");
+            },
+            403: function () {
+                alert("Access denied.");
+            },
+            404: function (response) {
+                let errorMessage = response?.responseJSON?.message;
+                switch (errorMessage) {
+                    case "no_thread":
+                        alert("The thread does not exist. Press OK to return to homepage.");
+                        window.location.href = "/";
+                        break;
+                    case "no_post":
+                        alert("The post does not exist. Press OK to return to the thread.");
+                        window.location.href = "../";
+                        break;
+                    case "no_comment":
+                        alert("The comment does not exist. Press OK to refresh the page.");
+                        location.reload();
+                        break;
+                    default:
+                        alert("Error");
+                        break;
+                }
             }
         }
     });
