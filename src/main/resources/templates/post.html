@@ -75,13 +75,13 @@
                     <p th:text="${comment.message}"></p>
 
                     <div th:if="${comment.user == null}">
-                        <form th:onsubmit="'deleteComment(\''+${comment.post.id}+'\',\''+${comment.id}+'\');return false;'">
+                        <form th:onsubmit="'deleteComment(\''+${comment.id}+'\');return false;'">
                             <input th:id="'inputCommentPassword' + ${comment.id}" type="password" name="password" placeholder="Password" required>
                             <button type="submit">Delete</button>
                         </form>
                     </div>
                     <div th:if="${comment.user != null and currentUser != null and comment.user.id == currentUser.id}">
-                        <form th:onsubmit="'deleteComment(\''+${comment.post.id}+'\',\''+${comment.id}+'\');return false;'">
+                        <form th:onsubmit="'deleteComment(\''+${comment.id}+'\');return false;'">
                             <button type="submit">Delete</button>
                         </form>
                     </div>
@@ -127,6 +127,33 @@
                 </div>
                 <div th:unless="${comment.active}">
                     <p>[Deleted comment]</p>
+                    <article th:each="subComment : ${comment.subComments}">↳
+                        <div th:if="${subComment.active}" style="margin-left: 16px;">
+                            <span th:if="${subComment.user == null}" style="font-weight: bold" th:text="Anonymous + ' (' + ${subComment?.ip} + ')'"></span>
+                            <span th:if="${subComment.user != null}" style="font-weight: bold" th:text="${subComment.user?.username}"></span>
+                            <span th:text="${subComment.getFormattedDateTime()}"></span>
+                            <p th:text="${subComment.message}"></p>
+
+                            <div th:if="${subComment.user == null}">
+                                <form th:onsubmit="'deleteComment(\''+${subComment.id}+'\');return false;'">
+                                    <input th:id="'inputCommentPassword'+${subComment.id}" type="password" name="password" placeholder="Password" required>
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                            <div th:if="${subComment.user != null and currentUser != null and subComment.user.id == currentUser.id}">
+                                <form th:onsubmit="'deleteComment(\''+${subComment.id}+'\');return false;'">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                            <hr>
+                        </div>
+                        <div th:unless="${subComment.active}" style="margin-left: 16px;">
+                            <p>[Deleted comment]</p>
+                            <hr>
+                        </div>
+
+                    </article>
+                    <hr>
                     <hr>
                 </div>
             </article>
