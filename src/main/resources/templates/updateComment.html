@@ -9,19 +9,32 @@
 
 </head>
     <body>
-        <div id="navbar">
-            <nav sec:authorize="isAnonymous()">
-                <a th:if="${#httpServletRequest.requestURI == '/'}">Home</a>
-                <a th:unless="${#httpServletRequest.requestURI == '/'}" href="/">Home</a>
-                <a th:unless="${#httpServletRequest.requestURI == '/login'}" href="/login">Sign in</a>
-                <a th:if="${#httpServletRequest.requestURI == '/login'}">Sign in</a>
-            </nav>
-            <nav sec:authorize="isAuthenticated()">
-                <a th:if="${#httpServletRequest.requestURI == '/'}">Home</a>
-                <a th:unless="${#httpServletRequest.requestURI == '/'}" href="/">Home</a>
-                <a href="/logout">Sign out</a>
-            </nav>
-        </div>
+    <div id="navbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">
+                The Forum
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li th:class="'nav-item '+${#httpServletRequest.requestURI == '/' ? 'active' : ''}">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li sec:authorize="isAnonymous()" th:class="'nav-item '+${#httpServletRequest.requestURI == '/login' ? 'active' : ''}">
+                        <a class="nav-link" href="/login">Sign in</a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()" th:class="'nav-item '+${#httpServletRequest.requestURI == '/users/'+ #authentication.principal.getId() ? 'active' : ''}">
+                        <a class="nav-link" th:href="@{/users/{id}(id=${#authentication.principal.getId()})}">My profile</a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()" class="nav-item">
+                        <a class="nav-link" href="/logout">Sign out</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
 
         <h2>Edit comment</h2>
         <form th:action="@{/posts/{postId}/comments/{commentId}/edit(postId=${comment.post.id},commentId=${comment.id})}" method="post" th:object="${comment}">
