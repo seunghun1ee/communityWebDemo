@@ -47,7 +47,7 @@ public class CommentController {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(postId);
         if(!optionalThread.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The thread was deleted. Press OK to go back to the homepage.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no_thread");
         }
         if(optionalPost.isPresent()) {
             JSONObject commentJson = new JSONObject(payload);
@@ -57,7 +57,7 @@ public class CommentController {
             commentService.add(comment);
             return true;
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"The post was deleted. Press OK to go back to the thread.");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_post");
     }
 
     @PostMapping(value = "/{threadUrl}/posts/{postId}/comments/{commentId}/delete", consumes = "application/json")

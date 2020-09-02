@@ -23,13 +23,7 @@ function addComment() {
         },
         statusCode: {
             404: function (response) {
-                response?.responseJSON?.message
-                alert(response?.responseJSON?.message);
-                window.location.href = "../";
-            },
-            500: function () {
-                alert("Internal Server Error");
-                window.location.href = "/";
+                notFound(response);
             }
         }
     });
@@ -94,25 +88,29 @@ function deleteComment(postId, commentId) {
                 alert("Access denied.");
             },
             404: function (response) {
-                let errorMessage = response?.responseJSON?.message;
-                switch (errorMessage) {
-                    case "no_thread":
-                        alert("The thread does not exist. Press OK to return to homepage.");
-                        window.location.href = "/";
-                        break;
-                    case "no_post":
-                        alert("The post does not exist. Press OK to return to the thread.");
-                        window.location.href = "../";
-                        break;
-                    case "no_comment":
-                        alert("The comment does not exist. Press OK to refresh the page.");
-                        location.reload();
-                        break;
-                    default:
-                        alert("Error");
-                        break;
-                }
+                notFound(response);
             }
         }
     });
+}
+
+function notFound(response) {
+    let errorMessage = response?.responseJSON?.message;
+    switch (errorMessage) {
+        case "no_thread":
+            alert("The thread does not exist. Press OK to return to homepage.");
+            window.location.href = "/";
+            break;
+        case "no_post":
+            alert("The post does not exist. Press OK to return to the thread.");
+            window.location.href = "../";
+            break;
+        case "no_comment":
+            alert("The comment does not exist. Press OK to refresh the page.");
+            location.reload();
+            break;
+        default:
+            alert("Error");
+            break;
+    }
 }
