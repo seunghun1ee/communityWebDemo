@@ -29,7 +29,7 @@ function addComment() {
     });
 }
 
-function replyComment(postId, commentId) {
+function replyComment(commentId) {
     var message = document.getElementById("inputReplyMessage"+commentId);
     var password = document.getElementById("inputReplyPassword"+commentId);
     var comment = {
@@ -59,7 +59,7 @@ function replyComment(postId, commentId) {
     });
 }
 
-function deleteComment(postId, commentId) {
+function deleteComment(commentId) {
     var commentPassword = document.getElementById("inputCommentPassword"+commentId);
     var password = {
         "password": commentPassword?.value
