@@ -57,12 +57,12 @@ public class ThreadController {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    @GetMapping("/new_thread")
+    //@GetMapping("/new_thread")
     public String createThread() {
         return "newThread";
     }
 
-    @PostMapping("/new_thread")
+    //@PostMapping("/new_thread")
     public String saveNewThread(Model model, String url, String name, String description) {
         Optional<Thread> urlCheck = threadService.getByUrl(url);
         if(urlCheck.isPresent()) {
@@ -80,7 +80,7 @@ public class ThreadController {
         return "newThread";
     }
 
-    @GetMapping("/{threadUrl}/settings")
+    //@GetMapping("/{threadUrl}/settings")
     public String threadSetting(@PathVariable String threadUrl, Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
@@ -90,7 +90,7 @@ public class ThreadController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    @PostMapping("/{threadUrl}/settings/edit")
+    //@PostMapping("/{threadUrl}/settings/edit")
     public String saveThreadSetting(@PathVariable String threadUrl, Model model, String description) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
@@ -109,7 +109,7 @@ public class ThreadController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
     }
 
-    @PostMapping("/{threadUrl}/delete")
+    //@PostMapping("/{threadUrl}/delete")
     public RedirectView deleteThread(@PathVariable String threadUrl) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
