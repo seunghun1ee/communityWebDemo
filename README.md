@@ -48,11 +48,11 @@ The project aims the website to have two major features
 * [ ] Use markdown for comments
 
 #### Frontend
-* [ ] Basic frontend design {
+* [x] Basic frontend design {
     * [x] Homepage
     * [x] Thread (with banner)
     * [x] Post page
-    * [ ] User profile
+    * [x] User profile
     * [x] Navbar
     
     }
