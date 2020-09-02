@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -67,20 +68,23 @@ public class UserController {
     }
 
     @PostMapping("/users/new_user")
-    public RedirectView saveNewUser(String username, String password, String repeatPassword, RedirectAttributes redirectAttr) {
+    public ModelAndView saveNewUser(String username, String password, String repeatPassword) {
+        ModelAndView modelAndView = new ModelAndView();
         Optional<User> existingUser = userService.getByUsername(username);
         if(existingUser.isPresent()) {
-            redirectAttr.addFlashAttribute("failMessage","The username is already in use");
-            return new RedirectView("/users/new_user");
+            modelAndView.addObject("failMessage","The username is already in use");
+            modelAndView.setViewName("newUser");
+            return modelAndView;
         }
-        if(password.equals(repeatPassword)) {
+        else if(password.equals(repeatPassword)) {
             User user = new User(username,passwordEncoder.encode(password));
             userService.add(user);
-            return new RedirectView("/login");
+            return new ModelAndView("redirect:/login");
         }
         else {
-            redirectAttr.addFlashAttribute("failMessage","Passwords don't match");
-            return new RedirectView("/users/new_user");
+            modelAndView.addObject("failMessage","Passwords don't match");
+            modelAndView.setViewName("newUser");
+            return modelAndView;
         }
     }
 
