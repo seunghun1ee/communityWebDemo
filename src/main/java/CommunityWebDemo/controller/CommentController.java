@@ -146,10 +146,10 @@ public class CommentController {
     }
 
     private Comment getActiveCommentOrException(Optional<Comment> optionalComment) {
-        if(!optionalComment.isPresent() || !optionalComment.get().isActive()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
+        if(optionalComment.isPresent() && optionalComment.get().isActive()) {
+            return optionalComment.get();
         }
-        else return optionalComment.get();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
     }
 
     private Post getPostOrException(Optional<Post> optionalPost) {
