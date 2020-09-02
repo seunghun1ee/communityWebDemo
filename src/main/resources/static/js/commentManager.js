@@ -37,7 +37,7 @@ function replyComment(postId, commentId) {
         "password": password?.value
     }
     $.post({
-        url: "/posts/"+postId+"/comments/"+commentId+"/reply",
+        url: window.location.href+"/comments/"+commentId +"/reply",
         data: JSON.stringify(comment),
         cache: false,
         contentType: "application/json; charset=utf-8",
@@ -53,7 +53,7 @@ function replyComment(postId, commentId) {
         },
         statusCode: {
             404: function (response) {
-
+                notFound(response);
             }
         }
     });

@@ -64,21 +64,17 @@ public class CommentController {
     @ResponseBody
     public boolean deleteComment(@PathVariable String threadUrl,@PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, RedirectAttributes redirectAttr) throws JSONException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(postId);
-        Optional<Comment> optionalComment = commentService.getById(commentId);
         if(!optionalThread.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_thread");
         }
-        else if(!optionalPost.isPresent()) {
+        Optional<Post> optionalPost = postService.getById(postId);
+        if(!optionalPost.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_post");
         }
-        else if(!optionalComment.isPresent() || !optionalComment.get().isActive()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
-        }
+        Comment comment = getActiveCommentOrException(commentService.getById(commentId));
 
         JSONObject passwordJson = new JSONObject(payload);
         String password = passwordJson.optString("password");
-        Comment comment = optionalComment.get();
         //anonymous or registered?
         if(comment.getUser() == null) {
             //Comment password is correct
@@ -103,21 +99,23 @@ public class CommentController {
         return true;
     }
 
-    @PostMapping("/posts/{postId}/comments/{commentId}/reply")
+    @PostMapping("/{threadUrl}/posts/{postId}/comments/{commentId}/reply")
     @ResponseBody
-    public boolean saveNewReply(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, HttpServletRequest request) throws JSONException {
-        Optional<Post> optionalPost = postService.getById(postId);
-        Optional<Comment> optionalComment = commentService.getById(commentId);
-        if(optionalPost.isPresent() && optionalComment.isPresent()) {
-            JSONObject commentJson = new JSONObject(payload);
-            Comment comment = parseJsonToComment(commentJson);
-            setupCommentUser(comment,request);
-            comment.setParentComment(optionalComment.get());
-            comment.setPost(optionalPost.get());
-            commentService.add(comment);
-            return true;
+    public boolean saveNewReply(@PathVariable String threadUrl, @PathVariable Long postId, @PathVariable Long commentId, @RequestBody String payload, HttpServletRequest request) throws JSONException {
+        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
+        if(!optionalThread.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_thread");
         }
-        return false;
+        Post post = getPostOrException(postService.getById(postId));
+        Comment parentComment = getActiveCommentOrException(commentService.getById(commentId));
+
+        JSONObject commentJson = new JSONObject(payload);
+        Comment comment = parseJsonToComment(commentJson);
+        setupCommentUser(comment,request);
+        comment.setParentComment(parentComment);
+        comment.setPost(post);
+        commentService.add(comment);
+        return true;
     }
 
     private Comment parseJsonToComment(JSONObject commentJson) {
@@ -145,6 +143,20 @@ public class CommentController {
         comment.setUser(null);
         comment.setActive(false);
         commentService.add(comment);
+    }
+
+    private Comment getActiveCommentOrException(Optional<Comment> optionalComment) {
+        if(!optionalComment.isPresent() || !optionalComment.get().isActive()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
+        }
+        else return optionalComment.get();
+    }
+
+    private Post getPostOrException(Optional<Post> optionalPost) {
+        if(!optionalPost.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_post");
+        }
+        else return optionalPost.get();
     }
 
 }
