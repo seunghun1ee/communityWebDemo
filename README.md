@@ -53,7 +53,7 @@ The project aims the website to have two major features
     * [x] Thread (with banner)
     * [x] Post page
     * [ ] User profile
-    * [ ] Navbar
+    * [x] Navbar
     
     }
 * [ ] Show subscribed threads first at the homepage (Users)
