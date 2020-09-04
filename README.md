@@ -38,7 +38,7 @@ The project aims the website to have two major features
 * [x] Be able to cancel vote
 * [x] Reply to comments
 * [ ] Voting system for comments and replies
-* [ ] Users can subscribe to threads
+* [x] Users can subscribe to threads
 * [ ] Be able to sort posts in various order (New, hot, best etc)
 * [ ] Users can open threads
 * [ ] Users can bookmark posts
@@ -56,7 +56,7 @@ The project aims the website to have two major features
     * [x] Navbar
     
     }
-* [ ] Show subscribed threads first at the homepage (Users)
+* [x] Show subscribed threads first at the homepage (Users)
 * [ ] Custom themes for each threads
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
