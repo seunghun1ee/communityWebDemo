@@ -18,7 +18,7 @@ public class Thread {
     @OneToMany
     private List<Post> posts = new ArrayList<>();
 
-    private String subscribedUsers = "[]";
+    private String subscribers = "[]";
 
     public Thread() {
         this.url = "null";
@@ -60,12 +60,12 @@ public class Thread {
         this.description = description;
     }
 
-    public String getSubscribedUsers() {
-        return subscribedUsers;
+    public String getSubscribers() {
+        return subscribers;
     }
 
-    public void setSubscribedUsers(String subscribedUsers) {
-        this.subscribedUsers = subscribedUsers;
+    public void setSubscribers(String subscribedUsers) {
+        this.subscribers = subscribedUsers;
     }
 
     @Override
