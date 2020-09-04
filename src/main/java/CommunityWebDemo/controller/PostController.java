@@ -73,7 +73,7 @@ public class PostController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User currentUser = (User) auth.getPrincipal();
                 model.addAttribute("currentUser",currentUser);
-                model.addAttribute("bookmarked",bookmarkController.checkBookmark(threadUrl,id));
+                model.addAttribute("bookmarked",bookmarkController.bookmark(threadUrl,id,"check"));
             }
             else {
                 model.addAttribute("currentUser",null);

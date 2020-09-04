@@ -34,23 +34,8 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
     @Autowired
     UserService userService;
 
-    @PostMapping("/{threadUrl}/posts/{postId}/checkBookmark")
-    public boolean checkBookmark(@PathVariable String threadUrl, @PathVariable Long postId) throws JSONException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Illegal request");
-        }
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(postId);
-        getThreadOrException(optionalThread);
-        Post post = getPostOrException(optionalPost);
-        User authUser = (User) auth.getPrincipal();
-        JSONObject bookmarksJSON = new JSONObject(authUser.getBookmarks());
-        return isBookmarked(post,bookmarksJSON);
-    }
-
     @PostMapping("/{threadUrl}/posts/{postId}/bookmark")
-    public boolean bookmark(@PathVariable String threadUrl, @PathVariable Long postId, @RequestParam boolean mode) throws JSONException {
+    public boolean bookmark(@PathVariable String threadUrl, @PathVariable Long postId, @RequestParam String mode) throws JSONException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Illegal request");
@@ -61,21 +46,28 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
         Post post = getPostOrException(optionalPost);
         User authUser = (User) auth.getPrincipal();
         JSONObject bookmarksJSON = new JSONObject(authUser.getBookmarks());
-        if(mode) {
-            if(isBookmarked(post,bookmarksJSON)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"already bookmarked");
-            }
-            bookmarksJSON.put(post.getId().toString(),true);
+        switch (mode) {
+            case "mark":
+                if(isBookmarked(post,bookmarksJSON)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"already bookmarked");
+                }
+                bookmarksJSON.put(post.getId().toString(),true);
+                authUser.setBookmarks(bookmarksJSON.toString());
+                userService.add(authUser);
+                return true;
+            case "unmark":
+                if(!isBookmarked(post,bookmarksJSON)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"not bookmarked before");
+                }
+                bookmarksJSON.remove(post.getId().toString());
+                authUser.setBookmarks(bookmarksJSON.toString());
+                userService.add(authUser);
+                return true;
+            case "check":
+            default:
+                return isBookmarked(post,bookmarksJSON);
         }
-        else {
-            if(!isBookmarked(post,bookmarksJSON)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"not bookmarked before");
-            }
-            bookmarksJSON.remove(post.getId().toString());
-        }
-        authUser.setBookmarks(bookmarksJSON.toString());
-        userService.add(authUser);
-        return true;
+
     }
 
     private boolean isBookmarked(Post post, JSONObject bookmarksJSON) {
