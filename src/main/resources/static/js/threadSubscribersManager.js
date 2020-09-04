@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function toggleSub() {
     if(subscribeButton.getAttribute("aria-pressed") !== "true") {
         $.post({
-            url:window.location.href + subRequest,
+            url:window.location.href + subRequest +"?sub=true",
             cache: false,
             success: function (response) {
                 if(response) {
@@ -38,11 +38,19 @@ function toggleSub() {
                     subscribeButton.textContent = "Subscribed";
                 }
             }
-        })
+        });
     }
     else {
-        subscribeButton.classList.remove("active");
-        subscribeButton.setAttribute("aria-pressed",String(false));
-        subscribeButton.textContent = "Subscribe";
+        $.post({
+            url:window.location.href + subRequest + "?sub=false",
+            cache: false,
+            success: function (response) {
+                if(response) {
+                    subscribeButton.classList.remove("active");
+                    subscribeButton.setAttribute("aria-pressed",String(false));
+                    subscribeButton.textContent = "Subscribe";
+                }
+            }
+        });
     }
 }
