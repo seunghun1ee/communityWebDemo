@@ -14,15 +14,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 public class BookmarkController implements OptionalEntityExceptionHandler{
 
     @Autowired
@@ -35,6 +38,7 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
     UserService userService;
 
     @PostMapping("/{threadUrl}/posts/{postId}/bookmark")
+    @ResponseBody
     public boolean bookmark(@PathVariable String threadUrl, @PathVariable Long postId, @RequestParam String mode) throws JSONException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
@@ -68,6 +72,32 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
                 return isBookmarked(post,bookmarksJSON);
         }
 
+    }
+
+    @GetMapping("/users/{id}/bookmarks")
+    public String showBookmarksOfUser(@PathVariable Long id, Model model) throws JSONException {
+        Optional<User> optionalUser = userService.getById(id);
+        User user = getUserOrException(optionalUser);
+        Authentication auth =SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            User authUser = (User) auth.getPrincipal();
+            if(user.equals(authUser)) {
+                List<Post> bookmarkedPosts = new ArrayList<>();
+                JSONObject bookmarkedPostsJSON = new JSONObject(user.getBookmarks());
+                Iterator<String> bookmarkedPostIds = bookmarkedPostsJSON.keys();
+                while (bookmarkedPostIds.hasNext()) {
+                    String postId = bookmarkedPostIds.next();
+                    Optional<Post> optionalPost = postService.getById(Long.valueOf(postId));
+                    if(optionalPost.isPresent()) {
+                        bookmarkedPosts.add(optionalPost.get());
+                    }
+                }
+                model.addAttribute("bookmarkedPosts",bookmarkedPosts);
+                return "bookmarks";
+            }
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+        else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
     }
 
     private boolean isBookmarked(Post post, JSONObject bookmarksJSON) {
