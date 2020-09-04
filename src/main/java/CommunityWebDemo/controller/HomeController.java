@@ -8,7 +8,10 @@ import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,50 +40,75 @@ public class HomeController {
     @Autowired
     ThreadRepository threadRepository;
     @Autowired
+    ThreadService threadService;
+    @Autowired
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
-    public String helloWorld(Model model) {
+    public String helloWorld(Model model) throws JSONException {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         List<Post> posts = postService.getAll();
         posts.sort(new SortByPostVote());
         model.addAttribute("threads",threads);
         model.addAttribute("posts",posts);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            User authUser = (User) auth.getPrincipal();
+            JSONObject subscribedThreadsJSON = new JSONObject(authUser.getSubscribedThreads());
+            List<Thread> subscribedThreads = new ArrayList<>();
+            Iterator<String> threadUrls = subscribedThreadsJSON.keys();
+            while (threadUrls.hasNext()) {
+                String threadUrl = threadUrls.next();
+                Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
+                optionalThread.ifPresent(subscribedThreads::add);
+            }
+            List<Post> subscribedPosts = new ArrayList<>();
+            for(Post post : posts) {
+                for(Thread thread : subscribedThreads) {
+                    if(post.getThread().equals(thread)) {
+                        subscribedPosts.add(post);
+                        break;
+                    }
+                }
+            }
+            subscribedPosts.sort(new SortByPostVote());
+            model.addAttribute("subscribedPosts",subscribedPosts);
+        }
         return "home";
     }
 
-//    @GetMapping("/load")
-//    public @ResponseBody String loadTestData() {
-//        commentService.deleteAll();
-//        postService.deleteAll();
-//        userService.deleteAll();
-//        threadRepository.deleteAll();
-//        User adam = new User("adam",passwordEncoder.encode("1234"));
-//        User eve = new User("eve",passwordEncoder.encode("1234"));
-//        userService.add(adam);
-//        userService.add(eve);
-//
-//        Thread threadA = new Thread("a","Thread A");
-//        Thread threadB = new Thread("b","Thread B");
-//        threadRepository.save(threadA);
-//        threadRepository.save(threadB);
-//
-//        postService.add(new Post(threadA,"first post","hello", adam));
-//        postService.add(new Post(threadA,"second post", "nice to meet you", eve));
-//        postService.add(new Post(threadA,"third post","this is adam", adam));
-//        postService.add(new Post(threadB,"first of /b","hello /b", eve));
-//
-//        List<Post> posts = postService.getAll();
-//        commentService.add(new Comment(posts.get(0),eve,"hi"));
-//        Comment parent = new Comment(posts.get(0),adam,"reply me");
-//        Comment child = new Comment(posts.get(0),eve,"reply");
-//        Comment child2 = new Comment(posts.get(0),adam,"Thanks!");
-//        child.setParentComment(parent);
-//        child2.setParentComment(parent);
-//        commentService.add(parent);
-//        commentService.add(child);
-//        commentService.add(child2);
-//
-//        return "Test data is loaded";
-//    }
+    @GetMapping("/load")
+    public @ResponseBody String loadTestData() {
+        commentService.deleteAll();
+        postService.deleteAll();
+        userService.deleteAll();
+        threadRepository.deleteAll();
+        User adam = new User("adam",passwordEncoder.encode("1234"));
+        User eve = new User("eve",passwordEncoder.encode("1234"));
+        userService.add(adam);
+        userService.add(eve);
+
+        Thread threadA = new Thread("a","Thread A");
+        Thread threadB = new Thread("b","Thread B");
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+
+        postService.add(new Post(threadA,"first post","hello", adam));
+        postService.add(new Post(threadA,"second post", "nice to meet you", eve));
+        postService.add(new Post(threadA,"third post","this is adam", adam));
+        postService.add(new Post(threadB,"first of /b","hello /b", eve));
+
+        List<Post> posts = postService.getAll();
+        commentService.add(new Comment(posts.get(0),eve,"hi"));
+        Comment parent = new Comment(posts.get(0),adam,"reply me");
+        Comment child = new Comment(posts.get(0),eve,"reply");
+        Comment child2 = new Comment(posts.get(0),adam,"Thanks!");
+        child.setParentComment(parent);
+        child2.setParentComment(parent);
+        commentService.add(parent);
+        commentService.add(child);
+        commentService.add(child2);
+
+        return "Test data is loaded";
+    }
 }
