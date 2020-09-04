@@ -1,3 +1,5 @@
+var subscribeButton = document.getElementById("subscribeButton");
+
 document.addEventListener("DOMContentLoaded", function () {
     var request
     if(window.location.href.charAt(window.location.href.length - 1) === "/") {
@@ -12,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
         success: function (response) {
             if(response) {
                 console.log("subscribed");
+                subscribeButton.classList.add("active");
+                subscribeButton.setAttribute("aria-pressed",String(true));
+                subscribeButton.textContent = "Subscribed";
             }
             else {
                 console.log("not subscribed");
@@ -19,3 +24,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     })
 });
+
+function toggleSub() {
+    if(subscribeButton.getAttribute("aria-pressed") !== "true") {
+        subscribeButton.classList.add("active");
+        subscribeButton.setAttribute("aria-pressed",String(true));
+        subscribeButton.textContent = "Subscribed";
+    }
+    else {
+        subscribeButton.classList.remove("active");
+        subscribeButton.setAttribute("aria-pressed",String(false));
+        subscribeButton.textContent = "Subscribe";
+    }
+}
