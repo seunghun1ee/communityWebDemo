@@ -1,16 +1,19 @@
 var subscribeButton = document.getElementById("subscribeButton");
-
+var checkSubRequest
+var subRequest
 document.addEventListener("DOMContentLoaded", function () {
     if(subscribeButton !== null) {
-        var request
+
         if(window.location.href.charAt(window.location.href.length - 1) === "/") {
-            request = "checkSubscribers";
+            checkSubRequest = "checkSubscribers";
+            subRequest = "subscribe";
         }
         else {
-            request = "/checkSubscribers";
+            checkSubRequest = "/checkSubscribers";
+            subRequest = "/subscribe";
         }
         $.post({
-            url: window.location.href + request,
+            url: window.location.href + checkSubRequest,
             cache:false,
             success: function (response) {
                 if(response) {
@@ -25,9 +28,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function toggleSub() {
     if(subscribeButton.getAttribute("aria-pressed") !== "true") {
-        subscribeButton.classList.add("active");
-        subscribeButton.setAttribute("aria-pressed",String(true));
-        subscribeButton.textContent = "Subscribed";
+        $.post({
+            url:window.location.href + subRequest,
+            cache: false,
+            success: function (response) {
+                if(response) {
+                    subscribeButton.classList.add("active");
+                    subscribeButton.setAttribute("aria-pressed",String(true));
+                    subscribeButton.textContent = "Subscribed";
+                }
+            }
+        })
     }
     else {
         subscribeButton.classList.remove("active");
