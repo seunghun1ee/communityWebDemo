@@ -41,7 +41,7 @@
         <div class="container">
             <h2 th:text="${thread.name}"></h2>
             <h6 th:text="'/' + ${thread.url}"></h6>
-            <button class="btn btn-outline-primary">Subscribe</button>
+            <button sec:authorize="isAuthenticated()" id="subscribeButton" class="btn btn-outline-primary" aria-pressed="false" onclick="toggleSub()">Subscribe</button>
         </div>
     </div>
     <div class="container">
