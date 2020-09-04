@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     private String title;
     @Column(length = 1000) private String body;
-    private LocalDateTime dateTime = LocalDateTime.now();
+    private LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     private Integer vote = 0;
     @ManyToOne() @JoinColumn()
     private User user;
