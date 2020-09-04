@@ -41,11 +41,12 @@ The project aims the website to have two major features
 * [x] Users can subscribe to threads
 * [ ] Be able to sort posts in various order (New, hot, best etc)
 * [ ] Users can open threads
-* [ ] Users can bookmark posts
+* [x] Users can bookmark posts
 * [ ] Be able to attach an image in posts
 * [ ] post tags
 * [ ] Use markdown for posts
 * [ ] Use markdown for comments
+* [ ] Disable entities instead of deleting
 
 #### Frontend
 * [x] Basic frontend design {
@@ -61,8 +62,9 @@ The project aims the website to have two major features
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
 * [ ] Markdown editor
-* [ ] Navigation bar
+* [ ] Navigation bar with search function
 * [x] Keep replies of the comment after the comment is deleted
+* [ ] Deleted bookmark post is shown as \[Deleted post\]
 
 Not fixed. They are subject to change.
 
