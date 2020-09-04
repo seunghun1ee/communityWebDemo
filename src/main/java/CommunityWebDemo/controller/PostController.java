@@ -73,6 +73,7 @@ public class PostController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User currentUser = (User) auth.getPrincipal();
                 model.addAttribute("currentUser",currentUser);
+                model.addAttribute("bookmarked",bookmarkController.checkBookmark(threadUrl,id));
             }
             else {
                 model.addAttribute("currentUser",null);
@@ -90,9 +91,6 @@ public class PostController {
                 model.addAttribute("upVoted",false);
                 model.addAttribute("downVoted",false);
             }
-
-
-            model.addAttribute("bookmarked",bookmarkController.checkBookmark(threadUrl,id));
 
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");

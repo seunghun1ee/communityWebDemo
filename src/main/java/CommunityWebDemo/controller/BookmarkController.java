@@ -73,10 +73,12 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
             }
             bookmarksJSON.remove(post.getId().toString());
         }
+        authUser.setBookmarks(bookmarksJSON.toString());
+        userService.add(authUser);
         return true;
     }
 
-    private boolean isBookmarked(Post post, JSONObject bookmarksJSON) throws JSONException {
+    private boolean isBookmarked(Post post, JSONObject bookmarksJSON) {
         return !bookmarksJSON.isNull(post.getId().toString());
     }
 }
