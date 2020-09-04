@@ -26,6 +26,8 @@ public class User implements UserDetails {
 
     private String subscribedThreads = "{}";
 
+    private String bookmarks = "{}";
+
     public User() {
     }
 
@@ -89,6 +91,14 @@ public class User implements UserDetails {
 
     public void setSubscribedThreads(String subscribedThreads) {
         this.subscribedThreads = subscribedThreads;
+    }
+
+    public String getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(String bookmarks) {
+        this.bookmarks = bookmarks;
     }
 
     @Override
