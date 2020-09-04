@@ -44,6 +44,8 @@ public class PostController {
     PasswordEncoder passwordEncoder;
     @Autowired
     VoteController voteController;
+    @Autowired
+    BookmarkController bookmarkController;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -88,6 +90,10 @@ public class PostController {
                 model.addAttribute("upVoted",false);
                 model.addAttribute("downVoted",false);
             }
+
+
+            model.addAttribute("bookmarked",bookmarkController.checkBookmark(threadUrl,id));
+
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 
