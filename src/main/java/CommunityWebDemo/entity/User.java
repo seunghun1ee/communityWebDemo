@@ -24,6 +24,10 @@ public class User implements UserDetails {
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
+    private String subscribedThreads = "{}";
+
+    private String bookmarks = "{}";
+
     public User() {
     }
 
@@ -79,6 +83,22 @@ public class User implements UserDetails {
 
     public void setAccountLevel(Integer accountLevel) {
         this.accountLevel = accountLevel;
+    }
+
+    public String getSubscribedThreads() {
+        return subscribedThreads;
+    }
+
+    public void setSubscribedThreads(String subscribedThreads) {
+        this.subscribedThreads = subscribedThreads;
+    }
+
+    public String getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(String bookmarks) {
+        this.bookmarks = bookmarks;
     }
 
     @Override

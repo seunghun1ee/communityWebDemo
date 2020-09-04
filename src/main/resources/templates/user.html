@@ -43,6 +43,7 @@
                 <h2 th:text="${user.username}"></h2>
                 <div th:if="${currentUser != null and user.id == currentUser.id}">
                     <br>
+                    <p><a th:href="@{/users/{id}/bookmarks(id=${user.id})}">Bookmarks</a></p>
                     <p><a th:href="@{/users/{id}/edit(id=${user.id})}">User settings</a></p>
                 </div>
             </div>

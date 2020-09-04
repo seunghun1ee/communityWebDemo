@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Controller
-public class CommentController {
+public class CommentController implements OptionalEntityExceptionHandler{
 
     @Autowired
     PostService postService;
@@ -144,19 +144,4 @@ public class CommentController {
         comment.setActive(false);
         commentService.add(comment);
     }
-
-    private Comment getActiveCommentOrException(Optional<Comment> optionalComment) {
-        if(optionalComment.isPresent() && optionalComment.get().isActive()) {
-            return optionalComment.get();
-        }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_comment");
-    }
-
-    private Post getPostOrException(Optional<Post> optionalPost) {
-        if(!optionalPost.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_post");
-        }
-        else return optionalPost.get();
-    }
-
 }

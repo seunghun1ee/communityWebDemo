@@ -44,6 +44,8 @@ public class PostController {
     PasswordEncoder passwordEncoder;
     @Autowired
     VoteController voteController;
+    @Autowired
+    BookmarkController bookmarkController;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -71,6 +73,7 @@ public class PostController {
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
                 User currentUser = (User) auth.getPrincipal();
                 model.addAttribute("currentUser",currentUser);
+                model.addAttribute("bookmarked",bookmarkController.bookmark(threadUrl,id,"check"));
             }
             else {
                 model.addAttribute("currentUser",null);
@@ -88,6 +91,7 @@ public class PostController {
                 model.addAttribute("upVoted",false);
                 model.addAttribute("downVoted",false);
             }
+
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
 

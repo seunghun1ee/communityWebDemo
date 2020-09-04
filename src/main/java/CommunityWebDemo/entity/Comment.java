@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class Comment {
     private String ip;
     private String password;
     private String message;
-    private LocalDateTime dateTime = LocalDateTime.now();
+    private LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
     private boolean active = true;
 
