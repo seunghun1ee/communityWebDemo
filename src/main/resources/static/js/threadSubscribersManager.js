@@ -37,6 +37,20 @@ function toggleSub() {
                     subscribeButton.setAttribute("aria-pressed",String(true));
                     subscribeButton.textContent = "Subscribed";
                 }
+            },
+            statusCode: {
+                400: function () {
+                    alert("You already subscribed to this thread");
+                    location.reload();
+                },
+                403: function () {
+                    alert("Illegal subscription request");
+                    location.reload();
+                },
+                404: function () {
+                    alert("Thread not found. Press OK to go back to homepage.");
+                    window.location.href = "/";
+                }
             }
         });
     }
@@ -49,6 +63,20 @@ function toggleSub() {
                     subscribeButton.classList.remove("active");
                     subscribeButton.setAttribute("aria-pressed",String(false));
                     subscribeButton.textContent = "Subscribe";
+                }
+            },
+            statusCode: {
+                400: function () {
+                    alert("You are not subscribed to this thread");
+                    location.reload();
+                },
+                403: function () {
+                    alert("Illegal subscription request");
+                    location.reload();
+                },
+                404: function () {
+                    alert("Thread not found. Press OK to go back to homepage.");
+                    window.location.href = "/";
                 }
             }
         });
