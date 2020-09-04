@@ -18,6 +18,8 @@ public class Thread {
     @OneToMany
     private List<Post> posts = new ArrayList<>();
 
+    private String subscribedUsers = "[]";
+
     public Thread() {
         this.url = "null";
         this.name = "Null";
@@ -58,6 +60,13 @@ public class Thread {
         this.description = description;
     }
 
+    public String getSubscribedUsers() {
+        return subscribedUsers;
+    }
+
+    public void setSubscribedUsers(String subscribedUsers) {
+        this.subscribedUsers = subscribedUsers;
+    }
 
     @Override
     public boolean equals(Object o) {
