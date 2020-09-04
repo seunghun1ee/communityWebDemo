@@ -1,28 +1,26 @@
 var subscribeButton = document.getElementById("subscribeButton");
 
 document.addEventListener("DOMContentLoaded", function () {
-    var request
-    if(window.location.href.charAt(window.location.href.length - 1) === "/") {
-        request = "checkSubscribers";
-    }
-    else {
-        request = "/checkSubscribers";
-    }
-    $.post({
-        url: window.location.href + request,
-        cache:false,
-        success: function (response) {
-            if(response) {
-                console.log("subscribed");
-                subscribeButton.classList.add("active");
-                subscribeButton.setAttribute("aria-pressed",String(true));
-                subscribeButton.textContent = "Subscribed";
-            }
-            else {
-                console.log("not subscribed");
-            }
+    if(subscribeButton !== null) {
+        var request
+        if(window.location.href.charAt(window.location.href.length - 1) === "/") {
+            request = "checkSubscribers";
         }
-    })
+        else {
+            request = "/checkSubscribers";
+        }
+        $.post({
+            url: window.location.href + request,
+            cache:false,
+            success: function (response) {
+                if(response) {
+                    subscribeButton.classList.add("active");
+                    subscribeButton.setAttribute("aria-pressed",String(true));
+                    subscribeButton.textContent = "Subscribed";
+                }
+            }
+        })
+    }
 });
 
 function toggleSub() {
