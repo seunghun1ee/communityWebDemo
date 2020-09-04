@@ -53,6 +53,23 @@
                 </tr>
             </div>
             <div class="col-md-9">
+                <div sec:authorize="isAuthenticated()">
+                    <h4>Posts from subscribed threads</h4>
+                    <article>
+                        <article th:each="post : ${subscribedPosts}">
+                            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                            <span>| Posted at <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
+                            <p>
+                                <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
+                                <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                                <span th:text="${post.getFormattedDateTime()}"></span>
+                                <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
+                            </p>
+                        </article>
+                    </article>
+                    <hr>
+                </div>
+
                 <h4>Best posts</h4>
                 <article>
                     <article th:each="post : ${posts}">
