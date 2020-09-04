@@ -18,7 +18,7 @@ public class Thread {
     @OneToMany
     private List<Post> posts = new ArrayList<>();
 
-    private String subscribers = "[]";
+    private String subscribers = "{}";
 
     public Thread() {
         this.url = "null";

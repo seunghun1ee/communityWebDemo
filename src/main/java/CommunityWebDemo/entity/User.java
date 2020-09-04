@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
-    private String subscribedThreads = "[]";
+    private String subscribedThreads = "{}";
 
     public User() {
     }
