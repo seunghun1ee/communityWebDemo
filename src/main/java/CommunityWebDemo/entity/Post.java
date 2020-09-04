@@ -30,6 +30,8 @@ public class Post {
 
     private String voterList = "{\"users\":{}, \"guests\":{}}";
 
+    private boolean active = true;
+
     @Transient
     private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
@@ -168,6 +170,14 @@ public class Post {
 
     public void setVoterList(String votingList) {
         this.voterList = votingList;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
