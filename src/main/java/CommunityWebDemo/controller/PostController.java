@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +59,10 @@ public class PostController {
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
+            Parser parser = Parser.builder().build();
+            HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
+            Node node = parser.parse(post.getBody());
+            post.setBody(htmlRenderer.render(node));
             List<Comment> allComments = commentService.getCommentsOfPost(post);
             List<Comment> comments = new ArrayList<>();
             for(Comment comment : allComments) {
