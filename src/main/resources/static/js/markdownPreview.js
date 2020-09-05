@@ -11,6 +11,8 @@ function htmlToElements(html) {
 document.addEventListener("DOMContentLoaded", function () {
     md = window.markdownit('commonmark',{breaks: true});
     updatePreview();
+    imgFluid();
+    blockquote();
 })
 
 function updatePreview() {
@@ -25,6 +27,14 @@ function updatePreview() {
 
 }
 
-inputBody.onkeyup = updatePreview;
-inputBody.onchange = updatePreview;
+inputBody.onkeyup = function () {
+    updatePreview();
+    imgFluid();
+    blockquote();
+}
+inputBody.onchange = function () {
+    updatePreview();
+    imgFluid();
+    blockquote();
+}
 
