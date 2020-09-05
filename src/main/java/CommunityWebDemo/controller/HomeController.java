@@ -62,6 +62,7 @@ public class HomeController {
                 Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
                 optionalThread.ifPresent(subscribedThreads::add);
             }
+            model.addAttribute("subscribedThreads",subscribedThreads);
             List<Post> subscribedPosts = new ArrayList<>();
             for(Post post : posts) {
                 for(Thread thread : subscribedThreads) {

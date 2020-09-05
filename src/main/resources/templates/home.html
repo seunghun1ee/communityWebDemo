@@ -44,8 +44,17 @@
                 <div sec:authorize="isAnonymous()">
                     <p><a href="/login">Sign in</a></p>
                 </div>
-
-                <h4>Threads</h4>
+                <hr>
+                <div th:if="${subscribedThreads}">
+                    <h4>Subscribed Threads</h4>
+                    <tr th:each="thread : ${subscribedThreads}">
+                        <li>
+                            <a th:href="@{/{ti}/(ti=${thread.url})}" th:text="${thread.name}"></a>
+                        </li>
+                    </tr>
+                    <hr>
+                </div>
+                <h4>All Threads</h4>
                 <tr th:each="thread : ${threads}">
                     <li>
                         <a th:href="@{/{ti}/(ti=${thread.url})}" th:text="${thread.name}"></a>
@@ -56,7 +65,8 @@
             </div>
             <div class="col-md-9">
                 <div sec:authorize="isAuthenticated()">
-                    <h4>Posts from subscribed threads</h4>
+                    <h3>Posts from subscribed threads</h3>
+                    <hr>
                     <article>
                         <article th:each="post : ${subscribedPosts}">
                             <div th:if="${post.active == true}">
@@ -74,7 +84,8 @@
                     </article>
                 </div>
 
-                <h4>Best posts</h4>
+                <h3>Best posts</h3>
+                <hr>
                 <article>
                     <article th:each="post : ${posts}">
                         <div th:if="${post.active == true}">
