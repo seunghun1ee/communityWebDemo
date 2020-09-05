@@ -46,7 +46,7 @@ The project aims the website to have two major features
 * [x] Users can bookmark posts
 * [ ] Be able to attach an image in posts
 * [ ] post tags
-* [ ] Use markdown for posts
+* [x] Use markdown for posts
 * [ ] Use markdown for comments
 * [x] Disable entities instead of deleting
 
@@ -64,7 +64,7 @@ The project aims the website to have two major features
 * [ ] Custom themes for each threads
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
-* [ ] Markdown editor
+* [x] Markdown editor
 * [ ] Navigation bar with search function
 * [x] Keep replies of the comment after the comment is deleted
 * [x] Deleted bookmark post is shown as \[Deleted post\]
