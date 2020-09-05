@@ -39,14 +39,19 @@
     <h2>Bookmarks</h2>
     <article>
         <article th:each="post : ${bookmarkedPosts}">
-            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
-            <span>| <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
-            <p>
-                <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
-                <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
-                <span th:text="'| '+${post.getFormattedDateTime()}"></span>
-                <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
-            </p>
+            <div th:if="${post.active == true}">
+                <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                <span>| <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
+                <p>
+                    <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
+                    <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                    <span th:text="'| '+${post.getFormattedDateTime()}"></span>
+                    <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                </p>
+            </div>
+            <div th:unless="${post.active == true}">
+                <p>[Deleted post]</p>
+            </div>
             <hr>
         </article>
     </article>
