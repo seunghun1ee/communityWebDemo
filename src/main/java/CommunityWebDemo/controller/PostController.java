@@ -59,10 +59,6 @@ public class PostController {
         Optional<Post> optionalPost = postService.getById(id);
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
-            Parser parser = Parser.builder().build();
-            HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
-            Node node = parser.parse(post.getBody());
-            post.setBody(htmlRenderer.render(node));
             List<Comment> allComments = commentService.getCommentsOfPost(post);
             List<Comment> comments = new ArrayList<>();
             for(Comment comment : allComments) {
@@ -70,6 +66,10 @@ public class PostController {
                     comments.add(comment);
                 }
             }
+            Parser parser = Parser.builder().build();
+            HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
+            Node node = parser.parse(post.getBody());
+            post.setBody(htmlRenderer.render(node));
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
