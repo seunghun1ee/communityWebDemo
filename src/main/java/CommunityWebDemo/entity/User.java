@@ -23,10 +23,14 @@ public class User implements UserDetails {
     private List<Post> posts = new ArrayList<>();
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "opener")
+    private List<Thread> openedThreads = new ArrayList<>();
 
     private String subscribedThreads = "{}";
 
     private String bookmarks = "{}";
+
+    private boolean active = true;
 
     public User() {
     }
@@ -101,6 +105,14 @@ public class User implements UserDetails {
         this.bookmarks = bookmarks;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -135,7 +147,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
 
     @Override

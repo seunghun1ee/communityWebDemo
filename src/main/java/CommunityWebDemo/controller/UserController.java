@@ -45,6 +45,10 @@ public class UserController {
     public String showUser(@PathVariable Long id, Model model) throws ResponseStatusException {
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
+            //If the user is disabled user
+            if(!optionalUser.get().isActive()) {
+                return "deletedUser";
+            }
             List<Post> posts = postService.getPostsOfUser(optionalUser.get());
             model.addAttribute("user",optionalUser.get());
             model.addAttribute("posts",posts);
@@ -110,14 +114,17 @@ public class UserController {
                     }
                     //All comments from posts that user made
                     for(Post post : posts) {
+                        post.setActive(false);
                         commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
                     }
                     for(Comment comment : commentsFromUser) {
-                        commentController.emptyComment(commentService,comment);
+                        commentController.emptyComment(comment);
                     }
+                    commentService.addAll(commentsFromUser);
                     commentService.deleteAll(commentsFromPosts);
-                    postService.deleteAll(posts);
-                    userService.deleteById(id);
+                    postService.addAll(posts);
+                    authUser.setActive(false);
+                    userService.add(authUser);
                     return new RedirectView("/logout");
                 }
                 //no

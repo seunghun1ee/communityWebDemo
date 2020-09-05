@@ -145,7 +145,11 @@ public class PostController {
                 if(passwordEncoder.matches(password, post.getPassword())) {
                     List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                     commentService.deleteAll(comments);
-                    postService.deleteById(id);
+                    post.setIp(null);
+                    post.setPassword(null);
+                    post.setThread(null);
+                    post.setActive(false);
+                    postService.add(post);
                     redirectAttr.addFlashAttribute("successMessage","The post is deleted");
                     return new RedirectView("/{threadUrl}/");
                 }
@@ -165,7 +169,10 @@ public class PostController {
                     if(post.getUser().equals(authUser)) {
                         List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                         commentService.deleteAll(comments);
-                        postService.deleteById(id);
+                        post.setUser(null);
+                        post.setThread(null);
+                        post.setActive(false);
+                        postService.add(post);
                         redirectAttr.addFlashAttribute("successMessage","The post is deleted");
                         return new RedirectView("/{threadUrl}/");
                     }

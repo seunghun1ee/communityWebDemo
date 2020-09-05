@@ -77,38 +77,41 @@ public class HomeController {
         return "home";
     }
 
-//    @GetMapping("/load")
-//    public @ResponseBody String loadTestData() {
-//        commentService.deleteAll();
-//        postService.deleteAll();
-//        userService.deleteAll();
-//        threadRepository.deleteAll();
-//        User adam = new User("adam",passwordEncoder.encode("1234"));
-//        User eve = new User("eve",passwordEncoder.encode("1234"));
-//        userService.add(adam);
-//        userService.add(eve);
-//
-//        Thread threadA = new Thread("a","Thread A");
-//        Thread threadB = new Thread("b","Thread B");
-//        threadRepository.save(threadA);
-//        threadRepository.save(threadB);
-//
-//        postService.add(new Post(threadA,"first post","hello", adam));
-//        postService.add(new Post(threadA,"second post", "nice to meet you", eve));
-//        postService.add(new Post(threadA,"third post","this is adam", adam));
-//        postService.add(new Post(threadB,"first of /b","hello /b", eve));
-//
-//        List<Post> posts = postService.getAll();
-//        commentService.add(new Comment(posts.get(0),eve,"hi"));
-//        Comment parent = new Comment(posts.get(0),adam,"reply me");
-//        Comment child = new Comment(posts.get(0),eve,"reply");
-//        Comment child2 = new Comment(posts.get(0),adam,"Thanks!");
-//        child.setParentComment(parent);
-//        child2.setParentComment(parent);
-//        commentService.add(parent);
-//        commentService.add(child);
-//        commentService.add(child2);
-//
-//        return "Test data is loaded";
-//    }
+    @GetMapping("/load")
+    public @ResponseBody String loadTestData() {
+        commentService.deleteAll();
+        postService.deleteAll();
+        threadRepository.deleteAll();
+        userService.deleteAll();
+        User adam = new User("adam",passwordEncoder.encode("1234"));
+        User eve = new User("eve",passwordEncoder.encode("1234"));
+        userService.add(adam);
+        userService.add(eve);
+
+        Thread threadA = new Thread("a","Thread A","Welcome to Thread A",adam);
+        Thread threadB = new Thread("b","Thread B","Welcome to Thread B",eve);
+        Thread threadC = new Thread("c","Thread C","This is Thread C",adam);
+        threadRepository.save(threadA);
+        threadRepository.save(threadB);
+        threadRepository.save(threadC);
+
+        postService.add(new Post(threadA,"first post","hello", adam));
+        postService.add(new Post(threadA,"second post", "nice to meet you", eve));
+        postService.add(new Post(threadA,"third post","this is adam", adam));
+        postService.add(new Post(threadB,"first of /b","hello /b", eve));
+
+        List<Post> posts = postService.getAll();
+        commentService.add(new Comment(posts.get(0),eve,"hi"));
+        Comment parent = new Comment(posts.get(0),adam,"reply me");
+        Comment child = new Comment(posts.get(0),eve,"reply");
+        Comment child2 = new Comment(posts.get(0),adam,"Thanks!");
+        child.setParentComment(parent);
+        child2.setParentComment(parent);
+        commentService.add(parent);
+        commentService.add(child);
+        commentService.add(child2);
+
+        return "Test data is loaded";
+    }
+
 }

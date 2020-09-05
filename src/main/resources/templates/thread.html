@@ -51,19 +51,24 @@
                 <p th:text="${thread.description}"></p>
                 <h5>Guideline</h5>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p th:if="${thread?.opener?.active == true}">Opened by <a th:href="@{/users/{id}(id=${thread.opener.id})}" th:text="${thread.opener.username}"></a></p>
+                <p th:unless="${thread?.opener?.active == true}">Opened by [Deleted user]</p>
                 <br>
                 <p><a th:href="@{/{thread}/new_post(thread=${thread.url})}">Add new post</a></p>
             </div>
             <div class="col-md-9">
                 <article>
                     <article th:each="post : ${posts}">
-                        <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
-                        <p>
-                            <span th:if="${post.user == null}" th:text="Anonymous + ' (' + ${post.ip} + ')'"></span>
-                            <a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
-                            <span th:text="${post.getFormattedDateTime()}"></span>
-                            <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
-                        </p>
+                        <div th:if="${post.active == true}">
+                            <a th:text="${post.title}" th:href="@{posts/{id}(id=${post.id})}"></a>
+                            <p>
+                                <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
+                                <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                                <span th:text="'| ' + ${post.getFormattedDateTime()}"></span>
+                                <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                            </p>
+                            <hr>
+                        </div>
                     </article>
                 </article>
             </div>
