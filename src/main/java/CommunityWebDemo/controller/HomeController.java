@@ -81,8 +81,8 @@ public class HomeController {
     public @ResponseBody String loadTestData() {
         commentService.deleteAll();
         postService.deleteAll();
-        userService.deleteAll();
         threadRepository.deleteAll();
+        userService.deleteAll();
         User adam = new User("adam",passwordEncoder.encode("1234"));
         User eve = new User("eve",passwordEncoder.encode("1234"));
         userService.add(adam);

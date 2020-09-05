@@ -5,12 +5,16 @@ import CommunityWebDemo.compartor.SortByPostVote;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
+import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -57,27 +62,36 @@ public class ThreadController {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
-    //@GetMapping("/new_thread")
+    @GetMapping("/new_thread")
     public String createThread() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            return "redirect:/login";
+        }
         return "newThread";
     }
 
-    //@PostMapping("/new_thread")
-    public String saveNewThread(Model model, String url, String name, String description) {
+    @PostMapping("/new_thread")
+    public String saveNewThread(Model model, String url, String name, String description, RedirectAttributes redirectAttr) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+        }
+        User authUser = (User) auth.getPrincipal();
         Optional<Thread> urlCheck = threadService.getByUrl(url);
         if(urlCheck.isPresent()) {
-            model.addAttribute("urlTakenError","This url is already in use");
+            model.addAttribute("failMessage","This url is already in use");
             return "newThread";
         }
         List<Thread> nameCheck = threadService.getByName(name);
         if(!nameCheck.isEmpty()) {
-            model.addAttribute("nameTakenError","This name is already in use");
+            model.addAttribute("failMessage","This name is already in use");
             return "newThread";
         }
-        Thread thread = new Thread(url, name, description);
+        Thread thread = new Thread(url, name, description, authUser);
         threadRepository.save(thread);
-        model.addAttribute("successMessage","The thread is opened");
-        return "newThread";
+        redirectAttr.addFlashAttribute("successMessage","The thread is opened");
+        return "redirect:/"+url+"/";
     }
 
     //@GetMapping("/{threadUrl}/settings")
