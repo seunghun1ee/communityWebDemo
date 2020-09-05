@@ -40,7 +40,9 @@ The project aims the website to have two major features
 * [ ] Voting system for comments and replies
 * [x] Users can subscribe to threads
 * [ ] Be able to sort posts in various order (New, hot, best etc)
-* [ ] Users can open threads
+* [x] Users can open threads
+* [ ] Thread settings
+* [ ] Be able to archive threads
 * [x] Users can bookmark posts
 * [ ] Be able to attach an image in posts
 * [ ] post tags
@@ -58,6 +60,7 @@ The project aims the website to have two major features
     
     }
 * [x] Show subscribed threads first at the homepage (Users)
+* [ ] Separate subscribed threads and all threads
 * [ ] Custom themes for each threads
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
