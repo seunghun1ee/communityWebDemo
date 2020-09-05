@@ -2,3 +2,8 @@ textarea.comment-box {
     max-width: 100%;
     resize: none;
 }
+
+textarea.post-body {
+    max-width: 100%;
+    resize: none;
+}

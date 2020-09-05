@@ -78,6 +78,12 @@
             <version>0.0.20131108.vaadin1</version>
             <scope>compile</scope>
         </dependency>
+		<!--markdown commonmark-->
+		<dependency>
+			<groupId>com.atlassian.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.15.2</version>
+		</dependency>
     </dependencies>
 
 	<build>
