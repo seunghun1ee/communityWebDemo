@@ -79,7 +79,8 @@ public class CommentController implements OptionalEntityExceptionHandler{
         if(comment.getUser() == null) {
             //Comment password is correct
             if(passwordEncoder.matches(password, comment.getPassword())) {
-                emptyComment(commentService,comment);
+                emptyComment(comment);
+                commentService.add(comment);
             }
             else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Wrong password");
@@ -90,7 +91,8 @@ public class CommentController implements OptionalEntityExceptionHandler{
             User authUser = (User) auth.getPrincipal();
             //Current logged in user is the owner of the comment
             if(comment.getUser().equals(authUser)) {
-                emptyComment(commentService,comment);
+                emptyComment(comment);
+                commentService.add(comment);
             }
             else {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
@@ -138,10 +140,10 @@ public class CommentController implements OptionalEntityExceptionHandler{
         }
     }
 
-    public void emptyComment(CommentService commentService,Comment comment) {
+    public void emptyComment(Comment comment) {
         comment.setMessage(null);
         comment.setUser(null);
         comment.setActive(false);
-        commentService.add(comment);
+
     }
 }

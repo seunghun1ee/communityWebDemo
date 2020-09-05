@@ -118,8 +118,9 @@ public class UserController {
                         commentsFromPosts.addAll(commentService.getCommentsOfPost(post));
                     }
                     for(Comment comment : commentsFromUser) {
-                        commentController.emptyComment(commentService,comment);
+                        commentController.emptyComment(comment);
                     }
+                    commentService.addAll(commentsFromUser);
                     commentService.deleteAll(commentsFromPosts);
                     postService.addAll(posts);
                     authUser.setActive(false);
