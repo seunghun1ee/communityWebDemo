@@ -28,6 +28,8 @@ public class User implements UserDetails {
 
     private String bookmarks = "{}";
 
+    private boolean active = true;
+
     public User() {
     }
 
@@ -99,6 +101,14 @@ public class User implements UserDetails {
 
     public void setBookmarks(String bookmarks) {
         this.bookmarks = bookmarks;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
