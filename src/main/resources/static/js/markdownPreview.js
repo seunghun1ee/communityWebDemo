@@ -9,8 +9,8 @@ function htmlToElements(html) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    md = window.markdownit();
-
+    md = window.markdownit('commonmark',{breaks: true});
+    updatePreview();
 })
 
 function updatePreview() {
