@@ -47,7 +47,7 @@ public class HomeController {
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
-    public String helloWorld(Model model, @RequestParam String sort) throws JSONException {
+    public String helloWorld(Model model, @RequestParam(required = false,defaultValue = "vote") String sort) throws JSONException {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         List<Post> posts = postService.getAll();
 

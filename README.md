@@ -49,6 +49,7 @@ The project aims the website to have two major features
 * [x] Use markdown for posts
 * [ ] Use markdown for comments
 * [x] Disable entities instead of deleting
+* [ ] View count
 
 #### Frontend
 * [x] Basic frontend design {
