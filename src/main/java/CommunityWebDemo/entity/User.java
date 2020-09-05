@@ -23,6 +23,8 @@ public class User implements UserDetails {
     private List<Post> posts = new ArrayList<>();
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "opener")
+    private List<Thread> openedThreads = new ArrayList<>();
 
     private String subscribedThreads = "{}";
 

@@ -88,10 +88,12 @@ public class HomeController {
         userService.add(adam);
         userService.add(eve);
 
-        Thread threadA = new Thread("a","Thread A");
-        Thread threadB = new Thread("b","Thread B");
+        Thread threadA = new Thread("a","Thread A","Welcome to Thread A",adam);
+        Thread threadB = new Thread("b","Thread B","Welcome to Thread B",eve);
+        Thread threadC = new Thread("c","Thread C","This is Thread C",adam);
         threadRepository.save(threadA);
         threadRepository.save(threadB);
+        threadRepository.save(threadC);
 
         postService.add(new Post(threadA,"first post","hello", adam));
         postService.add(new Post(threadA,"second post", "nice to meet you", eve));
