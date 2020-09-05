@@ -60,7 +60,7 @@ The project aims the website to have two major features
     
     }
 * [x] Show subscribed threads first at the homepage (Users)
-* [ ] Separate subscribed threads and all threads
+* [x] Separate subscribed threads and all threads
 * [ ] Custom themes for each threads
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
