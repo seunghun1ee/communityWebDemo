@@ -46,7 +46,7 @@ The project aims the website to have two major features
 * [ ] post tags
 * [ ] Use markdown for posts
 * [ ] Use markdown for comments
-* [ ] Disable entities instead of deleting
+* [x] Disable entities instead of deleting
 
 #### Frontend
 * [x] Basic frontend design {
@@ -64,7 +64,7 @@ The project aims the website to have two major features
 * [ ] Markdown editor
 * [ ] Navigation bar with search function
 * [x] Keep replies of the comment after the comment is deleted
-* [ ] Deleted bookmark post is shown as \[Deleted post\]
+* [x] Deleted bookmark post is shown as \[Deleted post\]
 
 Not fixed. They are subject to change.
 
