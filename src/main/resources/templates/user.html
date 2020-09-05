@@ -51,12 +51,15 @@
                 <h5 th:text="'Posts from '+${user.username}"></h5>
                 <article>
                     <article th:each="post : ${posts}">
-                        <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
-                        <span>| Posted at <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
-                        <p>
-                            <span th:text="${post.getFormattedDateTime()}"></span>
-                            <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
-                        </p>
+                        <div th:if="${post.active == true}">
+                            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                            <span>| Posted at <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
+                            <p>
+                                <span th:text="${post.getFormattedDateTime()}"></span>
+                                <span th:text="'[vote: ' + ${post.vote} + ']'"></span>
+                            </p>
+                            <hr>
+                        </div>
                     </article>
                 </article>
             </div>

@@ -145,7 +145,6 @@ public class PostController {
                 if(passwordEncoder.matches(password, post.getPassword())) {
                     List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                     commentService.deleteAll(comments);
-                    //postService.deleteById(id);
                     post.setActive(false);
                     postService.add(post);
                     redirectAttr.addFlashAttribute("successMessage","The post is deleted");
@@ -167,7 +166,6 @@ public class PostController {
                     if(post.getUser().equals(authUser)) {
                         List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                         commentService.deleteAll(comments);
-                        //postService.deleteById(id);
                         post.setActive(false);
                         postService.add(post);
                         redirectAttr.addFlashAttribute("successMessage","The post is deleted");
