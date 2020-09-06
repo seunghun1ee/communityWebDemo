@@ -39,7 +39,7 @@ The project aims the website to have two major features
 * [x] Reply to comments
 * [ ] Voting system for comments and replies
 * [x] Users can subscribe to threads
-* [ ] Be able to sort posts in various order (New, hot, best etc)
+* [x] Be able to sort posts in various order (New, hot, best etc)
 * [x] Users can open threads
 * [ ] Thread settings
 * [ ] Be able to archive threads
