@@ -65,6 +65,9 @@ public class PostController {
                 if(comment.getParentComment() == null) {
                     comments.add(comment);
                 }
+                if(comment.isActive()) {
+                    post.setNumberOfComments(post.getNumberOfComments() + 1);
+                }
             }
             Parser parser = Parser.builder().build();
             HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
@@ -73,7 +76,6 @@ public class PostController {
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
-            model.addAttribute("allComments",allComments);
             //Check if current user is registered or anonymous
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
@@ -100,7 +102,7 @@ public class PostController {
 
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-        postService.incrementViewOfPostById(id);
+
         return "post";
     }
 

@@ -50,6 +50,7 @@ public class UserController {
                 return "deletedUser";
             }
             List<Post> posts = postService.getPostsOfUser(optionalUser.get());
+            posts.forEach(post -> commentController.setActiveCommentNumber(post));
             model.addAttribute("user",optionalUser.get());
             model.addAttribute("posts",posts);
             //Check if current user is registered or anonymous

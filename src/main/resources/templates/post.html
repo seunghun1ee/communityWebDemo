@@ -52,8 +52,8 @@
         <small th:if="${post.user == null}" th:text="' | Posted by Anonymous ' + ' (' + ${post.ip} + ')'"></small>
         <small th:unless="${post.user == null}"> | Posted by <a th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a></small>
         <small th:text="' | ' + ${post.getFormattedDateTime()}"></small>
-        <small th:if="${post.view == 1}">| 1 view</small>
-        <small th:unless="${post.view == 1}" th:text="'| '+${post.view}+' views'"></small>
+        <small th:if="${post.numberOfComments == 1}">| 1 comment</small>
+        <small th:unless="${post.numberOfComments == 1}" th:text="'| '+ ${post.numberOfComments} + ' comments'"></small>
         <button sec:authorize="isAuthenticated()" id="bookmarkButton" type="button" class="btn btn-outline-dark btn-sm" th:aria-pressed="${bookmarked}" onclick="bookmark()">Bookmark</button>
         <hr>
         <div th:utext="${post.body}"></div>
@@ -77,8 +77,8 @@
         </form>
 
         <br>
-        <h6 th:if="${allComments.size() == 1}">1 Comment</h6>
-        <h6 th:unless="${allComments.size() == 1}" th:text="${allComments.size()} + ' Comments'"></h6>
+        <h6 th:if="${post.numberOfComments == 1}">1 Comment</h6>
+        <h6 th:unless="${post.numberOfComments == 1}" th:text="${post.numberOfComments} + ' Comments'"></h6>
         <hr>
         <article>
             <article th:each="comment : ${comments}">

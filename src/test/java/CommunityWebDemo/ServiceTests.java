@@ -503,27 +503,4 @@ public class ServiceTests {
         assertThat(userService.getByUsername("user1")).isPresent();
         assertThat(userService.getByUsername("user4")).isEmpty();
     }
-
-    @Test
-    void incrementViewOfPostByIdTest() {
-        commentRepository.deleteAll();
-        postRepository.deleteAll();
-        threadRepository.deleteAll();
-        userRepository.deleteAll();
-
-        Post post = new Post();
-        Post post1 = new Post();
-        postRepository.save(post);
-        postRepository.save(post1);
-
-        postService.incrementViewOfPostById(post.getId());
-
-        Optional<Post> target = postService.getById(post.getId());
-        Optional<Post> notTarget = postService.getById(post1.getId());
-
-        assertThat(target).isPresent();
-        assertThat(notTarget).isPresent();
-        assertThat(target.get().getView()).isEqualTo(1);
-        assertThat(notTarget.get().getView()).isZero();
-    }
 }

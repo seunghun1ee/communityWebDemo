@@ -40,12 +40,18 @@ public class ThreadController {
     PostService postService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    CommentController commentController;
+
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
     public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sort, Model model) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
+            for(Post post : posts) {
+                commentController.setActiveCommentNumber(post);
+            }
             switch (sort) {
                 case "vote":
                     posts.sort(new SortByPostVote());
