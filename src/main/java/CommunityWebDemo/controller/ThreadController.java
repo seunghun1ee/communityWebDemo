@@ -46,6 +46,10 @@ public class ThreadController {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         if(optionalThread.isPresent()) {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
+            for(Post post : posts) {
+                List<Comment> comments = commentService.getCommentsOfPost(post);
+                post.setNumberOfComments(comments.size());
+            }
             switch (sort) {
                 case "vote":
                     posts.sort(new SortByPostVote());

@@ -1,9 +1,11 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.ThreadRepository;
+import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.ThreadService;
 import CommunityWebDemo.service.UserService;
@@ -36,6 +38,8 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
     PostService postService;
     @Autowired
     UserService userService;
+    @Autowired
+    CommentService commentService;
 
     @PostMapping("/{threadUrl}/posts/{postId}/bookmark")
     @ResponseBody
@@ -89,6 +93,8 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
                     String postId = bookmarkedPostIds.next();
                     Optional<Post> optionalPost = postService.getById(Long.valueOf(postId));
                     if(optionalPost.isPresent()) {
+                        List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
+                        optionalPost.get().setNumberOfComments(comments.size());
                         bookmarkedPosts.add(optionalPost.get());
                     }
                 }

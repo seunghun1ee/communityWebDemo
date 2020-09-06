@@ -50,7 +50,10 @@ public class HomeController {
     public String helloWorld(Model model, @RequestParam(required = false,defaultValue = "vote") String sort) throws JSONException {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         List<Post> posts = postService.getAll();
-
+        for(Post post : posts) {
+            List<Comment> comments = commentService.getCommentsOfPost(post);
+            post.setNumberOfComments(comments.size());
+        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
             User authUser = (User) auth.getPrincipal();
