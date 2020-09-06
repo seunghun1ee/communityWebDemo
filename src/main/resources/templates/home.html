@@ -44,8 +44,17 @@
                 <div sec:authorize="isAnonymous()">
                     <p><a href="/login">Sign in</a></p>
                 </div>
-
-                <h4>Threads</h4>
+                <hr>
+                <div th:if="${subscribedThreads}">
+                    <h4>Subscribed Threads</h4>
+                    <tr th:each="thread : ${subscribedThreads}">
+                        <li>
+                            <a th:href="@{/{ti}/(ti=${thread.url})}" th:text="${thread.name}"></a>
+                        </li>
+                    </tr>
+                    <hr>
+                </div>
+                <h4>All Threads</h4>
                 <tr th:each="thread : ${threads}">
                     <li>
                         <a th:href="@{/{ti}/(ti=${thread.url})}" th:text="${thread.name}"></a>
@@ -55,8 +64,10 @@
                 <p><a href="/new_thread">Open new thread</a></p>
             </div>
             <div class="col-md-9">
+                <small>Sort by: <a class="btn btn-secondary btn-sm" href="/?sort=vote">Best</a><a class="btn btn-secondary btn-sm" href="/?sort=date">New</a></small>
                 <div sec:authorize="isAuthenticated()">
-                    <h4>Posts from subscribed threads</h4>
+                    <h3>Posts from subscribed threads</h3>
+                    <hr>
                     <article>
                         <article th:each="post : ${subscribedPosts}">
                             <div th:if="${post.active == true}">
@@ -67,6 +78,8 @@
                                     <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                     <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                     <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                                    <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
+                                    <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>
                                 </p>
                                 <hr>
                             </div>
@@ -74,7 +87,8 @@
                     </article>
                 </div>
 
-                <h4>Best posts</h4>
+                <h3>Best posts</h3>
+                <hr>
                 <article>
                     <article th:each="post : ${posts}">
                         <div th:if="${post.active == true}">
@@ -85,6 +99,8 @@
                                 <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                 <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                 <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                                <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
+                                <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>
                             </p>
                             <hr>
                         </div>

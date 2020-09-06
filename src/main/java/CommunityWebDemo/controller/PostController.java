@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,11 +65,17 @@ public class PostController {
                 if(comment.getParentComment() == null) {
                     comments.add(comment);
                 }
+                if(comment.isActive()) {
+                    post.setNumberOfComments(post.getNumberOfComments() + 1);
+                }
             }
+            Parser parser = Parser.builder().build();
+            HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
+            Node node = parser.parse(post.getBody());
+            post.setBody(htmlRenderer.render(node));
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("post",post);
             model.addAttribute("comments",comments);
-            model.addAttribute("allComments",allComments);
             //Check if current user is registered or anonymous
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {

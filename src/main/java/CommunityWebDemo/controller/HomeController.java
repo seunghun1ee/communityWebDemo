@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.compartor.SortByPostDateTime;
 import CommunityWebDemo.compartor.SortByPostVote;
 import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
@@ -20,9 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,14 +44,17 @@ public class HomeController {
     ThreadService threadService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CommentController commentController;
 
     @GetMapping("/")
-    public String helloWorld(Model model) throws JSONException {
+    public String helloWorld(Model model, @RequestParam(required = false,defaultValue = "vote") String sort) throws JSONException {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         List<Post> posts = postService.getAll();
-        posts.sort(new SortByPostVote());
-        model.addAttribute("threads",threads);
-        model.addAttribute("posts",posts);
+        for(Post post : posts) {
+            commentController.setActiveCommentNumber(post);
+        }
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
             User authUser = (User) auth.getPrincipal();
@@ -62,6 +66,7 @@ public class HomeController {
                 Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
                 optionalThread.ifPresent(subscribedThreads::add);
             }
+            model.addAttribute("subscribedThreads",subscribedThreads);
             List<Post> subscribedPosts = new ArrayList<>();
             for(Post post : posts) {
                 for(Thread thread : subscribedThreads) {
@@ -71,9 +76,31 @@ public class HomeController {
                     }
                 }
             }
+            switch (sort) {
+                case "date":
+                    subscribedPosts.sort(new SortByPostDateTime());
+                    break;
+                case "vote":
+                default:
+                    subscribedPosts.sort(new SortByPostVote());
+                    break;
+            }
+
             subscribedPosts.sort(new SortByPostVote());
             model.addAttribute("subscribedPosts",subscribedPosts);
         }
+        switch (sort) {
+            case "date":
+                posts.sort(new SortByPostDateTime());
+                break;
+            case "vote":
+            default:
+                posts.sort(new SortByPostVote());
+                break;
+        }
+        model.addAttribute("threads",threads);
+        model.addAttribute("posts",posts);
+
         return "home";
     }
 

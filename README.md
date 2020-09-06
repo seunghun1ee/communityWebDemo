@@ -39,14 +39,14 @@ The project aims the website to have two major features
 * [x] Reply to comments
 * [ ] Voting system for comments and replies
 * [x] Users can subscribe to threads
-* [ ] Be able to sort posts in various order (New, hot, best etc)
+* [x] Be able to sort posts in various order (New, hot, best etc)
 * [x] Users can open threads
 * [ ] Thread settings
 * [ ] Be able to archive threads
 * [x] Users can bookmark posts
-* [ ] Be able to attach an image in posts
+* [x] Be able to attach an image in posts
 * [ ] post tags
-* [ ] Use markdown for posts
+* [x] Use markdown for posts
 * [ ] Use markdown for comments
 * [x] Disable entities instead of deleting
 
@@ -60,11 +60,11 @@ The project aims the website to have two major features
     
     }
 * [x] Show subscribed threads first at the homepage (Users)
-* [ ] Separate subscribed threads and all threads
+* [x] Separate subscribed threads and all threads
 * [ ] Custom themes for each threads
 * [x] Verify passwords from frontend
 * [ ] Show character count for posts and comments
-* [ ] Markdown editor
+* [x] Markdown editor
 * [ ] Navigation bar with search function
 * [x] Keep replies of the comment after the comment is deleted
 * [x] Deleted bookmark post is shown as \[Deleted post\]

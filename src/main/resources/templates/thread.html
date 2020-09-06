@@ -54,7 +54,7 @@
                 <p th:if="${thread?.opener?.active == true}">Opened by <a th:href="@{/users/{id}(id=${thread.opener.id})}" th:text="${thread.opener.username}"></a></p>
                 <p th:unless="${thread?.opener?.active == true}">Opened by [Deleted user]</p>
                 <br>
-                <p><a th:href="@{/{thread}/new_post(thread=${thread.url})}">Add new post</a></p>
+                <p><a th:href="@{/{thread}/new_post(thread=${thread.url})}">Create new post</a></p>
             </div>
             <div class="col-md-9">
                 <article>
@@ -66,6 +66,8 @@
                                 <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                 <span th:text="'| ' + ${post.getFormattedDateTime()}"></span>
                                 <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                                <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
+                                <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>
                             </p>
                             <hr>
                         </div>
