@@ -37,6 +37,9 @@ public class Post {
     @Transient
     private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
+    @Transient
+    private List<Comment> tempComments = new ArrayList<>();
+
     public Post() {
 
     }
@@ -189,6 +192,16 @@ public class Post {
     public void setView(Integer view) {
         this.view = view;
     }
+
+    public List<Comment> getTempComments() {
+        return tempComments;
+    }
+
+    public void setTempComments(List<Comment> tempComments) {
+        this.tempComments = tempComments;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
