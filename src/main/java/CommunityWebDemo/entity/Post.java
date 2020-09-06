@@ -32,8 +32,6 @@ public class Post {
 
     private boolean active = true;
 
-    private Integer view = 0;
-
     @Transient
     private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
@@ -185,13 +183,6 @@ public class Post {
         this.active = active;
     }
 
-    public Integer getView() {
-        return this.view;
-    }
-
-    public void setView(Integer view) {
-        this.view = view;
-    }
 
     public Integer getNumberOfComments() {
         return numberOfComments;
