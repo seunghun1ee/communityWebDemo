@@ -32,6 +32,8 @@ public class Post {
 
     private boolean active = true;
 
+    private Integer view = 0;
+
     @Transient
     private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
@@ -180,6 +182,14 @@ public class Post {
         this.active = active;
     }
 
+    public Integer getView() {
+        return this.view;
+    }
+
+    public void setView(Integer view) {
+        this.view = view;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -189,16 +199,14 @@ public class Post {
                 Objects.equals(title, post.title) &&
                 Objects.equals(body, post.body) &&
                 Objects.equals(dateTime, post.dateTime) &&
-                Objects.equals(vote, post.vote) &&
                 Objects.equals(user, post.user) &&
                 Objects.equals(thread, post.thread) &&
                 Objects.equals(ip, post.ip) &&
-                Objects.equals(password, post.password) &&
-                Objects.equals(voterList, post.voterList);
+                Objects.equals(password, post.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, body, dateTime, vote, user, thread, ip, password, voterList);
+        return Objects.hash(id, title, body, dateTime, user, thread, ip, password);
     }
 }
