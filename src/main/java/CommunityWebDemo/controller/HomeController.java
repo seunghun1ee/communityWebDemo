@@ -52,7 +52,13 @@ public class HomeController {
         List<Post> posts = postService.getAll();
         for(Post post : posts) {
             List<Comment> comments = commentService.getCommentsOfPost(post);
-            post.setNumberOfComments(comments.size());
+            List<Comment> activeComments = new ArrayList<>();
+            comments.forEach(comment -> {
+                if(comment.isActive()) {
+                    activeComments.add(comment);
+                }
+            });
+            post.setNumberOfComments(activeComments.size());
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
