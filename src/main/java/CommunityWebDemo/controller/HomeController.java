@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,21 +44,17 @@ public class HomeController {
     ThreadService threadService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CommentController commentController;
 
     @GetMapping("/")
     public String helloWorld(Model model, @RequestParam(required = false,defaultValue = "vote") String sort) throws JSONException {
         List<Thread> threads = (List<Thread>) threadRepository.findAll();
         List<Post> posts = postService.getAll();
         for(Post post : posts) {
-            List<Comment> comments = commentService.getCommentsOfPost(post);
-            List<Comment> activeComments = new ArrayList<>();
-            comments.forEach(comment -> {
-                if(comment.isActive()) {
-                    activeComments.add(comment);
-                }
-            });
-            post.setNumberOfComments(activeComments.size());
+            commentController.setActiveCommentNumber(post);
         }
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
             User authUser = (User) auth.getPrincipal();

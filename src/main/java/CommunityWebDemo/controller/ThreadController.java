@@ -40,6 +40,9 @@ public class ThreadController {
     PostService postService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    CommentController commentController;
+
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
     public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sort, Model model) throws ResponseStatusException {
@@ -47,14 +50,7 @@ public class ThreadController {
         if(optionalThread.isPresent()) {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
             for(Post post : posts) {
-                List<Comment> comments = commentService.getCommentsOfPost(post);
-                List<Comment> activeComments = new ArrayList<>();
-                comments.forEach(comment -> {
-                    if(comment.isActive()) {
-                        activeComments.add(comment);
-                    }
-                });
-                post.setNumberOfComments(activeComments.size());
+                commentController.setActiveCommentNumber(post);
             }
             switch (sort) {
                 case "vote":

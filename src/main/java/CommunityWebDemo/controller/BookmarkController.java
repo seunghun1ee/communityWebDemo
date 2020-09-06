@@ -40,6 +40,8 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
     UserService userService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    CommentController commentController;
 
     @PostMapping("/{threadUrl}/posts/{postId}/bookmark")
     @ResponseBody
@@ -94,14 +96,7 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
                     Optional<Post> optionalPost = postService.getById(Long.valueOf(postId));
                     if(optionalPost.isPresent()) {
                         Post post = optionalPost.get();
-                        List<Comment> comments = commentService.getCommentsOfPost(post);
-                        List<Comment> activeComments = new ArrayList<>();
-                        comments.forEach(comment -> {
-                            if(comment.isActive()) {
-                                activeComments.add(comment);
-                            }
-                        });
-                        post.setNumberOfComments(activeComments.size());
+                        commentController.setActiveCommentNumber(post);
                         bookmarkedPosts.add(post);
                     }
                 }

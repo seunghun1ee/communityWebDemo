@@ -23,6 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -145,5 +147,16 @@ public class CommentController implements OptionalEntityExceptionHandler{
         comment.setUser(null);
         comment.setActive(false);
 
+    }
+
+    public void setActiveCommentNumber(Post post) {
+        List<Comment> comments = commentService.getCommentsOfPost(post);
+        List<Comment> activeComments = new ArrayList<>();
+        comments.forEach(comment -> {
+            if(comment.isActive()) {
+                activeComments.add(comment);
+            }
+        });
+        post.setNumberOfComments(activeComments.size());
     }
 }
