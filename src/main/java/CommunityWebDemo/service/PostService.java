@@ -78,4 +78,15 @@ public class PostService extends MyService<Post>{
         return posts;
     }
 
+    public boolean incrementViewOfPostById(Long id) {
+        Optional<Post> optionalPost = getById(id);
+        if(optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            post.setView(post.getView() + 1);
+            postRepository.save(post);
+            return true;
+        }
+        else return false;
+    }
+
 }
