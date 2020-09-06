@@ -78,6 +78,8 @@
                                     <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                     <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                     <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                                    <span th:if="${post.view == 1}">| 1 view</span>
+                                    <span th:unless="${post.view == 1}" th:text="'| '+${post.view}+' views'"></span>
                                 </p>
                                 <hr>
                             </div>
@@ -97,6 +99,8 @@
                                 <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                 <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                 <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                                <span th:if="${post.view == 1}">| 1 view</span>
+                                <span th:unless="${post.view == 1}" th:text="'| '+${post.view}+' views'"></span>
                             </p>
                             <hr>
                         </div>
