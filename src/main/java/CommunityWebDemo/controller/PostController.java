@@ -100,7 +100,7 @@ public class PostController {
 
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-
+        postService.incrementViewOfPostById(id);
         return "post";
     }
 
