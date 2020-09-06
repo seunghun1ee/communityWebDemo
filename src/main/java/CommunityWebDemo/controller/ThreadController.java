@@ -48,7 +48,13 @@ public class ThreadController {
             List<Post> posts = postService.getPostsOfThread(optionalThread.get());
             for(Post post : posts) {
                 List<Comment> comments = commentService.getCommentsOfPost(post);
-                post.setNumberOfComments(comments.size());
+                List<Comment> activeComments = new ArrayList<>();
+                comments.forEach(comment -> {
+                    if(comment.isActive()) {
+                        activeComments.add(comment);
+                    }
+                });
+                post.setNumberOfComments(activeComments.size());
             }
             switch (sort) {
                 case "vote":
