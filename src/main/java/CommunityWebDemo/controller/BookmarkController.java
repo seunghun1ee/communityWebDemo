@@ -93,9 +93,16 @@ public class BookmarkController implements OptionalEntityExceptionHandler{
                     String postId = bookmarkedPostIds.next();
                     Optional<Post> optionalPost = postService.getById(Long.valueOf(postId));
                     if(optionalPost.isPresent()) {
-                        List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
-                        optionalPost.get().setNumberOfComments(comments.size());
-                        bookmarkedPosts.add(optionalPost.get());
+                        Post post = optionalPost.get();
+                        List<Comment> comments = commentService.getCommentsOfPost(post);
+                        List<Comment> activeComments = new ArrayList<>();
+                        comments.forEach(comment -> {
+                            if(comment.isActive()) {
+                                activeComments.add(comment);
+                            }
+                        });
+                        post.setNumberOfComments(activeComments.size());
+                        bookmarkedPosts.add(post);
                     }
                 }
                 model.addAttribute("bookmarkedPosts",bookmarkedPosts);
