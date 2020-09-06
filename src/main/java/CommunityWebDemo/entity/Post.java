@@ -37,6 +37,9 @@ public class Post {
     @Transient
     private final DateTimeFormatter defaultDateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.SHORT);
 
+    @Transient
+    private Integer numberOfComments = 0;
+
     public Post() {
 
     }
@@ -188,6 +191,14 @@ public class Post {
 
     public void setView(Integer view) {
         this.view = view;
+    }
+
+    public Integer getNumberOfComments() {
+        return numberOfComments;
+    }
+
+    public void setNumberOfComments(Integer numberOfComments) {
+        this.numberOfComments = numberOfComments;
     }
 
     @Override
