@@ -70,7 +70,7 @@ public class HomeController {
             List<Post> subscribedPosts = new ArrayList<>();
             for(Post post : posts) {
                 for(Thread thread : subscribedThreads) {
-                    if(post.getThread().equals(thread)) {
+                    if(post.isActive() && post.getThread().equals(thread)) {
                         subscribedPosts.add(post);
                         break;
                     }
