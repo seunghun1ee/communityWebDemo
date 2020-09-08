@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //csrf protection needed
-        http.csrf().disable();
+        http.csrf();
         http.authorizeRequests()
                 .antMatchers("/users","/posts","/comments","/threads").denyAll()
                 .antMatchers("/**","/css/**","/js/**").permitAll()
