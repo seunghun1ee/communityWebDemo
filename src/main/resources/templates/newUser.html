@@ -42,6 +42,7 @@
         <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <h2>New User</h2>
         <form method="post" action="/users/new_user">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="text" id="inputName" name="username" placeholder="Username" th:text="${username}" required>
             <br>
             <input type="password" id="inputNewPassword" name="password" placeholder="Password" th:text="${password}" required>
