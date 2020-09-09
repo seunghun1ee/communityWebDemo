@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
         $.post({
             url: window.location.href + checkSubRequest,
             cache:false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     subscribeButton.classList.add("active");
@@ -31,6 +34,9 @@ function toggleSub() {
         $.post({
             url:window.location.href + subRequest +"?sub=true",
             cache: false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     subscribeButton.classList.add("active");
@@ -58,6 +64,9 @@ function toggleSub() {
         $.post({
             url:window.location.href + subRequest + "?sub=false",
             cache: false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     subscribeButton.classList.remove("active");

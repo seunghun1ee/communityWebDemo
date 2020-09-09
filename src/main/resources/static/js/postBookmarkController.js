@@ -13,6 +13,9 @@ function bookmark() {
         $.post({
             url:window.location.href + "/bookmark?mode=mark",
             cache:false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     bookMarkButton.classList.add("active");
@@ -26,6 +29,9 @@ function bookmark() {
         $.post({
             url:window.location.href + "/bookmark?mode=unmark",
             cache:false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     bookMarkButton.classList.remove("active");

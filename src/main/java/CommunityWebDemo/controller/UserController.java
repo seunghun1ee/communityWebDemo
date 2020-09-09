@@ -9,10 +9,12 @@ import CommunityWebDemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.jaas.SecurityContextLoginModule;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,7 +97,7 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/delete")
-    public RedirectView deleteUser(@PathVariable Long id) throws ResponseStatusException{
+    public RedirectView deleteUser(@PathVariable Long id, HttpServletRequest request) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
         if(optionalUser.isPresent()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -126,7 +129,9 @@ public class UserController {
                     postService.addAll(posts);
                     authUser.setActive(false);
                     userService.add(authUser);
-                    return new RedirectView("/logout");
+                    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+                    logoutHandler.logout(request,null,auth);
+                    return new RedirectView("/");
                 }
                 //no
                 else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");

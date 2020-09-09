@@ -26,7 +26,10 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
                             <a class="dropdown-item" th:href="@{/users/{id}(id=${#authentication.principal.getId()})}">My profile</a>
                             <a class="dropdown-item" th:href="@{/users/{id}/edit(id=${#authentication.principal.getId()})}">User settings</a>
-                            <a class="dropdown-item" href="/logout">Sign out</a>
+                            <form action="/logout" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button class="dropdown-item">Sign out</button>
+                            </form>
                         </div>
                     </li>
                 </ul>
@@ -39,10 +42,13 @@
                 <h2>Hello world</h2>
                 <div sec:authorize="isAuthenticated()">
                     <p>Welcome, <a th:href="@{/users/{id}(id=${#authentication.principal.getId()})}" th:text="${#authentication.principal.getUsername()}"></a></p>
-                    <p><a href="/logout">Sign out</a></p>
+                    <form action="/logout" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button class="btn btn-primary" type="submit">Sign out</button>
+                    </form>
                 </div>
                 <div sec:authorize="isAnonymous()">
-                    <p><a href="/login">Sign in</a></p>
+                    <p><a class="btn btn-primary" href="/login">Sign in</a></p>
                 </div>
                 <hr>
                 <div th:if="${subscribedThreads}">

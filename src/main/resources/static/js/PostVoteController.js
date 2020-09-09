@@ -29,6 +29,9 @@ function upVote() {
     if(upVoteButton.getAttribute("aria-pressed") !== "true") {
         $.post({
             url: window.location.href + "/checkVoteBefore?isUpvote=true",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     alert("You already voted");
@@ -48,6 +51,9 @@ function downVote() {
     if(downVoteButton.getAttribute("aria-pressed") !== "true") {
         $.post({
             url: window.location.href + "/checkVoteBefore?isUpvote=false",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(headerName, token);
+            },
             success: function (response) {
                 if(response) {
                     alert("You already voted");
@@ -118,14 +124,20 @@ function cancelDownVote() {
 function submitVote(type) {
     $.post({
         url: window.location.href + "/vote?type=" + type,
-        cache: false
+        cache: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        }
     });
 }
 
 function cancelVote() {
     $.post({
         url: window.location.href + "/cancelVote",
-        cache: false
+        cache: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        }
     })
 }
 
@@ -133,6 +145,9 @@ function reverseVote(type) {
     $.post({
         url: window.location.href + "/cancelVote",
         cache: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function (response) {
             if(response === "success") {
                 submitVote(type);
