@@ -6,12 +6,16 @@ function addComment() {
         "message": message?.value,
         "password": password?.value
     }
+
     $.post({
         url: window.location.href + "/new_comment",
         data: JSON.stringify(comment),
         cache: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function (response) {
             if(response) {
                 location.reload();
@@ -42,6 +46,9 @@ function replyComment(commentId) {
         cache: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function (response) {
             if(response) {
                 location.reload();
@@ -71,6 +78,9 @@ function deleteComment(commentId) {
         cache: false,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(headerName, token);
+        },
         success: function (response) {
             if(response) {
                 location.reload();
