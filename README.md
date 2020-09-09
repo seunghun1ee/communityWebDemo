@@ -68,7 +68,7 @@ The project aims the website to have two major features
 * [ ] Navigation bar with search function
 * [x] Keep replies of the comment after the comment is deleted
 * [x] Deleted bookmark post is shown as \[Deleted post\]
-* [ ] Fade the post with large number of negative votes into grey
+* [x] Fade the post with large number of negative votes into grey
 
 Not fixed. They are subject to change.
 

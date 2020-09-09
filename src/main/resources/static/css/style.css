@@ -7,3 +7,16 @@ textarea.post-body {
     max-width: 100%;
     resize: none;
 }
+
+div.post.bad-post {
+    color: lightgrey;
+}
+
+a.post-link.bad-post {
+    color: lightgrey;
+    text-decoration-line: line-through;
+}
+
+a.user-link.bad-post {
+    color: lightgrey;
+}

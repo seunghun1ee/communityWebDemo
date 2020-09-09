@@ -6,6 +6,7 @@
     <title>Title</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <div id="navbar">
@@ -76,12 +77,12 @@
                     <hr>
                     <article>
                         <article th:each="post : ${subscribedPosts}">
-                            <div th:if="${post.active == true}">
-                                <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
-                                <span>| <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
+                            <div th:if="${post.active == true}" th:class="'post' + ${post.vote < -5 ? ' bad-post' : ''}">
+                                <a th:text="${post.title}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                                <span>| <a th:text="${'/'+post.thread.url}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
                                 <p>
                                     <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
-                                    <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                                    <span>Posted by </span><a th:unless="${post.user == null}" th:class="'user-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                     <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                     <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
                                     <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
@@ -97,12 +98,12 @@
                 <hr>
                 <article>
                     <article th:each="post : ${posts}">
-                        <div th:if="${post.active == true}">
-                            <a th:text="${post.title}" th:href="@{/posts/{id}(id=${post.id})}"></a>
-                            <span>| <a th:text="${'/'+post.thread.url}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
+                        <div th:if="${post.active == true}" th:class="'post' + ${post.vote < -5 ? ' bad-post' : ''}">
+                            <a th:text="${post.title}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                            <span>| <a th:text="${'/'+post.thread.url}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{/{thread}/(thread=${post.thread.url})}"></a></span>
                             <p>
                                 <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
-                                <span>Posted by </span><a th:unless="${post.user == null}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                                <span>Posted by </span><a th:unless="${post.user == null}" th:class="'user-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                                 <span th:text="'| '+${post.getFormattedDateTime()}"></span>
                                 <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
                                 <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
