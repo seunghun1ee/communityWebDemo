@@ -79,7 +79,7 @@ public class UserController {
     public ModelAndView saveNewUser(String username, String password, String repeatPassword) {
         ModelAndView modelAndView = new ModelAndView();
         Optional<User> existingUser = userService.getByUsername(username);
-        if(existingUser.isPresent()) {
+        if(existingUser.isPresent() && existingUser.get().isActive()) {
             modelAndView.addObject("failMessage","The username is already in use");
             modelAndView.setViewName("newUser");
             return modelAndView;
@@ -99,7 +99,7 @@ public class UserController {
     @PostMapping("/users/{id}/delete")
     public RedirectView deleteUser(@PathVariable Long id, HttpServletRequest request) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
-        if(optionalUser.isPresent()) {
+        if(optionalUser.isPresent() && optionalUser.get().isActive()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
@@ -144,7 +144,7 @@ public class UserController {
     @GetMapping("/users/{id}/edit")
     public String updateUser(@PathVariable Long id, Model model) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
-        if(optionalUser.isPresent()) {
+        if(optionalUser.isPresent() && optionalUser.get().isActive()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
@@ -164,7 +164,7 @@ public class UserController {
     @PostMapping("/users/{id}/changeUsername")
     public RedirectView saveNewUsername(@PathVariable Long id, String username, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
         Optional<User> optionalUser = userService.getById(id);
-        if(optionalUser.isPresent()) {
+        if(optionalUser.isPresent() && optionalUser.get().isActive()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
@@ -197,7 +197,7 @@ public class UserController {
     @PostMapping("/users/{id}/changePassword")
     public RedirectView saveNewPassword(@PathVariable Long id, String currentPassword, String newPassword, String repeatPassword, RedirectAttributes redirectAttr) throws ResponseStatusException {
         Optional<User> optionalUser = userService.getById(id);
-        if(optionalUser.isPresent()) {
+        if(optionalUser.isPresent() && optionalUser.get().isActive()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //logged in?
             if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
