@@ -31,7 +31,7 @@ public class VoteController {
     public String saveVote(@PathVariable String threadUrl, @PathVariable Long id, @RequestParam String type, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+        if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().isActive()) {
             Post post = optionalPost.get();
             Integer vote = post.getVote();
             JSONObject voterObject = new JSONObject(post.getVoterList());
@@ -71,7 +71,7 @@ public class VoteController {
     public boolean checkVoteBefore(@PathVariable String threadUrl, @PathVariable Long id, @RequestParam boolean isUpvote, HttpServletRequest request) throws JSONException, ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+        if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().isActive()) {
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             JSONObject voters = getVoters(voterObject,auth);
@@ -91,7 +91,7 @@ public class VoteController {
     public String cancelVote(@PathVariable String threadUrl, @PathVariable Long id, HttpServletRequest request) throws ResponseStatusException, JSONException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
+        if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().isActive()) {
             Post post = optionalPost.get();
             JSONObject voterObject = new JSONObject(optionalPost.get().getVoterList());
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
