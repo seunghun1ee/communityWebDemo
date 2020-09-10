@@ -21,7 +21,7 @@ public class Thread {
 
     private String subscribers = "{}";
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     private List<Tag> tags;
 
     public Thread() {
@@ -85,10 +85,6 @@ public class Thread {
 
     public void setOpener(User opener) {
         this.opener = opener;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
     }
 
     @Override

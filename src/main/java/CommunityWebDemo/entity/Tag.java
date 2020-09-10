@@ -12,10 +12,24 @@ public class Tag {
     @Id @GeneratedValue
     private Long id;
     private String tagName;
-    private String colour;
+    private String colour = "#ffffff";
 
     @ManyToOne
     private Thread thread;
+
+    public Tag() {
+    }
+
+    public Tag(String tagName, Thread thread) {
+        this.tagName = tagName;
+        this.thread = thread;
+    }
+
+    public Tag(String tagName, String colour, Thread thread) {
+        this.tagName = tagName;
+        this.colour = colour;
+        this.thread = thread;
+    }
 
     public Long getId() {
         return id;
@@ -43,6 +57,10 @@ public class Tag {
 
     public void setThread(Thread thread) {
         this.thread = thread;
+    }
+
+    public Thread getThread() {
+        return this.thread;
     }
 
     @Override
