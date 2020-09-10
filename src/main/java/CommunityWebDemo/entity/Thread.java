@@ -1,9 +1,6 @@
 package CommunityWebDemo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +20,9 @@ public class Thread {
     private User opener;
 
     private String subscribers = "{}";
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Tag> tags;
 
     public Thread() {
         this.url = "null";
@@ -85,6 +85,10 @@ public class Thread {
 
     public void setOpener(User opener) {
         this.opener = opener;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 
     @Override
