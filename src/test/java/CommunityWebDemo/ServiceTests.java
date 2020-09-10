@@ -1,22 +1,15 @@
 package CommunityWebDemo;
 
-import CommunityWebDemo.entity.Comment;
-import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.*;
 import CommunityWebDemo.entity.Thread;
-import CommunityWebDemo.entity.User;
-import CommunityWebDemo.repository.CommentRepository;
-import CommunityWebDemo.repository.PostRepository;
-import CommunityWebDemo.repository.ThreadRepository;
-import CommunityWebDemo.repository.UserRepository;
-import CommunityWebDemo.service.CommentService;
-import CommunityWebDemo.service.PostService;
-import CommunityWebDemo.service.ThreadService;
-import CommunityWebDemo.service.UserService;
+import CommunityWebDemo.repository.*;
+import CommunityWebDemo.service.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +34,10 @@ public class ServiceTests {
     ThreadRepository threadRepository;
     @Autowired
     ThreadService threadService;
+    @Autowired
+    TagRepository tagRepository;
+    @Autowired
+    TagService tagService;
 
     @Test
     void idGeneratedValueTest() {
@@ -502,5 +499,24 @@ public class ServiceTests {
 
         assertThat(userService.getByUsername("user1")).isPresent();
         assertThat(userService.getByUsername("user4")).isEmpty();
+    }
+
+    @Test
+    void getTagsOfThreadTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        tagRepository.deleteAll();
+        threadRepository.deleteAll();
+
+        Thread thread = new Thread("test","test");
+        threadRepository.save(thread);
+        Tag tag0 = new Tag("tag0",thread);
+        Tag tag1 = new Tag("tag1",thread);
+        Tag tag2 = new Tag();
+        tagRepository.saveAll(Arrays.asList(tag0,tag1,tag2));
+        List<Tag> target = tagService.getByThread(thread);
+        assertThat(target).contains(tag0);
+        assertThat(target).contains(tag1);
+        assertThat(target).doesNotContain(tag2);
     }
 }
