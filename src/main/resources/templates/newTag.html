@@ -10,6 +10,8 @@
 <body>
     <div class="container">
         <h1>New tag</h1>
+        <div th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div th:if="${failMessage}" th:text="${failMessage}"></div>
         <form th:action="@{/{thread}/tags/new_tag(thread=${thread.url})}" method="post">
             <input type="text" id="inputTagName" placeholder="Tag name" name="tagName" th:object="${tagName}" required>
             <br>
