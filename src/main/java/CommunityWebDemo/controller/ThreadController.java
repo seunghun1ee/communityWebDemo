@@ -2,13 +2,12 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.compartor.SortByPostDateTime;
 import CommunityWebDemo.compartor.SortByPostVote;
-import CommunityWebDemo.entity.Comment;
-import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.*;
 import CommunityWebDemo.entity.Thread;
-import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.TagService;
 import CommunityWebDemo.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,6 +41,8 @@ public class ThreadController {
     CommentService commentService;
     @Autowired
     CommentController commentController;
+    @Autowired
+    TagService tagService;
 
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
@@ -63,6 +64,8 @@ public class ThreadController {
             }
             model.addAttribute("thread",optionalThread.get());
             model.addAttribute("posts",posts);
+            List<Tag> tags = tagService.getByThread(optionalThread.get());
+            model.addAttribute("tags",tags);
             return "thread";
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
