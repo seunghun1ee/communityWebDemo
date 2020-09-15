@@ -47,6 +47,7 @@
         </div>
     </div>
     <div class="container">
+        <small th:if="${post.tag != null}" th:text="${post.tag.tagName}" th:style="'color: '+${post.tag.colour}"></small>
         <h3 th:text="${post.title}"></h3>
         <span>[vote: </span>
         <span th:id="voteCount" th:text="${post.vote}"></span>
