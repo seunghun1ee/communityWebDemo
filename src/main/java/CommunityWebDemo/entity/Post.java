@@ -30,6 +30,9 @@ public class Post {
 
     private String voterList = "{\"users\":{}, \"guests\":{}}";
 
+    @ManyToOne
+    private Tag tag;
+
     private boolean active = true;
 
     @Transient
