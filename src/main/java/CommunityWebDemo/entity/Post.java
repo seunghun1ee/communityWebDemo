@@ -195,6 +195,14 @@ public class Post {
         this.numberOfComments = numberOfComments;
     }
 
+    public Tag getTag() {
+        return tag;
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

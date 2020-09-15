@@ -1,14 +1,9 @@
 package CommunityWebDemo.controller;
 
-import CommunityWebDemo.security.IpHandler;
-import CommunityWebDemo.entity.Comment;
-import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.*;
 import CommunityWebDemo.entity.Thread;
-import CommunityWebDemo.entity.User;
-import CommunityWebDemo.service.CommentService;
-import CommunityWebDemo.service.PostService;
-import CommunityWebDemo.service.ThreadService;
-import CommunityWebDemo.service.UserService;
+import CommunityWebDemo.security.IpHandler;
+import CommunityWebDemo.service.*;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class PostController {
+public class PostController implements OptionalEntityExceptionHandler {
 
     @Autowired
     PostService postService;
@@ -48,6 +43,8 @@ public class PostController {
     VoteController voteController;
     @Autowired
     BookmarkController bookmarkController;
+    @Autowired
+    TagService tagService;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -108,34 +105,37 @@ public class PostController {
 
     @GetMapping("/{threadUrl}/new_post")
     public String newPost(@PathVariable String threadUrl, Model model) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            model.addAttribute("thread",optionalThread.get());
-            return "newPost";
-        }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        List<Tag> tags = tagService.getByThread(thread);
+        model.addAttribute("thread",thread);
+        model.addAttribute("tags",tags);
+        return "newPost";
     }
 
     @PostMapping("/{threadUrl}/new_post")
-    public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, HttpServletRequest request) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            newPost.setThread(optionalThread.get());
-
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //Post author Anonymous or Registered
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
-                newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
-            }
-            else {
-                User authUser = (User) auth.getPrincipal();
-                newPost.setUser(authUser);
+    public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, String stringTagId, HttpServletRequest request) throws ResponseStatusException {
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        if(stringTagId != null) {
+            Long tagId = Long.valueOf(stringTagId);
+            List<Tag> tags = tagService.getByThread(thread);
+            newPost.setThread(thread);
+            for(Tag tag : tags) {
+                if(tag.getId().equals(tagId)) {
+                    newPost.setTag(tag);
+                    break;
+                }
             }
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //Post author Anonymous or Registered
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+            newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
+        }
+        else {
+            User authUser = (User) auth.getPrincipal();
+            newPost.setUser(authUser);
+        }
         postService.add(newPost);
         return new RedirectView("/{threadUrl}/posts/"+newPost.getId());
     }
