@@ -6,6 +6,7 @@ import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
+import CommunityWebDemo.repository.TagRepository;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
@@ -46,6 +47,8 @@ public class HomeController {
     PasswordEncoder passwordEncoder;
     @Autowired
     CommentController commentController;
+    @Autowired
+    TagRepository tagRepository;
 
     @GetMapping("/")
     public String helloWorld(Model model, @RequestParam(required = false,defaultValue = "vote") String sort) throws JSONException {
@@ -108,6 +111,7 @@ public class HomeController {
     public @ResponseBody String loadTestData() {
         commentService.deleteAll();
         postService.deleteAll();
+        tagRepository.deleteAll();
         threadRepository.deleteAll();
         userService.deleteAll();
         User adam = new User("adam",passwordEncoder.encode("1234"));

@@ -1,14 +1,9 @@
 package CommunityWebDemo.controller;
 
-import CommunityWebDemo.security.IpHandler;
-import CommunityWebDemo.entity.Comment;
-import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.*;
 import CommunityWebDemo.entity.Thread;
-import CommunityWebDemo.entity.User;
-import CommunityWebDemo.service.CommentService;
-import CommunityWebDemo.service.PostService;
-import CommunityWebDemo.service.ThreadService;
-import CommunityWebDemo.service.UserService;
+import CommunityWebDemo.security.IpHandler;
+import CommunityWebDemo.service.*;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class PostController {
+public class PostController implements OptionalEntityExceptionHandler {
 
     @Autowired
     PostService postService;
@@ -48,6 +43,8 @@ public class PostController {
     VoteController voteController;
     @Autowired
     BookmarkController bookmarkController;
+    @Autowired
+    TagService tagService;
 
     IpHandler ipHandler = new IpHandler();
 
@@ -55,87 +52,84 @@ public class PostController {
 
     @GetMapping("/{threadUrl}/posts/{id}")
     public String showPostById(@PathVariable String threadUrl, @PathVariable Long id, Model model, HttpServletRequest request) throws ResponseStatusException, JSONException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(id);
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            List<Comment> allComments = commentService.getCommentsOfPost(post);
-            List<Comment> comments = new ArrayList<>();
-            for(Comment comment : allComments) {
-                if(comment.getParentComment() == null) {
-                    comments.add(comment);
-                }
-                if(comment.isActive()) {
-                    post.setNumberOfComments(post.getNumberOfComments() + 1);
-                }
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        Post post = getPostOrException(postService.getById(id));
+        List<Comment> allComments = commentService.getCommentsOfPost(post);
+        List<Comment> comments = new ArrayList<>();
+        for(Comment comment : allComments) {
+            if(comment.getParentComment() == null) {
+                comments.add(comment);
             }
-            Parser parser = Parser.builder().build();
-            HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
-            Node node = parser.parse(post.getBody());
-            post.setBody(htmlRenderer.render(node));
-            model.addAttribute("thread",optionalThread.get());
-            model.addAttribute("post",post);
-            model.addAttribute("comments",comments);
-            //Check if current user is registered or anonymous
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                User currentUser = (User) auth.getPrincipal();
-                model.addAttribute("currentUser",currentUser);
-                model.addAttribute("bookmarked",bookmarkController.bookmark(threadUrl,id,"check"));
+            if(comment.isActive()) {
+                post.setNumberOfComments(post.getNumberOfComments() + 1);
             }
-            else {
-                model.addAttribute("currentUser",null);
-            }
-
-            if(voteController.checkVoteBefore(threadUrl,id,true,request)) {
-                model.addAttribute("upVoted",true);
-                model.addAttribute("downVoted",false);
-            }
-            else if(voteController.checkVoteBefore(threadUrl,id,false,request)) {
-                model.addAttribute("upVoted",false);
-                model.addAttribute("downVoted",true);
-            }
-            else {
-                model.addAttribute("upVoted",false);
-                model.addAttribute("downVoted",false);
-            }
-
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        Parser parser = Parser.builder().build();
+        HtmlRenderer htmlRenderer = HtmlRenderer.builder().escapeHtml(true).softbreak("<br>").build();
+        Node node = parser.parse(post.getBody());
+        post.setBody(htmlRenderer.render(node));
+        model.addAttribute("thread",thread);
+        model.addAttribute("post",post);
+        model.addAttribute("comments",comments);
+        //Check if current user is registered or anonymous
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            User currentUser = (User) auth.getPrincipal();
+            model.addAttribute("currentUser",currentUser);
+            model.addAttribute("bookmarked",bookmarkController.bookmark(threadUrl,id,"check"));
+        }
+        else {
+            model.addAttribute("currentUser",null);
+        }
 
+        if(voteController.checkVoteBefore(threadUrl,id,true,request)) {
+            model.addAttribute("upVoted",true);
+            model.addAttribute("downVoted",false);
+        }
+        else if(voteController.checkVoteBefore(threadUrl,id,false,request)) {
+            model.addAttribute("upVoted",false);
+            model.addAttribute("downVoted",true);
+        }
+        else {
+            model.addAttribute("upVoted",false);
+            model.addAttribute("downVoted",false);
+        }
         return "post";
     }
 
     @GetMapping("/{threadUrl}/new_post")
     public String newPost(@PathVariable String threadUrl, Model model) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            model.addAttribute("thread",optionalThread.get());
-            return "newPost";
-        }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        List<Tag> tags = tagService.getByThread(thread);
+        model.addAttribute("thread",thread);
+        model.addAttribute("tags",tags);
+        return "newPost";
     }
 
     @PostMapping("/{threadUrl}/new_post")
-    public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, HttpServletRequest request) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            newPost.setThread(optionalThread.get());
-
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //Post author Anonymous or Registered
-            if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
-                newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
-            }
-            else {
-                User authUser = (User) auth.getPrincipal();
-                newPost.setUser(authUser);
+    public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, String stringTagId, HttpServletRequest request) throws ResponseStatusException {
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        if(stringTagId != null) {
+            Long tagId = Long.valueOf(stringTagId);
+            List<Tag> tags = tagService.getByThread(thread);
+            newPost.setThread(thread);
+            for(Tag tag : tags) {
+                if(tag.getId().equals(tagId)) {
+                    newPost.setTag(tag);
+                    break;
+                }
             }
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //Post author Anonymous or Registered
+        if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            newPost.setIp(ipHandler.trimIpAddress(request.getRemoteAddr()));
+            newPost.setPassword(passwordEncoder.encode(newPost.getPassword()));
+        }
+        else {
+            User authUser = (User) auth.getPrincipal();
+            newPost.setUser(authUser);
+        }
         postService.add(newPost);
         return new RedirectView("/{threadUrl}/posts/"+newPost.getId());
     }

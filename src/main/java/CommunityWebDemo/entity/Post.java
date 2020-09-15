@@ -30,6 +30,9 @@ public class Post {
 
     private String voterList = "{\"users\":{}, \"guests\":{}}";
 
+    @ManyToOne
+    private Tag tag;
+
     private boolean active = true;
 
     @Transient
@@ -190,6 +193,14 @@ public class Post {
 
     public void setNumberOfComments(Integer numberOfComments) {
         this.numberOfComments = numberOfComments;
+    }
+
+    public Tag getTag() {
+        return tag;
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 
     @Override

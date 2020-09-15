@@ -2,13 +2,12 @@ package CommunityWebDemo.controller;
 
 import CommunityWebDemo.compartor.SortByPostDateTime;
 import CommunityWebDemo.compartor.SortByPostVote;
-import CommunityWebDemo.entity.Comment;
-import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.*;
 import CommunityWebDemo.entity.Thread;
-import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.ThreadRepository;
 import CommunityWebDemo.service.CommentService;
 import CommunityWebDemo.service.PostService;
+import CommunityWebDemo.service.TagService;
 import CommunityWebDemo.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class ThreadController {
+public class ThreadController implements OptionalEntityExceptionHandler {
 
     @Autowired
     ThreadRepository threadRepository;
@@ -42,30 +41,31 @@ public class ThreadController {
     CommentService commentService;
     @Autowired
     CommentController commentController;
+    @Autowired
+    TagService tagService;
 
 
     @GetMapping(value = {"/{threadUrl}/","/{threadUrl}"})
     public String showAllPostsOfThread(@PathVariable String threadUrl, @RequestParam(required = false, defaultValue = "date") String sort, Model model) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        if(optionalThread.isPresent()) {
-            List<Post> posts = postService.getPostsOfThread(optionalThread.get());
-            for(Post post : posts) {
-                commentController.setActiveCommentNumber(post);
-            }
-            switch (sort) {
-                case "vote":
-                    posts.sort(new SortByPostVote());
-                    break;
-                case "date":
-                default:
-                    posts.sort(new SortByPostDateTime());
-                    break;
-            }
-            model.addAttribute("thread",optionalThread.get());
-            model.addAttribute("posts",posts);
-            return "thread";
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        List<Post> posts = postService.getPostsOfThread(thread);
+        for(Post post : posts) {
+            commentController.setActiveCommentNumber(post);
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        switch (sort) {
+            case "vote":
+                posts.sort(new SortByPostVote());
+                break;
+            case "date":
+            default:
+                posts.sort(new SortByPostDateTime());
+                break;
+        }
+        model.addAttribute("thread",thread);
+        model.addAttribute("posts",posts);
+        List<Tag> tags = tagService.getByThread(thread);
+        model.addAttribute("tags",tags);
+        return "thread";
     }
 
     @GetMapping("/new_thread")

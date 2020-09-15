@@ -43,6 +43,10 @@
                 <h3>New post</h3>
                 <form id="newPost" th:action="@{/{ti}/new_post(ti=${thread.url})}" method="post" th:object="${newPost}">
                     <input type="text" id="inputTitle" name="title" placeholder="Title" th:object="${title}" required>
+                    <select id="selectTag" name="stringTagId" th:object="${stringTagId}">
+                        <option th:value="null">No tag</option>
+                        <option th:each="tag : ${tags}" th:text="${tag.tagName}" th:value="${tag.id}" th:style="'color: '+${tag.colour}"></option>
+                    </select>
                     <br>
                     <textarea class="post-body" id="inputBody" form="newPost" name="body" placeholder="Body" th:object="${body}" maxlength="500" rows="20" cols="55" required></textarea>
                     <br>
