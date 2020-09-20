@@ -68,6 +68,8 @@
                         <a th:text="${tag.tagName}" th:style="'color:'+ ${tag.colour}" class="border"></a>
                     </div>
                 </div>
+                <br>
+                <p sec:authorize="isAuthenticated()"><a th:href="@{/{thread}/tags/new_tag(thread=${thread.url})}">Create new tag</a></p>
                 <hr>
             </div>
             <div class="col-md-9">
