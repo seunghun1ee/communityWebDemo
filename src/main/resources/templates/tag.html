@@ -52,8 +52,8 @@
                         <span>Posted by </span><a th:unless="${post.user == null}" th:class="'user-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
                         <span th:text="'| ' + ${post.getFormattedDateTime()}"></span>
                         <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
-<!--                        <span th:if="${post.numberOfComments == 1}">| 1 comment</span>-->
-<!--                        <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>-->
+                        <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
+                        <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>
                     </p>
                     <hr>
                 </div>

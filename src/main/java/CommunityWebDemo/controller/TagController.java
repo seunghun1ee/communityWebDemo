@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Comment;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Tag;
 import CommunityWebDemo.entity.Thread;
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,6 +36,8 @@ public class TagController implements OptionalEntityExceptionHandler{
     TagService tagService;
     @Autowired
     PostService postService;
+    @Autowired
+    CommentController commentController;
 
     @GetMapping("/{threadId}/tags/new_tag")
     public String showNewTagPage(@PathVariable String threadId, Model model) {
@@ -68,6 +72,7 @@ public class TagController implements OptionalEntityExceptionHandler{
         for(Tag tag : tags) {
             if(tag.getThread().equals(thread) && tag.getTagName().equals(tagName)) {
                 List<Post> posts = postService.getPostsOfTag(tag);
+                posts.forEach(post -> commentController.setActiveCommentNumber(post));
                 model.addAttribute("tag",tag);
                 model.addAttribute("posts",posts);
                 return "tag";
