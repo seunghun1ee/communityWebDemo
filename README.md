@@ -45,7 +45,7 @@ The project aims the website to have two major features
 * [ ] Be able to archive threads
 * [x] Users can bookmark posts
 * [x] Be able to attach an image in posts
-* [ ] post tags
+* [x] post tags
 * [x] Use markdown for posts
 * [ ] Use markdown for comments
 * [x] Disable entities instead of deleting
