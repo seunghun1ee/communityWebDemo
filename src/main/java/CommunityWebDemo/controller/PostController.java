@@ -110,15 +110,7 @@ public class PostController implements OptionalEntityExceptionHandler {
     public RedirectView saveNewPost(@PathVariable String threadUrl, Post newPost, String stringTagId, HttpServletRequest request) throws ResponseStatusException {
         Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
         if(stringTagId != null) {
-            Long tagId = Long.valueOf(stringTagId);
-            List<Tag> tags = tagService.getByThread(thread);
-            newPost.setThread(thread);
-            for(Tag tag : tags) {
-                if(tag.getId().equals(tagId)) {
-                    newPost.setTag(tag);
-                    break;
-                }
-            }
+            checkAndSetTagToPost(thread,newPost,stringTagId);
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //Post author Anonymous or Registered
@@ -136,16 +128,15 @@ public class PostController implements OptionalEntityExceptionHandler {
 
     @PostMapping("/{threadUrl}/posts/{id}/delete")
     public RedirectView delete(@PathVariable String threadUrl, @PathVariable Long id, String password, RedirectAttributes redirectAttr) throws ResponseStatusException{
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(id);
-        //The thread is present, the post is present and the thread of the post is same
-        if(optionalThread.isPresent() && optionalPost.isPresent() && optionalPost.get().getThread().equals(optionalThread.get())) {
-            Post post = optionalPost.get();
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        Post post = getPostOrException(postService.getById(id));
+        //the thread of the post is same
+        if(post.getThread().equals(thread)) {
+            List<Comment> comments = commentService.getCommentsOfPost(post);
             //Owner of the post Anonymous or Registered?
             if(post.getUser() == null) {
                 //password match?
                 if(passwordEncoder.matches(password, post.getPassword())) {
-                    List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                     commentService.deleteAll(comments);
                     post.setIp(null);
                     post.setPassword(null);
@@ -169,7 +160,6 @@ public class PostController implements OptionalEntityExceptionHandler {
                     User authUser = (User) auth.getPrincipal();
                     //Is current user the owner of the post?
                     if(post.getUser().equals(authUser)) {
-                        List<Comment> comments = commentService.getCommentsOfPost(optionalPost.get());
                         commentService.deleteAll(comments);
                         post.setUser(null);
                         post.setThread(null);
@@ -191,100 +181,99 @@ public class PostController implements OptionalEntityExceptionHandler {
 
     @GetMapping("/{threadUrl}/posts/{id}/edit")
     public String updatePost(@PathVariable String threadUrl, @PathVariable Long id, Model model, RedirectAttributes redirectAttr) throws ResponseStatusException{
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(id);
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        Post post = getPostOrException(postService.getById(id));
         //The thread is present, the post is present
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            //is this post owned by registered user?
-            if(optionalPost.get().getUser() != null) {
-                //logged in?
-                if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                    User authUser = (User) auth.getPrincipal();
-                    //current user is the owner of the post
-                    if(optionalPost.get().getUser().equals(authUser)) {
-                        model.addAttribute("thread",optionalThread.get());
-                        model.addAttribute("post", post);
-                        return "updatePost";
-                    }
-                    //current user is not the owner of the post
-                    else {
-                        redirectAttr.addFlashAttribute("failMessage","Access denied");
-                        return "redirect:/{threadUrl}/posts/{id}";
-                    }
+        List<Tag> tags = tagService.getByThread(thread);
+        model.addAttribute("tags",tags);
+        model.addAttribute("thread",thread);
+        model.addAttribute("post", post);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        //is this post owned by registered user?
+        if(post.getUser() != null) {
+            //logged in?
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //current user is the owner of the post
+                if(post.getUser().equals(authUser)) {
+                    return "updatePost";
                 }
-                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
+                //current user is not the owner of the post
+                else {
+                    redirectAttr.addFlashAttribute("failMessage","Access denied");
+                    return "redirect:/{threadUrl}/posts/{id}";
+                }
             }
-            //This post was written by anonymous user
-            else {
-                model.addAttribute("thread",optionalThread.get());
-                model.addAttribute("post", post);
-                return "updatePost";
-            }
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
-        //thread or post is not present, throw exception
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+        //This post was written by anonymous user
+        else {
+            return "updatePost";
+        }
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/edit")
-    public RedirectView saveUpdatedPost(@PathVariable String threadUrl,@PathVariable Long id, Post post,RedirectAttributes redirectAttr) throws ResponseStatusException {
-        Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
-        Optional<Post> optionalPost = postService.getById(id);
-        //The thread and the post are present
-        if(optionalThread.isPresent() && optionalPost.isPresent()) {
-            //apply changes
-            Post targetPost = optionalPost.get();
-            targetPost.setTitle(post.getTitle());
-            targetPost.setBody(post.getBody());
-            //the owner of the post registered or anonymous?
-            if(targetPost.getUser() != null) {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                //logged in?
-                if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
-                    User authUser = (User) auth.getPrincipal();
-                    //current user is the owner of the post
-                    if(targetPost.getUser().equals(authUser)) {
-                        postService.add(targetPost);
-                    }
-                    //wrong user
-                    else {
-                        redirectAttr.addFlashAttribute("failMessage","Access denied");
-                    }
-                }
-                else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
-            }
-            //owner of the post is anonymous
-            else {
-                //check password
-                if(passwordEncoder.matches(post.getPassword(),targetPost.getPassword())) {
+    public RedirectView saveUpdatedPost(@PathVariable String threadUrl,@PathVariable Long id, Post post, String stringTagId, RedirectAttributes redirectAttr) throws ResponseStatusException {
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        Post targetPost = getPostOrException(postService.getById(id));
+        //apply changes
+        targetPost.setTitle(post.getTitle());
+        targetPost.setBody(post.getBody());
+        if(stringTagId != null) {
+            checkAndSetTagToPost(thread, targetPost, stringTagId);
+        }
+
+        //the owner of the post registered or anonymous?
+        if(targetPost.getUser() != null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            //logged in?
+            if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+                User authUser = (User) auth.getPrincipal();
+                //current user is the owner of the post
+                if(targetPost.getUser().equals(authUser)) {
                     postService.add(targetPost);
                 }
-                //wrong password
+                //wrong user
                 else {
-                    redirectAttr.addFlashAttribute("failMessage","Wrong password");
-                    //redirectAttr.addFlashAttribute("post",post);
-                    return new RedirectView("/{threadUrl}/posts/{id}/edit");
+                    redirectAttr.addFlashAttribute("failMessage","Access denied");
                 }
             }
-
-            return new RedirectView("/{threadUrl}/posts/{id}");
+            else throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid request url");
+        //owner of the post is anonymous
+        else {
+            //check password
+            if(passwordEncoder.matches(post.getPassword(),targetPost.getPassword())) {
+                postService.add(targetPost);
+            }
+            //wrong password
+            else {
+                redirectAttr.addFlashAttribute("failMessage","Wrong password");
+                //redirectAttr.addFlashAttribute("post",post);
+                return new RedirectView("/{threadUrl}/posts/{id}/edit");
+            }
+        }
+        return new RedirectView("/{threadUrl}/posts/{id}");
     }
 
     @GetMapping("/posts/{id}")
     public RedirectView redirectPostToThread(@PathVariable Long id) throws ResponseStatusException{
-        Optional<Post> optionalPost = postService.getById(id);
-        if(optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            Optional<Thread> optionalThread = threadService.getByUrl(post.getThread().getUrl());
-            if(optionalThread.isPresent()) {
-                String threadUrl = optionalThread.get().getUrl();
-                return new RedirectView("/"+threadUrl+"/posts/{id}");
+        Post post = getPostOrException(postService.getById(id));
+        Thread thread = getThreadOrException(threadService.getByUrl(post.getThread().getUrl()));
+        return new RedirectView("/"+thread.getUrl()+"/posts/{id}");
+    }
+
+    private void checkAndSetTagToPost(Thread thread, Post post, String stringTagId) {
+        Long tagId = Long.valueOf(stringTagId);
+        List<Tag> tags = tagService.getByThread(thread);
+        post.setThread(thread);
+        for(Tag tag : tags) {
+            if(tag.getId().equals(tagId)) {
+                post.setTag(tag);
+                break;
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
     }
 
 }

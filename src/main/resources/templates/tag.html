@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Title</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+
 </head>
 <body>
     <div id="navbar">
@@ -38,49 +39,33 @@
         </nav>
     </div>
 
-    <div th:if="${successMessage}" th:text="${successMessage}"></div>
-    <div th:if="${failMessage}" th:text="${failMessage}"></div>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Edit post</h3>
-            <form id="editPost" th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="post" th:object="${post}">
-                <input type="text" id="inputTitle" name="title" placeholder="Title" th:value="${post.title}" th:object="${title}" required>
-                <select id="selectTag" name="stringTagId" th:object="${stringTagId}">
-                    <option th:value="null">No tag</option>
-                    <option th:each="tag : ${tags}" th:text="${tag.tagName}" th:value="${tag.id}" th:style="'color: '+${tag.colour}" th:selected="${tag.equals(post.tag)}"></option>
-                </select>
-                <br>
-                <textarea id="inputBody" form="editPost" name="body" placeholder="Body" th:text="${post.body}" th:object="${body}" maxlength="500" rows="20" cols="55" required></textarea>
-                <br>
-
-                <input sec:authorize="isAnonymous()" type="password" id="inputPassword_edit" name="password" placeholder="password" th:object="${password}" required>
-                <button type="submit">Save</button>
-            </form>
-            <form th:if="${post.user == null}" th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
-                <input type="password" id="inputPassword_delete1" name="password" placeholder="password" th:object="${password}" required>
-                <button type="submit">Delete this post</button>
-            </form>
-            <form th:if="${post.user != null}" th:action="@{/{ti}/posts/{id}/delete(id=${post.id},ti=${thread.url})}" method="post">
-                <button type="submit">Delete this post</button>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <h3>Preview</h3>
-            <hr>
-            <div id="preview" class="text-break"></div>
-        </div>
+    <div class="container">
+        <h2 th:text="'Posts with the tag ' +${tag.tagName}+ ' in /' +${tag.thread.url} + '/'"></h2>
+        <article>
+            <article th:each="post : ${posts}">
+                <div th:if="${post.active == true}" th:class="'post' + ${post.vote < -5 ? ' bad-post' : ''}">
+                    <a th:text="${post.title}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{/posts/{id}(id=${post.id})}"></a>
+                    <span th:if="${post.tag != null}" th:text="'| '"></span>
+                    <a th:if="${post.tag != null}" th:text="${post.tag.tagName}" th:style="'color: '+${post.tag.colour}"></a>
+                    <p>
+                        <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
+                        <span>Posted by </span><a th:unless="${post.user == null}" th:class="'user-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
+                        <span th:text="'| ' + ${post.getFormattedDateTime()}"></span>
+                        <span th:text="'| [vote: ' + ${post.vote} + ']'"></span>
+                        <span th:if="${post.numberOfComments == 1}">| 1 comment</span>
+                        <span th:unless="${post.numberOfComments == 1}" th:text="'| '+${post.numberOfComments}+' comments'"></span>
+                    </p>
+                    <hr>
+                </div>
+            </article>
+        </article>
     </div>
 
-    <script th:src="@{/js/imageFormatHandler.js}"></script>
-    <script th:src="@{/js/markdownPreview.js}"></script>
-    <!-- markdown-it CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/11.0.0/markdown-it.min.js" integrity="sha512-0tDdhRf9dcDufaaOQQdvywK56y+cwomy6rjOrqk05N61cQOTdO2Cqqgq8EfXVBDXJe0TH9smqvDicQzMiBG14g==" crossorigin="anonymous"></script>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <!-- Bootstrap CDN -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <!-- Popper.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-
 </body>
 </html>

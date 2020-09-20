@@ -519,4 +519,28 @@ public class ServiceTests {
         assertThat(target).contains(tag1);
         assertThat(target).doesNotContain(tag2);
     }
+
+    @Test
+    void getPostsOfTagTest() {
+        commentRepository.deleteAll();
+        postRepository.deleteAll();
+        tagRepository.deleteAll();
+        Tag tag0 = new Tag("test");
+        Tag tag1 = new Tag("bad");
+        tagRepository.saveAll(Arrays.asList(tag0,tag1));
+        Post post0 = new Post("post0","test tag");
+        post0.setTag(tag0);
+        Post post1 = new Post("post1","test tag");
+        post1.setTag(tag0);
+        Post post2 = new Post("post2","no tag");
+        Post post3 = new Post("post3","bad tag");
+        post3.setTag(tag1);
+        postRepository.saveAll(Arrays.asList(post0,post1,post2,post3));
+        List<Post> posts = postService.getPostsOfTag(tag0);
+        assertThat(posts).hasSize(2);
+        assertThat(posts).contains(post0);
+        assertThat(posts).contains(post1);
+        assertThat(posts).doesNotContain(post2);
+        assertThat(posts).doesNotContain(post3);
+    }
 }

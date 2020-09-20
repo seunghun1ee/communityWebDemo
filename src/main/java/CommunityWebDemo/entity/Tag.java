@@ -21,6 +21,10 @@ public class Tag {
     public Tag() {
     }
 
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
+
     public Tag(String tagName, Thread thread) {
         this.tagName = tagName;
         this.thread = thread;
