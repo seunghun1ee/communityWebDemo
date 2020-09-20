@@ -45,6 +45,10 @@
             <h3>Edit post</h3>
             <form id="editPost" th:action="@{/{ti}/posts/{id}/edit(id=${post.id},ti=${thread.url})}" method="post" th:object="${post}">
                 <input type="text" id="inputTitle" name="title" placeholder="Title" th:value="${post.title}" th:object="${title}" required>
+                <select id="selectTag" name="stringTagId" th:object="${stringTagId}">
+                    <option th:value="null">No tag</option>
+                    <option th:each="tag : ${tags}" th:text="${tag.tagName}" th:value="${tag.id}" th:style="'color: '+${tag.colour}" th:selected="${tag.equals(post.tag)}"></option>
+                </select>
                 <br>
                 <textarea id="inputBody" form="editPost" name="body" placeholder="Body" th:text="${post.body}" th:object="${body}" maxlength="500" rows="20" cols="55" required></textarea>
                 <br>

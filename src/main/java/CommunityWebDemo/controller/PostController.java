@@ -196,6 +196,11 @@ public class PostController implements OptionalEntityExceptionHandler {
         //The thread is present, the post is present
         if(optionalThread.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
+            List<Tag> tags = tagService.getByThread(optionalThread.get());
+            model.addAttribute("tags",tags);
+            model.addAttribute("thread",optionalThread.get());
+            model.addAttribute("post", post);
+
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //is this post owned by registered user?
             if(optionalPost.get().getUser() != null) {
@@ -204,8 +209,6 @@ public class PostController implements OptionalEntityExceptionHandler {
                     User authUser = (User) auth.getPrincipal();
                     //current user is the owner of the post
                     if(optionalPost.get().getUser().equals(authUser)) {
-                        model.addAttribute("thread",optionalThread.get());
-                        model.addAttribute("post", post);
                         return "updatePost";
                     }
                     //current user is not the owner of the post
@@ -218,8 +221,6 @@ public class PostController implements OptionalEntityExceptionHandler {
             }
             //This post was written by anonymous user
             else {
-                model.addAttribute("thread",optionalThread.get());
-                model.addAttribute("post", post);
                 return "updatePost";
             }
         }
@@ -228,7 +229,7 @@ public class PostController implements OptionalEntityExceptionHandler {
     }
 
     @PostMapping("/{threadUrl}/posts/{id}/edit")
-    public RedirectView saveUpdatedPost(@PathVariable String threadUrl,@PathVariable Long id, Post post,RedirectAttributes redirectAttr) throws ResponseStatusException {
+    public RedirectView saveUpdatedPost(@PathVariable String threadUrl,@PathVariable Long id, Post post, String stringTagId, RedirectAttributes redirectAttr) throws ResponseStatusException {
         Optional<Thread> optionalThread = threadService.getByUrl(threadUrl);
         Optional<Post> optionalPost = postService.getById(id);
         //The thread and the post are present
@@ -237,6 +238,11 @@ public class PostController implements OptionalEntityExceptionHandler {
             Post targetPost = optionalPost.get();
             targetPost.setTitle(post.getTitle());
             targetPost.setBody(post.getBody());
+
+            if(stringTagId != null) {
+                checkAndSetTagToPost(optionalThread.get(), targetPost, stringTagId);
+            }
+
             //the owner of the post registered or anonymous?
             if(targetPost.getUser() != null) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -285,6 +291,18 @@ public class PostController implements OptionalEntityExceptionHandler {
             }
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Page not found");
+    }
+
+    private void checkAndSetTagToPost(Thread thread, Post post, String stringTagId) {
+        Long tagId = Long.valueOf(stringTagId);
+        List<Tag> tags = tagService.getByThread(thread);
+        post.setThread(thread);
+        for(Tag tag : tags) {
+            if(tag.getId().equals(tagId)) {
+                post.setTag(tag);
+                break;
+            }
+        }
     }
 
 }
