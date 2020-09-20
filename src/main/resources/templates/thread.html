@@ -65,7 +65,7 @@
                 <h5>Tags</h5>
                 <div>
                     <div th:each="tag : ${tags}">
-                        <a th:text="${tag.tagName}" th:style="'color:'+ ${tag.colour}" class="border"></a>
+                        <a th:text="${tag.tagName}" th:href="@{tags/{tagName}(tagName=${tag.tagName})}" th:style="'color:'+ ${tag.colour}" class="border"></a>
                     </div>
                 </div>
                 <br>
@@ -78,7 +78,7 @@
                         <div th:if="${post.active == true}" th:class="'post' + ${post.vote < -5 ? ' bad-post' : ''}">
                             <a th:text="${post.title}" th:class="'post-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:href="@{posts/{id}(id=${post.id})}"></a>
                             <span th:if="${post.tag != null}" th:text="'| '"></span>
-                            <a th:if="${post.tag != null}" th:text="${post.tag.tagName}" th:style="'color: '+${post.tag.colour}"></a>
+                            <a th:if="${post.tag != null}" th:href="@{tags/{tagName}(tagName=${post.tag.tagName})}" th:text="${post.tag.tagName}" th:style="'color: '+${post.tag.colour}"></a>
                             <p>
                                 <span th:if="${post.user == null}" th:text="'Posted by Anonymous (' + ${post.ip} + ')'"></span>
                                 <span>Posted by </span><a th:unless="${post.user == null}" th:class="'user-link' + ${post.vote < -5 ? ' bad-post' : ''}" th:text="${post.user.username}" th:href="@{/users/{id}(id=${post.user.id})}"></a>
