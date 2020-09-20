@@ -1,5 +1,6 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.compartor.SortByPostVote;
 import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Tag;
 import CommunityWebDemo.entity.Thread;
@@ -70,6 +71,7 @@ public class TagController implements OptionalEntityExceptionHandler{
         for(Tag tag : tags) {
             if(tag.getThread().equals(thread) && tag.getTagName().equals(tagName)) {
                 List<Post> posts = postService.getPostsOfTag(tag);
+                posts.sort(new SortByPostVote());
                 posts.forEach(post -> commentController.setActiveCommentNumber(post));
                 model.addAttribute("tag",tag);
                 model.addAttribute("posts",posts);
