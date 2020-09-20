@@ -1,6 +1,7 @@
 package CommunityWebDemo.service;
 
 import CommunityWebDemo.entity.Post;
+import CommunityWebDemo.entity.Tag;
 import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.entity.User;
 import CommunityWebDemo.repository.PostRepository;
@@ -72,6 +73,16 @@ public class PostService extends MyService<Post>{
         List<Post> posts = new ArrayList<>();
         postRepository.findAll().forEach(post -> {
             if (post.getThread() != null && post.getThread().equals(thread)) {
+                posts.add(post);
+            }
+        });
+        return posts;
+    }
+
+    public List<Post> getPostsOfTag(Tag tag) {
+        List<Post> posts = new ArrayList<>();
+        postRepository.findAll().forEach(post -> {
+            if(post.getTag() != null && post.getTag().equals(tag)) {
                 posts.add(post);
             }
         });
