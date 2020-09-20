@@ -1,8 +1,10 @@
 package CommunityWebDemo.controller;
 
+import CommunityWebDemo.entity.Post;
 import CommunityWebDemo.entity.Tag;
 import CommunityWebDemo.entity.Thread;
 import CommunityWebDemo.repository.TagRepository;
+import CommunityWebDemo.service.PostService;
 import CommunityWebDemo.service.TagService;
 import CommunityWebDemo.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class TagController implements OptionalEntityExceptionHandler{
     TagRepository tagRepository;
     @Autowired
     TagService tagService;
+    @Autowired
+    PostService postService;
 
     @GetMapping("/{threadId}/tags/new_tag")
     public String showNewTagPage(@PathVariable String threadId, Model model) {
@@ -55,5 +59,20 @@ public class TagController implements OptionalEntityExceptionHandler{
         }
         tagRepository.save(newTag);
         return new RedirectView("/{threadId}/");
+    }
+
+    @GetMapping("/{threadUrl}/tags/{tagName}")
+    public String showTagPage(@PathVariable String threadUrl, @PathVariable String tagName, Model model) {
+        Thread thread = getThreadOrException(threadService.getByUrl(threadUrl));
+        List<Tag> tags = tagService.getByThread(thread);
+        for(Tag tag : tags) {
+            if(tag.getThread().equals(thread) && tag.getTagName().equals(tagName)) {
+                List<Post> posts = postService.getPostsOfTag(tag);
+                model.addAttribute("tag",tag);
+                model.addAttribute("posts",posts);
+                return "tag";
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"no_tag");
     }
 }
