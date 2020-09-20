@@ -10,7 +10,7 @@ public class Tag {
     @Id @GeneratedValue
     private Long id;
     private String tagName;
-    private String colour = "#ffffff";
+    private String colour = "#000000";
 
     @ManyToOne
     private Thread thread;
